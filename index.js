@@ -115,8 +115,6 @@ const convertToComponent = (texString = '', fontSize = 12, fontCache = false, co
                 rnStyle = cssStringToRNStyle(htmlStyle);
             }
 
-            console.log(rnStyle);
-
             componentList.push(generateTextComponent(adaptor.textContent(item), { fontSize, color, index, rnStyle }));
         }
     });

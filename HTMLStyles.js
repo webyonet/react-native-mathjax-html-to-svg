@@ -141,6 +141,5 @@ function mapAbsoluteFontSize(key, value) {
  * @return a react native style object
  */
 export function cssStringToRNStyle(str, styleset = STYLESETS.TEXT) {
-    console.log('AAA', cssStringToObject(str));
     return cssToRNStyle(cssStringToObject(str), styleset, { emSize: 1, ptSize: 1 });
 }
