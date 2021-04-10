@@ -12,6 +12,8 @@ const RegisterHTMLHandler = require('./mathjax/handlers/html').RegisterHTMLHandl
 
 const AllPackages = require('./mathjax/input/tex/AllPackages').AllPackages;
 
+const packageList = AllPackages.sort().join(', ').split(/\s*,\s*/);
+
 require('./mathjax/util/entities/all.js');
 
 const adaptor = liteAdaptor();
@@ -123,17 +125,16 @@ const GenerateTextComponent = ({ fontSize, color, index, item }) => {
     );
 };
 
-const convertToComponent = (texString = '', fontSize = 12, fontCache = false, color) => {
+const ConvertToComponent = ({ texString = '', fontSize = 12, fontCache = false, color }) => {
     if (!texString) {
         return '';
     }
 
     const tex = new TeX({
-        packages: AllPackages.sort().join(', ').split(/\s*,\s*/),
+        packages: packageList,
         inlineMath: [['$', '$'], ['\\(', '\\)']],
         displayMath: [['$$', '$$'], ['\\[', '\\]']],
-        processEscapes: true,
-        macros: { require: ['', 1] }
+        processEscapes: true
     });
 
     const svg = new SVG({
@@ -174,7 +175,7 @@ export const MathJaxSvg = memo((props) => {
 
     return (
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', flexShrink: 1, ...style }}>
-            {convertToComponent(textext, fontSize, fontCache, color)}
+            <ConvertToComponent fontSize={fontSize} color={color} texString={textext} fontCache={fontCache}/>
         </View>
     );
 });
