@@ -12,9 +12,26 @@ const RegisterHTMLHandler = require('./mathjax/handlers/html').RegisterHTMLHandl
 
 const AllPackages = require('./mathjax/input/tex/AllPackages').AllPackages;
 
+require('./mathjax/util/entities/all.js');
+
 const adaptor = liteAdaptor();
 
 RegisterHTMLHandler(adaptor);
+
+const tagToStyle = {
+    u: { textDecorationLine: 'underline' },
+    ins: { textDecorationLine: 'underline' },
+    s: { textDecorationLine: 'line-through' },
+    del: { textDecorationLine: 'line-through' },
+    b: { fontWeight: 'bold' },
+    strong: { fontWeight: 'bold' },
+    i: { fontStyle: 'italic' },
+    cite: { fontStyle: 'italic' },
+    dfn: { fontStyle: 'italic' },
+    em: { fontStyle: 'italic' },
+    mark: { backgroundColor: 'yellow' },
+    small: { fontSize: 8 }
+};
 
 const getScale = _svgString => {
     const svgString = _svgString.match(/<svg([^\>]+)>/gi).join('');
@@ -69,22 +86,24 @@ const GenerateTextComponent = ({ fontSize, color, index, item }) => {
     let text = null;
 
     if (item?.kind !== '#text' && item?.kind !== 'mjx-container') {
-        const htmlStyle = adaptor.allStyles(item);
+        let htmlStyle = adaptor.allStyles(item) || null;
 
         if (htmlStyle) {
             rnStyle = cssStringToRNStyle(htmlStyle);
         }
+
+        rnStyle = { ...(tagToStyle[item?.kind] || null), ...rnStyle };
     }
 
     if (item?.kind === '#text') {
-        text = adaptor.value(item);
+        text = decode(adaptor.value(item) || '');
     }
 
     return (
         <Text style={{ fontSize: ((fontSize - 1) * 2), color, ...rnStyle }}>
             {
                 text ?
-                    decode(text)
+                    text
                     : (
                         item?.kind === 'mjx-container' ?
                             <GenerateSvgComponent item={item} fontSize={fontSize} color={color}/>
