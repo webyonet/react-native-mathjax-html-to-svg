@@ -15,7 +15,7 @@
   ],
   "author": "webyonet <webyonet@hotmail.com>",
   "dependencies": {
-
+    "html-entities": "^2.3.2"
   },
   "homepage": "https://github.com/webyonet/react-native-mathjax-html-to-svg.git",
   "license": "MIT"

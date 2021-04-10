@@ -1,6 +1,7 @@
-import React, { memo } from 'react';
+import React, { memo, Fragment } from 'react';
 import { Text, View } from 'react-native';
 import { SvgFromXml } from 'react-native-svg';
+import { decode } from 'html-entities';
 import { cssStringToRNStyle } from './HTMLStyles';
 
 const mathjax = require('./mathjax/mathjax').mathjax;
@@ -47,15 +48,59 @@ const applyColor = (svgString, fillColor) => {
     return svgString.replace(/currentColor/gim, `${fillColor}`);
 };
 
-const generateSvgComponent = (svgXml, index) => {
+const GenerateSvgComponent = ({ item, fontSize, color }) => {
+    let svgText = adaptor.innerHTML(item);
+
+    const [width, height] = getScale(svgText);
+
+    svgText = svgText.replace(/font-family=\"([^\"]*)\"/gmi, '');
+
+    svgText = applyScale(svgText, [width * fontSize, height * fontSize]);
+
+    svgText = applyColor(svgText, color);
+
     return (
-        <SvgFromXml key={index} xml={svgXml}/>
+        <SvgFromXml xml={svgText}/>
     );
 };
 
-const generateTextComponent = (text, { fontSize, color, index, rnStyle }) => {
+const GenerateTextComponent = ({ fontSize, color, index, item }) => {
+    let rnStyle = null;
+    let text = null;
+
+    if (item?.kind !== '#text' && item?.kind !== 'mjx-container') {
+        const htmlStyle = adaptor.allStyles(item);
+
+        if (htmlStyle) {
+            rnStyle = cssStringToRNStyle(htmlStyle);
+        }
+    }
+
+    if (item?.kind === '#text') {
+        text = adaptor.value(item);
+    }
+
     return (
-        <Text style={{ fontSize: ((fontSize - 1) * 2), color, ...rnStyle }} key={index}>{text}</Text>
+        <Text style={{ fontSize: ((fontSize - 1) * 2), color, ...rnStyle }}>
+            {
+                text ?
+                    decode(text)
+                    : (
+                        item?.kind === 'mjx-container' ?
+                            <GenerateSvgComponent item={item} fontSize={fontSize} color={color}/>
+                            :
+                            (
+                                item.children?.length ?
+                                    (
+                                        item.children.map((subItem, subIndex) => (
+                                            <GenerateTextComponent key={`sub-${index}-${subIndex}`} color={color} fontSize={fontSize} item={subItem} index={subIndex}/>
+                                        ))
+                                    )
+                                    : null
+                            )
+                    )
+            }
+        </Text>
     );
 };
 
@@ -90,36 +135,15 @@ const convertToComponent = (texString = '', fontSize = 12, fontCache = false, co
 
     const nodes = adaptor.childNodes(adaptor.body(html.document));
 
-    let componentList = [];
-
-    nodes?.forEach((item, index) => {
-        if (item?.kind === '#text') {
-            componentList.push(generateTextComponent(adaptor.value(item), { fontSize, color, index }));
-        } else if (item?.kind === 'mjx-container') {
-            let svgText = adaptor.innerHTML(item);
-
-            const [width, height] = getScale(svgText);
-
-            svgText = svgText.replace(/font-family=\"([^\"]*)\"/gmi, '');
-
-            svgText = applyScale(svgText, [width * fontSize, height * fontSize]);
-
-            svgText = applyColor(svgText, color);
-
-            componentList.push(generateSvgComponent(svgText, index));
-        } else {
-            const htmlStyle = adaptor.allStyles(item);
-            let rnStyle = null;
-
-            if (htmlStyle) {
-                rnStyle = cssStringToRNStyle(htmlStyle);
+    return (
+        <Fragment>
+            {
+                nodes.map((item, index) => (
+                    <GenerateTextComponent key={index} item={item} index={index} fontSize={fontSize} color={color}/>
+                ))
             }
-
-            componentList.push(generateTextComponent(adaptor.textContent(item), { fontSize, color, index, rnStyle }));
-        }
-    });
-
-    return componentList;
+        </Fragment>
+    );
 };
 
 export const MathJaxSvg = memo((props) => {
@@ -129,13 +153,9 @@ export const MathJaxSvg = memo((props) => {
     const fontCache = props.fontCache;
     const style = props.style ? props.style : null;
 
-    const components = convertToComponent(textext, fontSize, fontCache, color);
-
     return (
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', flexShrink: 1, ...style }}>
-            {
-                components.map(item => item)
-            }
+            {convertToComponent(textext, fontSize, fontCache, color)}
         </View>
     );
 });
