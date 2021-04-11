@@ -2,27 +2,29 @@
 
 ## Installation
 ```
-$ yarn add react-native-mathjax-svg react-native-svg
+$ yarn add react-native-mathjax-html-to-svg react-native-svg
 ```
 
 ## Usage
-```
-import MathJax from 'react-native-mathjax-svg';
+```javascript
+import MathJaxSvg from 'react-native-mathjax-html-to-svg';
 
 ...
 
-<MathJax
+<MathJaxSvg 
   fontSize={16}
-  color={'red'}
-  >
+  color="red"
+  fontCache={true}>
   4sen(α)cos^2(α/2)
-</MathJax>
+</MathJaxSvg>
 ```
 
-|  Props name   | Default value  | Description                             |
-| ------------- | -------------- | --------------------------------------- |
-|  fontSize     | 16             | Size of font to display formula         |
-|  color        | 'black'        | Color of formula to display             |
+|  Props            | Default                    | Description                             |
+| ----------------- | -------------------------- | --------------------------------------- |
+|  fontSize         | 14                         | Font size to display formula. Note that it will apply to normal text. Regular text accept inline style if html has inline style        |
+|  color            | "#000000"                  | Color of formula to display. Note that it will apply to normal text. Regular text accept inline style if html has inline style             |
+|  fontCache        | false                      | MathJax will cache font paths on an express-by-expression (each expression has its own cache within the SVG image itself), which makes the SVG self-contained, but still allows for some savings if characters are repeated               |
+|  style            | `{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', flexShrink: 1 } `          | Container style             |
 
 
 [comment]: <> (## Example)

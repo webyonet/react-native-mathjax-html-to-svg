@@ -83,7 +83,7 @@ const GenerateSvgComponent = ({ item, fontSize, color }) => {
     );
 };
 
-const GenerateTextComponent = ({ fontSize, color, index, item }) => {
+const GenerateTextComponent = ({ fontSize, color, index, item, parentStyle = null }) => {
     let rnStyle = null;
     let text = null;
 
@@ -99,13 +99,19 @@ const GenerateTextComponent = ({ fontSize, color, index, item }) => {
 
     if (item?.kind === '#text') {
         text = decode(adaptor.value(item) || '');
+        rnStyle = (parentStyle ? parentStyle : null);
+    } else if (item?.kind === 'br') {
+        text = '\n';
+        rnStyle = { width: '100%', overflow: 'hidden', height: 0 };
     }
 
     return (
-        <Text style={{ fontSize: ((fontSize - 1) * 2), color, ...rnStyle }}>
+        <Fragment>
             {
                 text ?
-                    text
+                    (
+                        <Text style={{ fontSize: (fontSize * 2), color, ...rnStyle }}>{text}</Text>
+                    )
                     : (
                         item?.kind === 'mjx-container' ?
                             <GenerateSvgComponent item={item} fontSize={fontSize} color={color}/>
@@ -114,14 +120,14 @@ const GenerateTextComponent = ({ fontSize, color, index, item }) => {
                                 item.children?.length ?
                                     (
                                         item.children.map((subItem, subIndex) => (
-                                            <GenerateTextComponent key={`sub-${index}-${subIndex}`} color={color} fontSize={fontSize} item={subItem} index={subIndex}/>
+                                            <GenerateTextComponent key={`sub-${index}-${subIndex}`} color={color} fontSize={fontSize} item={subItem} index={subIndex} parentStyle={rnStyle}/>
                                         ))
                                     )
                                     : null
                             )
                     )
             }
-        </Text>
+        </Fragment>
     );
 };
 
@@ -158,7 +164,7 @@ const ConvertToComponent = ({ texString = '', fontSize = 12, fontCache = false, 
     return (
         <Fragment>
             {
-                nodes.map((item, index) => (
+                nodes?.map((item, index) => (
                     <GenerateTextComponent key={index} item={item} index={index} fontSize={fontSize} color={color}/>
                 ))
             }
