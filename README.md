@@ -28,7 +28,7 @@ return (
 
 <MathJaxSvg 
   fontSize={16}
-  color="red"
+  color="#000000"
   fontCache={true}
 >
   {`
