@@ -53,8 +53,8 @@ return (
 
 |  Props            | Default                    | Description                             |
 | ----------------- | -------------------------- | --------------------------------------- |
-|  fontSize         | 14                         | Font size to display formula. Note that it will apply to normal text. Regular text accept inline style if html has inline style        |
-|  color            | "#000000"                  | Color of formula to display. Note that it will apply to normal text. Regular text accept inline style if html has inline style             |
+|  fontSize         | 14                         | Font size to display formula. Note that it will apply to regular text. Regular text accept inline style if html has inline style        |
+|  color            | "#000000"                  | Color of formula to display. Note that it will apply to regular text. Regular text accept inline style if html has inline style             |
 |  fontCache        | false                      | MathJax will cache font paths on an express-by-expression (each expression has its own cache within the SVG image itself), which makes the SVG self-contained, but still allows for some savings if characters are repeated               |
 |  style            | `{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', flexShrink: 1 } `          | Container style             |
 
