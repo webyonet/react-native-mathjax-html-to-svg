@@ -1,11 +1,20 @@
-# React Native component to display Latex in HTML using MathJax without WebView
+# React Native component to display mathematics in HTML using MathJax without WebView
+
+A react native component used to easily display and handle mathematics (TeX or LaTeX) in html. The library does not use Web View.
 
 ## Installation
 ```bash
-$ yarn add react-native-mathjax-html-to-svg react-native-svg
+$ yarn add react-native-mathjax-html-to-svg
+```
+```bash
+$ yarn add react-native-svg
+```
+```bash
+$ cd ios && pod install
 ```
 
 ## Usage
+**Attention only accepts in-line mathematics.** [see](http://docs.mathjax.org/en/latest/basic/mathematics.html)
 ```jsx
 import MathJaxSvg from 'react-native-mathjax-html-to-svg';
 
@@ -19,7 +28,7 @@ import MathJaxSvg from 'react-native-mathjax-html-to-svg';
   {'$$4sen(α)cos^2(α/2)$$'}
 </MathJaxSvg>
 ```
-## Use in HTML
+## Using TeX or LaTeX with html
 ```jsx
 import MathJaxSvg from 'react-native-mathjax-html-to-svg';
 

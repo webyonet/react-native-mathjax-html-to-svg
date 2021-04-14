@@ -1,7 +1,7 @@
 {
   "name": "react-native-mathjax-html-to-svg",
-  "version": "1.0.0",
-  "description": "React Native component to display latex in html using MathJax. Uses [MathJax](https://github.com/mathjax/)",
+  "version": "1.0.1",
+  "description": "React Native component to display mathematics in html using MathJax. Uses [MathJax](https://github.com/mathjax/)",
   "repository": {
     "type": "git",
     "url": "git@github.com:webyonet/react-native-mathjax-html-to-svg.git"
@@ -9,11 +9,17 @@
   "main": "index.js",
   "keywords": [
     "react-native",
+    "react-native-mathjax",
+    "react-native-mathjax-html-to-svg",
+    "mathjax-html-to-svg",
     "mathjax",
     "svg",
     "mathjax-svg"
   ],
-  "author": "webyonet <webyonet@hotmail.com>",
+  "author": {
+    "name": "webyonet",
+    "email": "webyonet@hotmail.com"
+  },
   "dependencies": {
     "html-entities": "^2.3.2"
   },
