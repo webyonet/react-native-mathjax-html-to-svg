@@ -48,7 +48,7 @@ return (
   ...
 );
 ```
-### Export
+### Output
 <img width="600" src="https://raw.githubusercontent.com/webyonet/react-native-mathjax-html-to-svg/main/export.png"/>
 
 |  Props            | Default                    | Description                             |
