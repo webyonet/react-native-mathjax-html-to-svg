@@ -2,6 +2,8 @@
 
 A react native component used to easily display and handle mathematics (TeX or LaTeX) in html. The library does not use Web View.
 
+Only TeX or LaTeX is converted to svg. HTML is converted to native `<Text/>` component
+
 ## Installation
 ```bash
 $ yarn add react-native-mathjax-html-to-svg
