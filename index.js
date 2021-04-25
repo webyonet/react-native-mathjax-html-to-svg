@@ -87,7 +87,7 @@ const GenerateTextComponent = ({ fontSize, color, index, item, parentStyle = nul
     let rnStyle = null;
     let text = null;
 
-    if (item?.kind !== '#text' && item?.kind !== 'mjx-container') {
+    if (item?.kind !== '#text' && item?.kind !== 'mjx-container' && item?.kind !== '#comment') {
         let htmlStyle = adaptor.allStyles(item) || null;
 
         if (htmlStyle) {
