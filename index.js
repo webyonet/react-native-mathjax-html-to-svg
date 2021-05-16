@@ -60,6 +60,9 @@ const applyScale = (svgString, [width, height]) => {
         `$1${width}$3`
     );
 
+    retSvgString = retSvgString.replace(/(<svg[^\>]+width=\")([0]+[ep]?x?)(\"[^\>]+>)/ig, '$10$3');
+    retSvgString = retSvgString.replace(/(<svg[^\>]+height=\")([0]+[ep]?x?)(\"[^\>]+>)/ig, '$10$3');
+
     return retSvgString;
 };
 
