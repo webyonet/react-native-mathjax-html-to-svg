@@ -5,6 +5,8 @@ A react native component used to easily display and handle mathematics (TeX or L
 Only TeX or LaTeX is converted to svg. HTML is converted to native `<Text/>` component
 
 ## Installation
+
+#### With react-native-cli
 ```bash
 $ yarn add react-native-mathjax-html-to-svg
 ```
@@ -14,12 +16,18 @@ $ yarn add react-native-svg
 ```bash
 $ cd ios && pod install
 ```
+#### With expo-cli
+```bash
+$ expo install react-native-mathjax-html-to-svg 
+```
+```bash
+$ expo install react-native-svg
+```
 
 ## Usage
 **Attention only accepts in-line mathematics.** [see](http://docs.mathjax.org/en/latest/basic/mathematics.html)
 ```jsx
-import MathJaxSvg from 'react-native-mathjax-html-to-svg';
-
+import { MathJaxSvg } from 'react-native-mathjax-html-to-svg';
 ...
 
 <MathJaxSvg 
@@ -32,7 +40,7 @@ import MathJaxSvg from 'react-native-mathjax-html-to-svg';
 ```
 ## Using TeX or LaTeX with html
 ```jsx
-import MathJaxSvg from 'react-native-mathjax-html-to-svg';
+import { MathJaxSvg } from 'react-native-mathjax-html-to-svg';
 
 return (
   ...
