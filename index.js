@@ -99,7 +99,6 @@ const GenerateTextComponent = ({ fontSize, color, index, item, parentStyle = nul
 
         rnStyle = { ...(tagToStyle[item?.kind] || null), ...rnStyle };
     }
-
     if (item?.kind === '#text') {
         text = decode(adaptor.value(item) || '');
         rnStyle = (parentStyle ? parentStyle : null);
@@ -184,7 +183,11 @@ export const MathJaxSvg = memo((props) => {
 
     return (
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', flexShrink: 1, ...style }}>
-            <ConvertToComponent fontSize={fontSize} color={color} texString={textext} fontCache={fontCache}/>
+            {
+                textext ? (
+                    <ConvertToComponent fontSize={fontSize} color={color} texString={textext} fontCache={fontCache}/>
+                ) : null
+            }
         </View>
     );
 });
