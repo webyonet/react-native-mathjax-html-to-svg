@@ -182,7 +182,7 @@ export const MathJaxSvg = memo((props) => {
     const style = props.style ? props.style : null;
 
     return (
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', flexShrink: 1, ...style }}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', flexShrink: 1, ...style }}>
             {
                 textext ? (
                     <ConvertToComponent fontSize={fontSize} color={color} texString={textext} fontCache={fontCache}/>
