@@ -112,11 +112,11 @@ const GenerateTextComponent = ({ fontSize, color, index, item, parentStyle = nul
             {
                 text ?
                     (
-                        <Text style={{ fontSize: (fontSize * 2), color, ...rnStyle }}>{text}</Text>
+                        <Text key={`sub-${index}`} style={{ fontSize: (fontSize * 2), color, ...rnStyle }}>{text}</Text>
                     )
                     : (
                         item?.kind === 'mjx-container' ?
-                            <GenerateSvgComponent item={item} fontSize={fontSize} color={color}/>
+                            <GenerateSvgComponent key={`sub-${index}`} item={item} fontSize={fontSize} color={color}/>
                             :
                             (
                                 item.children?.length ?
