@@ -3,15 +3,40 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
@@ -42,7 +67,7 @@ var __read = (this && this.__read) || function (o, n) {
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CHTMLWrapper = exports.SPACE = exports.FONTSIZE = void 0;
-var LENGTHS = require("../../util/lengths.js");
+var LENGTHS = __importStar(require("../../util/lengths.js"));
 var Wrapper_js_1 = require("../common/Wrapper.js");
 var BBox_js_1 = require("../../util/BBox.js");
 exports.FONTSIZE = {
@@ -101,7 +126,7 @@ var CHTMLWrapper = (function (_super) {
         return chtml;
     };
     CHTMLWrapper.prototype.markUsed = function () {
-        this.constructor.used = true;
+        this.jax.wrapperUsage.add(this.kind);
     };
     CHTMLWrapper.prototype.createCHTMLnode = function (parent) {
         var href = this.node.attributes.get('href');
@@ -285,7 +310,7 @@ var CHTMLWrapper = (function (_super) {
     };
     CHTMLWrapper.kind = 'unknown';
     CHTMLWrapper.autoStyle = true;
-    CHTMLWrapper.used = false;
     return CHTMLWrapper;
 }(Wrapper_js_1.CommonWrapper));
 exports.CHTMLWrapper = CHTMLWrapper;
+//# sourceMappingURL=Wrapper.js.map

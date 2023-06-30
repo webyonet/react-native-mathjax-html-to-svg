@@ -10,10 +10,12 @@ export interface SVGWrapperClass extends AnyWrapperClass {
 }
 export declare class SVGWrapper<N, T, D> extends CommonWrapper<SVG<N, T, D>, SVGWrapper<N, T, D>, SVGWrapperClass, SVGCharOptions, SVGDelimiterData, SVGFontData> {
     static kind: string;
+    static borderFuzz: number;
     protected factory: SVGWrapperFactory<N, T, D>;
     parent: SVGWrapper<N, T, D>;
     childNodes: SVGWrapper<N, T, D>[];
     element: N;
+    dx: number;
     font: SVGFontData;
     toSVG(parent: N): void;
     addChildren(parent: N): void;
@@ -22,8 +24,13 @@ export declare class SVGWrapper<N, T, D> extends CommonWrapper<SVG<N, T, D>, SVG
     protected handleStyles(): void;
     protected handleScale(): void;
     protected handleColor(): void;
+    protected handleBorder(): void;
+    protected addBorderSolid(path: number[][], color: string, child: N): void;
+    protected addBorderBroken(path: number[][], color: string, style: string, t: number, i: number): void;
     protected handleAttributes(): void;
     place(x: number, y: number, element?: N): void;
+    protected handleId(y: number): number;
+    firstChild(): N;
     placeChar(n: number, x: number, y: number, parent: N, variant?: string): number;
     protected charNode(variant: string, C: string, path: string): N;
     protected pathNode(C: string, path: string): N;

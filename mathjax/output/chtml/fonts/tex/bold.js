@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.bold = void 0;
 var FontData_js_1 = require("../../FontData.js");
 var bold_js_1 = require("../../../common/fonts/tex/bold.js");
-exports.bold = FontData_js_1.AddCSS(bold_js_1.bold, {
+exports.bold = (0, FontData_js_1.AddCSS)(bold_js_1.bold, {
     0xB7: { c: '\\22C5' },
     0x131: { f: '' },
     0x237: { f: '' },
@@ -66,3 +66,4 @@ exports.bold = FontData_js_1.AddCSS(bold_js_1.bold, {
     0x3008: { c: '\\27E8' },
     0x3009: { c: '\\27E9' },
 });
+//# sourceMappingURL=bold.js.map

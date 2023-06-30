@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var SymbolMap_js_1 = require("../SymbolMap.js");
 var TexConstants_js_1 = require("../TexConstants.js");
 var TextMacrosMethods_js_1 = require("./TextMacrosMethods.js");
+var lengths_js_1 = require("../../../util/lengths.js");
 new SymbolMap_js_1.MacroMap('text-special', {
     '$': 'Math',
     '%': 'Comment',
@@ -65,16 +66,9 @@ new SymbolMap_js_1.CommandMap('text-macros', {
     LARGE: ['SetSize', 1.73],
     huge: ['SetSize', 2.07],
     Huge: ['SetSize', 2.49],
-    mathcal: 'MathModeOnly',
-    mathscr: 'MathModeOnly',
-    mathrm: 'MathModeOnly',
-    mathbf: 'MathModeOnly',
-    mathbb: 'MathModeOnly',
-    mathit: 'MathModeOnly',
-    mathfrak: 'MathModeOnly',
-    mathsf: 'MathModeOnly',
-    mathtt: 'MathModeOnly',
     Bbb: ['Macro', '{\\bbFont #1}', 1],
+    textnormal: ['Macro', '{\\rm #1}', 1],
+    textup: ['Macro', '{\\rm #1}', 1],
     textrm: ['Macro', '{\\rm #1}', 1],
     textit: ['Macro', '{\\it #1}', 1],
     textbf: ['Macro', '{\\bf #1}', 1],
@@ -83,16 +77,16 @@ new SymbolMap_js_1.CommandMap('text-macros', {
     dagger: ['Insert', '\u2020'],
     ddagger: ['Insert', '\u2021'],
     S: ['Insert', '\u00A7'],
-    ',': ['Spacer', TexConstants_js_1.TexConstant.Length.THINMATHSPACE],
-    ':': ['Spacer', TexConstants_js_1.TexConstant.Length.MEDIUMMATHSPACE],
-    '>': ['Spacer', TexConstants_js_1.TexConstant.Length.MEDIUMMATHSPACE],
-    ';': ['Spacer', TexConstants_js_1.TexConstant.Length.THICKMATHSPACE],
-    '!': ['Spacer', TexConstants_js_1.TexConstant.Length.NEGATIVETHINMATHSPACE],
-    enspace: ['Spacer', '.5em'],
-    quad: ['Spacer', '1em'],
-    qquad: ['Spacer', '2em'],
-    thinspace: ['Spacer', TexConstants_js_1.TexConstant.Length.THINMATHSPACE],
-    negthinspace: ['Spacer', TexConstants_js_1.TexConstant.Length.NEGATIVETHINMATHSPACE],
+    ',': ['Spacer', lengths_js_1.MATHSPACE.thinmathspace],
+    ':': ['Spacer', lengths_js_1.MATHSPACE.mediummathspace],
+    '>': ['Spacer', lengths_js_1.MATHSPACE.mediummathspace],
+    ';': ['Spacer', lengths_js_1.MATHSPACE.thickmathspace],
+    '!': ['Spacer', lengths_js_1.MATHSPACE.negativethinmathspace],
+    enspace: ['Spacer', .5],
+    quad: ['Spacer', 1],
+    qquad: ['Spacer', 2],
+    thinspace: ['Spacer', lengths_js_1.MATHSPACE.thinmathspace],
+    negthinspace: ['Spacer', lengths_js_1.MATHSPACE.negativethinmathspace],
     hskip: 'Hskip',
     hspace: 'Hskip',
     kern: 'Hskip',
@@ -114,3 +108,4 @@ new SymbolMap_js_1.CommandMap('text-macros', {
     ref: ['HandleRef', false],
     eqref: ['HandleRef', true],
 }, TextMacrosMethods_js_1.TextMacrosMethods);
+//# sourceMappingURL=TextMacrosMappings.js.map

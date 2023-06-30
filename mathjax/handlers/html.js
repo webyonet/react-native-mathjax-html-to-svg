@@ -9,3 +9,4 @@ function RegisterHTMLHandler(adaptor) {
     return handler;
 }
 exports.RegisterHTMLHandler = RegisterHTMLHandler;
+//# sourceMappingURL=html.js.map

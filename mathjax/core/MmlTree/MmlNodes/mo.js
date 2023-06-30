@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -54,6 +56,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MmlMo = void 0;
 var MmlNode_js_1 = require("../MmlNode.js");
 var OperatorDictionary_js_1 = require("../OperatorDictionary.js");
+var string_js_1 = require("../../../util/string.js");
 var MmlMo = (function (_super) {
     __extends(MmlMo, _super);
     function MmlMo() {
@@ -107,7 +110,7 @@ var MmlMo = (function (_super) {
         var math = this.factory.getNodeClass('math');
         while (parent && parent.isEmbellished && parent.coreMO() === this && !(parent instanceof math)) {
             embellished = parent;
-            parent = parent.Parent;
+            parent = parent.parent;
         }
         return embellished;
     };
@@ -118,7 +121,9 @@ var MmlMo = (function (_super) {
         if (parent.isEmbellished) {
             return parent.coreMO().getText();
         }
-        while ((((parent.isKind('mrow') || parent.isKind('TeXAtom') || parent.isKind('mstyle') ||
+        while ((((parent.isKind('mrow') ||
+            (parent.isKind('TeXAtom') && parent.texClass !== MmlNode_js_1.TEXCLASS.VCENTER) ||
+            parent.isKind('mstyle') ||
             parent.isKind('mphantom')) && parent.childNodes.length === 1) ||
             parent.isKind('munderover')) && parent.childNodes[0]) {
             parent = parent.childNodes[0];
@@ -170,14 +175,6 @@ var MmlMo = (function (_super) {
                 this.texClass = MmlNode_js_1.TEXCLASS.CLOSE;
             }
         }
-        if (this.getText() === '\u2061') {
-            if (prev) {
-                prev.texClass = MmlNode_js_1.TEXCLASS.OP;
-                prev.setProperty('fnOP', true);
-            }
-            this.texClass = this.prevClass = MmlNode_js_1.TEXCLASS.NONE;
-            return prev;
-        }
         return this.adjustTeXclass(prev);
     };
     MmlMo.prototype.adjustTeXclass = function (prev) {
@@ -221,13 +218,19 @@ var MmlMo = (function (_super) {
         return this;
     };
     MmlMo.prototype.setInheritedAttributes = function (attributes, display, level, prime) {
-        var e_1, _a;
         if (attributes === void 0) { attributes = {}; }
         if (display === void 0) { display = false; }
         if (level === void 0) { level = 0; }
         if (prime === void 0) { prime = false; }
         _super.prototype.setInheritedAttributes.call(this, attributes, display, level, prime);
         var mo = this.getText();
+        this.checkOperatorTable(mo);
+        this.checkPseudoScripts(mo);
+        this.checkPrimes(mo);
+        this.checkMathAccent(mo);
+    };
+    MmlMo.prototype.checkOperatorTable = function (mo) {
+        var e_1, _a;
         var _b = __read(this.handleExplicitForm(this.getForms()), 3), form1 = _b[0], form2 = _b[1], form3 = _b[2];
         this.attributes.setInherited('form', form1);
         var OPTABLE = this.constructor.OPTABLE;
@@ -253,7 +256,7 @@ var MmlMo = (function (_super) {
             this.rspace = (def[1] + 1) / 18;
         }
         else {
-            var range = this.getRange(mo);
+            var range = (0, OperatorDictionary_js_1.getRange)(mo);
             if (range) {
                 if (this.getProperty('texClass') === undefined) {
                     this.texClass = range[2];
@@ -290,37 +293,91 @@ var MmlMo = (function (_super) {
         }
         return forms;
     };
-    MmlMo.prototype.getRange = function (mo) {
-        var e_2, _a;
-        if (!mo.match(/^[\uD800-\uDBFF]?.$/)) {
-            return null;
+    MmlMo.prototype.checkPseudoScripts = function (mo) {
+        var PSEUDOSCRIPTS = this.constructor.pseudoScripts;
+        if (!mo.match(PSEUDOSCRIPTS))
+            return;
+        var parent = this.coreParent().Parent;
+        var isPseudo = !parent || !(parent.isKind('msubsup') && !parent.isKind('msub'));
+        this.setProperty('pseudoscript', isPseudo);
+        if (isPseudo) {
+            this.attributes.setInherited('lspace', 0);
+            this.attributes.setInherited('rspace', 0);
         }
-        var n = mo.codePointAt(0);
-        var ranges = this.constructor.RANGES;
-        try {
-            for (var ranges_1 = __values(ranges), ranges_1_1 = ranges_1.next(); !ranges_1_1.done; ranges_1_1 = ranges_1.next()) {
-                var range = ranges_1_1.value;
-                if (range[0] <= n && n <= range[1]) {
-                    return range;
-                }
-                if (n < range[0]) {
-                    return null;
-                }
-            }
+    };
+    MmlMo.prototype.checkPrimes = function (mo) {
+        var PRIMES = this.constructor.primes;
+        if (!mo.match(PRIMES))
+            return;
+        var REMAP = this.constructor.remapPrimes;
+        var primes = (0, string_js_1.unicodeString)((0, string_js_1.unicodeChars)(mo).map(function (c) { return REMAP[c]; }));
+        this.setProperty('primes', primes);
+    };
+    MmlMo.prototype.checkMathAccent = function (mo) {
+        var parent = this.Parent;
+        if (this.getProperty('mathaccent') !== undefined || !parent || !parent.isKind('munderover'))
+            return;
+        var base = parent.childNodes[0];
+        if (base.isEmbellished && base.coreMO() === this)
+            return;
+        var MATHACCENT = this.constructor.mathaccents;
+        if (mo.match(MATHACCENT)) {
+            this.setProperty('mathaccent', true);
         }
-        catch (e_2_1) { e_2 = { error: e_2_1 }; }
-        finally {
-            try {
-                if (ranges_1_1 && !ranges_1_1.done && (_a = ranges_1.return)) _a.call(ranges_1);
-            }
-            finally { if (e_2) throw e_2.error; }
-        }
-        return null;
     };
     MmlMo.defaults = __assign(__assign({}, MmlNode_js_1.AbstractMmlTokenNode.defaults), { form: 'infix', fence: false, separator: false, lspace: 'thickmathspace', rspace: 'thickmathspace', stretchy: false, symmetric: false, maxsize: 'infinity', minsize: '0em', largeop: false, movablelimits: false, accent: false, linebreak: 'auto', lineleading: '1ex', linebreakstyle: 'before', indentalign: 'auto', indentshift: '0', indenttarget: '', indentalignfirst: 'indentalign', indentshiftfirst: 'indentshift', indentalignlast: 'indentalign', indentshiftlast: 'indentshift' });
-    MmlMo.RANGES = OperatorDictionary_js_1.RANGES;
     MmlMo.MMLSPACING = OperatorDictionary_js_1.MMLSPACING;
     MmlMo.OPTABLE = OperatorDictionary_js_1.OPTABLE;
+    MmlMo.pseudoScripts = new RegExp([
+        '^["\'*`',
+        '\u00AA',
+        '\u00B0',
+        '\u00B2-\u00B4',
+        '\u00B9',
+        '\u00BA',
+        '\u2018-\u201F',
+        '\u2032-\u2037\u2057',
+        '\u2070\u2071',
+        '\u2074-\u207F',
+        '\u2080-\u208E',
+        ']+$'
+    ].join(''));
+    MmlMo.primes = new RegExp([
+        '^["\'`',
+        '\u2018-\u201F',
+        ']+$'
+    ].join(''));
+    MmlMo.remapPrimes = {
+        0x0022: 0x2033,
+        0x0027: 0x2032,
+        0x0060: 0x2035,
+        0x2018: 0x2035,
+        0x2019: 0x2032,
+        0x201A: 0x2032,
+        0x201B: 0x2035,
+        0x201C: 0x2036,
+        0x201D: 0x2033,
+        0x201E: 0x2033,
+        0x201F: 0x2036,
+    };
+    MmlMo.mathaccents = new RegExp([
+        '^[',
+        '\u00B4\u0301\u02CA',
+        '\u0060\u0300\u02CB',
+        '\u00A8\u0308',
+        '\u007E\u0303\u02DC',
+        '\u00AF\u0304\u02C9',
+        '\u02D8\u0306',
+        '\u02C7\u030C',
+        '\u005E\u0302\u02C6',
+        '\u2192\u20D7',
+        '\u02D9\u0307',
+        '\u02DA\u030A',
+        '\u20DB',
+        '\u20DC',
+        ']$'
+    ].join(''));
     return MmlMo;
 }(MmlNode_js_1.AbstractMmlTokenNode));
 exports.MmlMo = MmlMo;
+//# sourceMappingURL=mo.js.map

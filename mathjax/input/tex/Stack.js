@@ -26,12 +26,20 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var NodeUtil_js_1 = require("./NodeUtil.js");
+var NodeUtil_js_1 = __importDefault(require("./NodeUtil.js"));
 var Stack = (function () {
     function Stack(_factory, _env, inner) {
         this._factory = _factory;
@@ -76,7 +84,7 @@ var Stack = (function () {
                 }
                 if (top_1) {
                     this.Pop();
-                    this.Push.apply(this, __spread(top_1));
+                    this.Push.apply(this, __spreadArray([], __read(top_1), false));
                     continue;
                 }
                 this.stack.push(item);
@@ -121,3 +129,4 @@ var Stack = (function () {
     return Stack;
 }());
 exports.default = Stack;
+//# sourceMappingURL=Stack.js.map

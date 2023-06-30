@@ -1,4 +1,27 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __read = (this && this.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
@@ -15,15 +38,23 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var TexError_js_1 = require("../TexError.js");
-var TexParser_js_1 = require("../TexParser.js");
-var ParseUtil_js_1 = require("../ParseUtil.js");
-var BussproofsUtil = require("./BussproofsUtil.js");
+var TexError_js_1 = __importDefault(require("../TexError.js"));
+var TexParser_js_1 = __importDefault(require("../TexParser.js"));
+var ParseUtil_js_1 = __importDefault(require("../ParseUtil.js"));
+var BussproofsUtil = __importStar(require("./BussproofsUtil.js"));
 var BussproofsMethods = {};
 BussproofsMethods.Prooftree = function (parser, begin) {
     parser.Push(begin);
@@ -48,7 +79,7 @@ var paddedContent = function (parser, content) {
     }
     var lpad = parser.create('node', 'mspace', [], { width: '.5ex' });
     var rpad = parser.create('node', 'mspace', [], { width: '.5ex' });
-    return parser.create('node', 'mrow', __spread([lpad], nodes, [rpad]));
+    return parser.create('node', 'mrow', __spreadArray(__spreadArray([lpad], __read(nodes), false), [rpad], false));
 };
 BussproofsMethods.Inference = function (parser, name, n) {
     var top = parser.stack.Top();
@@ -209,3 +240,4 @@ BussproofsMethods.InferenceF = function (parser, name, n) {
     top.Push(rule);
 };
 exports.default = BussproofsMethods;
+//# sourceMappingURL=BussproofsMethods.js.map

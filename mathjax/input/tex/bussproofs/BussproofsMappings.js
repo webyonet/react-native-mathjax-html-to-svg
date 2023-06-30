@@ -1,7 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var BussproofsMethods_js_1 = require("./BussproofsMethods.js");
-var ParseMethods_js_1 = require("../ParseMethods.js");
+var BussproofsMethods_js_1 = __importDefault(require("./BussproofsMethods.js"));
+var ParseMethods_js_1 = __importDefault(require("../ParseMethods.js"));
 var SymbolMap_js_1 = require("../SymbolMap.js");
 new SymbolMap_js_1.CommandMap('Bussproofs-macros', {
     AxiomC: 'Axiom',
@@ -41,3 +44,4 @@ new SymbolMap_js_1.CommandMap('Bussproofs-macros', {
 new SymbolMap_js_1.EnvironmentMap('Bussproofs-environments', ParseMethods_js_1.default.environment, {
     prooftree: ['Prooftree', null, false]
 }, BussproofsMethods_js_1.default);
+//# sourceMappingURL=BussproofsMappings.js.map

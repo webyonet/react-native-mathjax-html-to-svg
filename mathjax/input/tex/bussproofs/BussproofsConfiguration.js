@@ -23,3 +23,4 @@ exports.BussproofsConfiguration = Configuration_js_1.Configuration.create('bussp
         [BussproofsUtil_js_1.balanceRules, 1]
     ]
 });
+//# sourceMappingURL=BussproofsConfiguration.js.map

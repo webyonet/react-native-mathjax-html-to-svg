@@ -1,6 +1,6 @@
-import { SVGWrapper } from '../Wrapper.js';
+import { SVGWrapper, SVGConstructor } from '../Wrapper.js';
 import { BBox } from '../../../util/BBox.js';
-declare const SVGmsqrt_base: import("mathjax-full/ts/output/common/Wrapper").Constructor<import("mathjax-full/ts/output/common/Wrappers/msqrt").CommonMsqrt> & import("mathjax-full/ts/output/common/Wrapper").Constructor<SVGWrapper<any, any, any>>;
+declare const SVGmsqrt_base: import("../../common/Wrappers/msqrt.js").MsqrtConstructor & SVGConstructor<any, any, any>;
 export declare class SVGmsqrt<N, T, D> extends SVGmsqrt_base {
     static kind: string;
     dx: number;

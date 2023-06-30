@@ -39,3 +39,4 @@ exports.texOldstyleBold = {
     0x59: [.686, .164, .759, { ic: .038, sk: .0958 }],
     0x5A: [.686, 0, .818, { ic: .035, sk: .16 }],
 };
+//# sourceMappingURL=tex-oldstyle-bold.js.map

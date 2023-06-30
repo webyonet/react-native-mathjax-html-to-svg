@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.sansSerif = void 0;
 var FontData_js_1 = require("../../FontData.js");
 var sans_serif_js_1 = require("../../../common/fonts/tex/sans-serif.js");
-exports.sansSerif = FontData_js_1.AddCSS(sans_serif_js_1.sansSerif, {
+exports.sansSerif = (0, FontData_js_1.AddCSS)(sans_serif_js_1.sansSerif, {
     0x391: { c: 'A' },
     0x392: { c: 'B' },
     0x395: { c: 'E' },
@@ -22,3 +22,4 @@ exports.sansSerif = FontData_js_1.AddCSS(sans_serif_js_1.sansSerif, {
     0x2044: { c: '/' },
     0x2206: { c: '\\394' },
 });
+//# sourceMappingURL=sans-serif.js.map

@@ -26,9 +26,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var MmlNode_js_1 = require("../../core/MmlTree/MmlNode.js");
@@ -44,6 +49,7 @@ var NodeUtil;
         ['useHeight', true],
         ['variantForm', true],
         ['withDelims', true],
+        ['mathaccent', true],
         ['open', true],
         ['close', true]
     ]);
@@ -132,7 +138,7 @@ var NodeUtil;
         for (var _i = 1; _i < arguments.length; _i++) {
             properties[_i - 1] = arguments[_i];
         }
-        node.removeProperty.apply(node, __spread(properties));
+        node.removeProperty.apply(node, __spreadArray([], __read(properties), false));
     }
     NodeUtil.removeProperties = removeProperties;
     function getChildAt(node, position) {
@@ -211,3 +217,4 @@ var NodeUtil;
     NodeUtil.getForm = getForm;
 })(NodeUtil || (NodeUtil = {}));
 exports.default = NodeUtil;
+//# sourceMappingURL=NodeUtil.js.map

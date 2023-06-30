@@ -39,3 +39,4 @@ exports.texOldstyle = {
     0x59: [.683, .143, .668, { ic: .046, sk: .0833 }],
     0x5A: [.683, 0, .725, { ic: .042, sk: .139 }],
 };
+//# sourceMappingURL=tex-oldstyle.js.map

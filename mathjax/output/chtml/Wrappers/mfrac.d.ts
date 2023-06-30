@@ -1,7 +1,7 @@
-import { CHTMLWrapper } from '../Wrapper.js';
+import { CHTMLConstructor } from '../Wrapper.js';
 import { CHTMLmo } from './mo.js';
 import { StyleList } from '../../../util/StyleList.js';
-declare const CHTMLmfrac_base: import("mathjax-full/ts/output/common/Wrapper").Constructor<import("mathjax-full/ts/output/common/Wrappers/mfrac").CommonMfrac> & import("mathjax-full/ts/output/common/Wrapper").Constructor<CHTMLWrapper<any, any, any>>;
+declare const CHTMLmfrac_base: import("../../common/Wrappers/mfrac.js").MfracConstructor & CHTMLConstructor<any, any, any>;
 export declare class CHTMLmfrac<N, T, D> extends CHTMLmfrac_base {
     static kind: string;
     static styles: StyleList;

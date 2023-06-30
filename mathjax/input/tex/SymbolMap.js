@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -39,14 +41,23 @@ var __values = (this && this.__values) || function(o) {
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EnvironmentMap = exports.CommandMap = exports.MacroMap = exports.DelimiterMap = exports.CharacterMap = exports.AbstractParseMap = exports.RegExpMap = exports.AbstractSymbolMap = void 0;
+exports.EnvironmentMap = exports.CommandMap = exports.MacroMap = exports.DelimiterMap = exports.CharacterMap = exports.AbstractParseMap = exports.RegExpMap = exports.AbstractSymbolMap = exports.parseResult = void 0;
 var Symbol_js_1 = require("./Symbol.js");
 var MapHandler_js_1 = require("./MapHandler.js");
+function parseResult(result) {
+    return result === void 0 ? true : result;
+}
+exports.parseResult = parseResult;
 var AbstractSymbolMap = (function () {
     function AbstractSymbolMap(_name, _parser) {
         this._name = _name;
@@ -67,8 +78,7 @@ var AbstractSymbolMap = (function () {
         var _b = __read(_a, 2), env = _b[0], symbol = _b[1];
         var parser = this.parserFor(symbol);
         var mapped = this.lookup(symbol);
-        return (parser && mapped) ?
-            parser(env, mapped) || true : null;
+        return (parser && mapped) ? parseResult(parser(env, mapped)) : null;
     };
     Object.defineProperty(AbstractSymbolMap.prototype, "parser", {
         get: function () {
@@ -193,7 +203,7 @@ var MacroMap = (function (_super) {
         if (!macro || !parser) {
             return null;
         }
-        return parser.apply(void 0, __spread([env, macro.symbol], macro.args)) || true;
+        return parseResult(parser.apply(void 0, __spreadArray([env, macro.symbol], __read(macro.args), false)));
     };
     return MacroMap;
 }(AbstractParseMap));
@@ -210,14 +220,11 @@ var CommandMap = (function (_super) {
         if (!macro || !parser) {
             return null;
         }
-        if (!parser) {
-            return null;
-        }
         var saveCommand = env.currentCS;
         env.currentCS = '\\' + symbol;
-        var result = parser.apply(void 0, __spread([env, '\\' + macro.symbol], macro.args));
+        var result = parser.apply(void 0, __spreadArray([env, '\\' + macro.symbol], __read(macro.args), false));
         env.currentCS = saveCommand;
-        return result || true;
+        return parseResult(result);
     };
     return CommandMap;
 }(MacroMap));
@@ -236,9 +243,9 @@ var EnvironmentMap = (function (_super) {
         if (!macro || !envParser) {
             return null;
         }
-        this.parser(env, macro.symbol, envParser, macro.args);
-        return true;
+        return parseResult(this.parser(env, macro.symbol, envParser, macro.args));
     };
     return EnvironmentMap;
 }(MacroMap));
 exports.EnvironmentMap = EnvironmentMap;
+//# sourceMappingURL=SymbolMap.js.map

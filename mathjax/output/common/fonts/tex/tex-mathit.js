@@ -55,3 +55,4 @@ exports.texMathit = {
     0x79: [.441, .205, .486],
     0x7A: [.442, .011, .409],
 };
+//# sourceMappingURL=tex-mathit.js.map

@@ -26,9 +26,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
@@ -50,7 +55,7 @@ var LiteElement = (function () {
         if (children === void 0) { children = []; }
         this.kind = kind;
         this.attributes = __assign({}, attributes);
-        this.children = __spread(children);
+        this.children = __spreadArray([], __read(children), false);
         try {
             for (var _b = __values(this.children), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var child = _c.value;
@@ -69,3 +74,4 @@ var LiteElement = (function () {
     return LiteElement;
 }());
 exports.LiteElement = LiteElement;
+//# sourceMappingURL=Element.js.map

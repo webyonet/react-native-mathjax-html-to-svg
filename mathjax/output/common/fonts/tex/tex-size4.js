@@ -56,3 +56,4 @@ exports.texSize4 = {
     0xE155: [.333, 0, .9, { ic: .01 }],
     0xE156: [.12, .213, .9, { ic: .01 }],
 };
+//# sourceMappingURL=tex-size4.js.map

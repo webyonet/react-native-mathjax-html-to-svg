@@ -14,6 +14,7 @@ export interface MinDocument<N, T> {
     querySelectorAll(selector: string): ArrayLike<N>;
 }
 export interface MinHTMLElement<N, T> {
+    nodeType: number;
     nodeName: string;
     nodeValue: string;
     textContent: string;
@@ -28,6 +29,9 @@ export interface MinHTMLElement<N, T> {
     className: string;
     classList: DOMTokenList;
     style: OptionList;
+    sheet?: {
+        insertRule: (rule: string, index?: number) => void;
+    };
     childNodes: (N | T)[] | NodeList;
     firstChild: N | T | Node;
     lastChild: N | T | Node;
@@ -53,6 +57,7 @@ export interface MinHTMLElement<N, T> {
     };
 }
 export interface MinText<N, T> {
+    nodeType: number;
     nodeName: string;
     nodeValue: string;
     parentNode: N | Node;
@@ -63,10 +68,16 @@ export interface MinText<N, T> {
 export interface MinDOMParser<D> {
     parseFromString(text: string, format?: string): D;
 }
+export interface MinXMLSerializer<N> {
+    serializeToString(node: N): string;
+}
 export interface MinWindow<N, D> {
     document: D;
     DOMParser: {
         new (): MinDOMParser<D>;
+    };
+    XMLSerializer: {
+        new (): MinXMLSerializer<N>;
     };
     NodeList: any;
     HTMLCollection: any;
@@ -110,6 +121,7 @@ export declare class HTMLAdaptor<N extends MinHTMLElement<N, T>, T extends MinTe
     textContent(node: N): string;
     innerHTML(node: N): string;
     outerHTML(node: N): string;
+    serializeXML(node: N): string;
     setAttribute(node: N, name: string, value: string, ns?: string): void;
     getAttribute(node: N, name: string): string;
     removeAttribute(node: N, name: string): void;
@@ -121,6 +133,7 @@ export declare class HTMLAdaptor<N extends MinHTMLElement<N, T>, T extends MinTe
     setStyle(node: N, name: string, value: string): void;
     getStyle(node: N, name: string): any;
     allStyles(node: N): any;
+    insertRules(node: N, rules: string[]): void;
     fontSize(node: N): number;
     fontFamily(node: N): any;
     nodeSize(node: N, em?: number, local?: boolean): [number, number];

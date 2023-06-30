@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -45,7 +47,8 @@ var MmlVisitor_js_1 = require("./MmlVisitor.js");
 var MmlNode_js_1 = require("./MmlNode.js");
 var mi_js_1 = require("./MmlNodes/mi.js");
 exports.DATAMJX = 'data-mjx-';
-exports.toEntity = function (c) { return '&#x' + c.codePointAt(0).toString(16).toUpperCase() + ';'; };
+var toEntity = function (c) { return '&#x' + c.codePointAt(0).toString(16).toUpperCase() + ';'; };
+exports.toEntity = toEntity;
 var SerializedMmlVisitor = (function (_super) {
     __extends(SerializedMmlVisitor, _super);
     function SerializedMmlVisitor() {
@@ -148,6 +151,10 @@ var SerializedMmlVisitor = (function (_super) {
         var variants = this.constructor.variants;
         variant && variants.hasOwnProperty(variant) && this.setDataAttribute(data, 'variant', variant);
         node.getProperty('variantForm') && this.setDataAttribute(data, 'alternate', '1');
+        node.getProperty('pseudoscript') && this.setDataAttribute(data, 'pseudoscript', 'true');
+        node.getProperty('autoOP') === false && this.setDataAttribute(data, 'auto-op', 'false');
+        var scriptalign = node.getProperty('scriptalign');
+        scriptalign && this.setDataAttribute(data, 'script-align', scriptalign);
         var texclass = node.getProperty('texClass');
         if (texclass !== undefined) {
             var setclass = true;
@@ -157,6 +164,8 @@ var SerializedMmlVisitor = (function (_super) {
             }
             setclass && this.setDataAttribute(data, 'texclass', texclass < 0 ? 'NONE' : MmlNode_js_1.TEXCLASSNAMES[texclass]);
         }
+        node.getProperty('scriptlevel') && node.getProperty('useHeight') === false &&
+            this.setDataAttribute(data, 'smallmatrix', 'true');
         return data;
     };
     SerializedMmlVisitor.prototype.setDataAttribute = function (data, name, value) {
@@ -172,9 +181,9 @@ var SerializedMmlVisitor = (function (_super) {
     };
     SerializedMmlVisitor.variants = {
         '-tex-calligraphic': 'script',
-        '-tex-calligraphic-bold': 'bold-script',
+        '-tex-bold-calligraphic': 'bold-script',
         '-tex-oldstyle': 'normal',
-        '-tex-oldstyle-bold': 'bold',
+        '-tex-bold-oldstyle': 'bold',
         '-tex-mathit': 'italic'
     };
     SerializedMmlVisitor.defaultAttributes = {
@@ -185,3 +194,4 @@ var SerializedMmlVisitor = (function (_super) {
     return SerializedMmlVisitor;
 }(MmlVisitor_js_1.MmlVisitor));
 exports.SerializedMmlVisitor = SerializedMmlVisitor;
+//# sourceMappingURL=SerializedMmlVisitor.js.map

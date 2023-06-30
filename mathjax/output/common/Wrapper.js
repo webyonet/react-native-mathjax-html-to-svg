@@ -3,15 +3,40 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
@@ -39,16 +64,21 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CommonWrapper = void 0;
 var Wrapper_js_1 = require("../../core/Tree/Wrapper.js");
 var MmlNode_js_1 = require("../../core/MmlTree/MmlNode.js");
 var string_js_1 = require("../../util/string.js");
-var LENGTHS = require("../../util/lengths.js");
+var LENGTHS = __importStar(require("../../util/lengths.js"));
 var Styles_js_1 = require("../../util/Styles.js");
 var BBox_js_1 = require("../../util/BBox.js");
 var FontData_js_1 = require("./FontData.js");
@@ -131,14 +161,21 @@ var CommonWrapper = (function (_super) {
         this.bboxComputed = save;
         return bbox;
     };
-    CommonWrapper.prototype.computeBBox = function (bbox, recompute) {
+    CommonWrapper.prototype.getOuterBBox = function (save) {
         var e_1, _a;
-        if (recompute === void 0) { recompute = false; }
-        bbox.empty();
+        if (save === void 0) { save = true; }
+        var bbox = this.getBBox(save);
+        if (!this.styles)
+            return bbox;
+        var obox = new BBox_js_1.BBox();
+        Object.assign(obox, bbox);
         try {
-            for (var _b = __values(this.childNodes), _c = _b.next(); !_c.done; _c = _b.next()) {
-                var child = _c.value;
-                bbox.append(child.getBBox());
+            for (var _b = __values(BBox_js_1.BBox.StyleAdjust), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var _d = __read(_c.value, 2), name_1 = _d[0], side = _d[1];
+                var x = this.styles.get(name_1);
+                if (x) {
+                    obox[side] += this.length2em(x, 1, obox.rscale);
+                }
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -148,13 +185,32 @@ var CommonWrapper = (function (_super) {
             }
             finally { if (e_1) throw e_1.error; }
         }
+        return obox;
+    };
+    CommonWrapper.prototype.computeBBox = function (bbox, recompute) {
+        var e_2, _a;
+        if (recompute === void 0) { recompute = false; }
+        bbox.empty();
+        try {
+            for (var _b = __values(this.childNodes), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var child = _c.value;
+                bbox.append(child.getOuterBBox());
+            }
+        }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_2) throw e_2.error; }
+        }
         bbox.clean();
         if (this.fixesPWidth && this.setChildPWidths(recompute)) {
             this.computeBBox(bbox, true);
         }
     };
     CommonWrapper.prototype.setChildPWidths = function (recompute, w, clear) {
-        var e_2, _a;
+        var e_3, _a;
         if (w === void 0) { w = null; }
         if (clear === void 0) { clear = true; }
         if (recompute) {
@@ -167,18 +223,18 @@ var CommonWrapper = (function (_super) {
         try {
             for (var _b = __values(this.childNodes), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var child = _c.value;
-                var cbox = child.getBBox();
+                var cbox = child.getOuterBBox();
                 if (cbox.pwidth && child.setChildPWidths(recompute, w === null ? cbox.w : w, clear)) {
                     changed = true;
                 }
             }
         }
-        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        catch (e_3_1) { e_3 = { error: e_3_1 }; }
         finally {
             try {
                 if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
             }
-            finally { if (e_2) throw e_2.error; }
+            finally { if (e_3) throw e_3.error; }
         }
         return changed;
     };
@@ -192,11 +248,14 @@ var CommonWrapper = (function (_super) {
     };
     CommonWrapper.prototype.copySkewIC = function (bbox) {
         var first = this.childNodes[0];
-        if (first && first.bbox.sk) {
+        if (first === null || first === void 0 ? void 0 : first.bbox.sk) {
             bbox.sk = first.bbox.sk;
         }
+        if (first === null || first === void 0 ? void 0 : first.bbox.dx) {
+            bbox.dx = first.bbox.dx;
+        }
         var last = this.childNodes[this.childNodes.length - 1];
-        if (last && last.bbox.ic) {
+        if (last === null || last === void 0 ? void 0 : last.bbox.ic) {
             bbox.ic = last.bbox.ic;
             bbox.w += bbox.ic;
         }
@@ -302,6 +361,10 @@ var CommonWrapper = (function (_super) {
     };
     CommonWrapper.prototype.getMathMLSpacing = function () {
         var node = this.node.coreMO();
+        var child = node.coreParent();
+        var parent = child.parent;
+        if (!parent || !parent.isKind('mrow') || parent.childNodes.length === 1)
+            return;
         var attributes = node.attributes;
         var isScript = (attributes.get('scriptlevel') > 0);
         this.bbox.L = (attributes.isSet('lspace') ?
@@ -310,6 +373,16 @@ var CommonWrapper = (function (_super) {
         this.bbox.R = (attributes.isSet('rspace') ?
             Math.max(0, this.length2em(attributes.get('rspace'))) :
             MathMLSpace(isScript, node.rspace));
+        var n = parent.childIndex(child);
+        if (n === 0)
+            return;
+        var prev = parent.childNodes[n - 1];
+        if (!prev.isEmbellished)
+            return;
+        var bbox = this.jax.nodeMap.get(prev).getBBox();
+        if (bbox.R) {
+            this.bbox.L = Math.max(0, this.bbox.L - bbox.R);
+        }
     };
     CommonWrapper.prototype.getTeXSpacing = function (isTop, hasSpacing) {
         if (!hasSpacing) {
@@ -330,7 +403,7 @@ var CommonWrapper = (function (_super) {
     };
     CommonWrapper.prototype.isTopEmbellished = function () {
         return (this.node.isEmbellished &&
-            !(this.node.Parent && this.node.Parent.isEmbellished));
+            !(this.node.parent && this.node.parent.isEmbellished));
     };
     CommonWrapper.prototype.core = function () {
         return this.jax.nodeMap.get(this.node.core());
@@ -339,7 +412,7 @@ var CommonWrapper = (function (_super) {
         return this.jax.nodeMap.get(this.node.coreMO());
     };
     CommonWrapper.prototype.getText = function () {
-        var e_3, _a;
+        var e_4, _a;
         var text = '';
         if (this.node.isToken) {
             try {
@@ -350,12 +423,12 @@ var CommonWrapper = (function (_super) {
                     }
                 }
             }
-            catch (e_3_1) { e_3 = { error: e_3_1 }; }
+            catch (e_4_1) { e_4 = { error: e_4_1 }; }
             finally {
                 try {
                     if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
                 }
-                finally { if (e_3) throw e_3.error; }
+                finally { if (e_4) throw e_4.error; }
             }
         }
         return text;
@@ -374,7 +447,7 @@ var CommonWrapper = (function (_super) {
     };
     CommonWrapper.prototype.getAlignShift = function () {
         var _a;
-        var _b = (_a = this.node.attributes).getList.apply(_a, __spread(MmlNode_js_1.indentAttributes)), indentalign = _b.indentalign, indentshift = _b.indentshift, indentalignfirst = _b.indentalignfirst, indentshiftfirst = _b.indentshiftfirst;
+        var _b = (_a = this.node.attributes).getList.apply(_a, __spreadArray([], __read(MmlNode_js_1.indentAttributes), false)), indentalign = _b.indentalign, indentshift = _b.indentshift, indentalignfirst = _b.indentalignfirst, indentshiftfirst = _b.indentshiftfirst;
         if (indentalignfirst !== 'indentalign') {
             indentalign = indentalignfirst;
         }
@@ -401,7 +474,7 @@ var CommonWrapper = (function (_super) {
     CommonWrapper.prototype.getAlignY = function (H, D, h, d, align) {
         return (align === 'top' ? H - h :
             align === 'bottom' ? d - D :
-                align === 'middle' ? ((H - h) - (D - d)) / 2 :
+                align === 'center' ? ((H - h) - (D - d)) / 2 :
                     0);
     };
     CommonWrapper.prototype.getWrapWidth = function (i) {
@@ -430,7 +503,7 @@ var CommonWrapper = (function (_super) {
     };
     CommonWrapper.prototype.unicodeChars = function (text, name) {
         if (name === void 0) { name = this.variant; }
-        var chars = string_js_1.unicodeChars(text);
+        var chars = (0, string_js_1.unicodeChars)(text);
         var variant = this.font.getVariant(name);
         if (variant && variant.chars) {
             var map_1 = variant.chars;
@@ -512,3 +585,4 @@ var CommonWrapper = (function (_super) {
     return CommonWrapper;
 }(Wrapper_js_1.AbstractWrapper));
 exports.CommonWrapper = CommonWrapper;
+//# sourceMappingURL=Wrapper.js.map

@@ -9,3 +9,4 @@ function max(A) {
     return A.reduce(function (a, b) { return Math.max(a, b); }, 0);
 }
 exports.max = max;
+//# sourceMappingURL=numeric.js.map

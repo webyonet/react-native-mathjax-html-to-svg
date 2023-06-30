@@ -15,13 +15,16 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var BaseMethods_js_1 = require("../base/BaseMethods.js");
-var TexParser_js_1 = require("../TexParser.js");
-var TexError_js_1 = require("../TexError.js");
+var BaseMethods_js_1 = __importDefault(require("../base/BaseMethods.js"));
+var TexParser_js_1 = __importDefault(require("../TexParser.js"));
+var TexError_js_1 = __importDefault(require("../TexError.js"));
 var MmlNode_js_1 = require("../../../core/MmlTree/MmlNode.js");
-var ParseUtil_js_1 = require("../ParseUtil.js");
-var NodeUtil_js_1 = require("../NodeUtil.js");
+var ParseUtil_js_1 = __importDefault(require("../ParseUtil.js"));
+var NodeUtil_js_1 = __importDefault(require("../NodeUtil.js"));
 var NodeFactory_js_1 = require("../NodeFactory.js");
 var PhysicsMethods = {};
 var pairs = {
@@ -191,10 +194,7 @@ PhysicsMethods.StarMacro = function (parser, name, argcount) {
     macro = ParseUtil_js_1.default.substituteArgs(parser, args, macro);
     parser.string = ParseUtil_js_1.default.addArgs(parser, macro, parser.string.slice(parser.i));
     parser.i = 0;
-    if (++parser.macroCount > parser.configuration.options['maxMacros']) {
-        throw new TexError_js_1.default('MaxMacroSub1', 'MathJax maximum macro substitution count exceeded; ' +
-            'is there a recursive macro call?');
-    }
+    ParseUtil_js_1.default.checkMaxMacros(parser);
 };
 var vectorApplication = function (parser, kind, name, operator, fences) {
     var op = new TexParser_js_1.default(operator, parser.stack.env, parser.configuration).mml();
@@ -354,20 +354,20 @@ PhysicsMethods.Bra = function (parser, name) {
     var macro = '';
     if (hasKet) {
         macro = (starBra || starKet) ?
-            "\\langle{" + bra + "}\\vert{" + ket + "}\\rangle" :
-            "\\left\\langle{" + bra + "}\\middle\\vert{" + ket + "}\\right\\rangle";
+            "\\langle{".concat(bra, "}\\vert{").concat(ket, "}\\rangle") :
+            "\\left\\langle{".concat(bra, "}\\middle\\vert{").concat(ket, "}\\right\\rangle");
     }
     else {
         macro = (starBra || starKet) ?
-            "\\langle{" + bra + "}\\vert" : "\\left\\langle{" + bra + "}\\right\\vert{" + ket + "}";
+            "\\langle{".concat(bra, "}\\vert") : "\\left\\langle{".concat(bra, "}\\right\\vert{").concat(ket, "}");
     }
     parser.Push(new TexParser_js_1.default(macro, parser.stack.env, parser.configuration).mml());
 };
 PhysicsMethods.Ket = function (parser, name) {
     var star = parser.GetStar();
     var ket = parser.GetArgument(name);
-    var macro = star ? "\\vert{" + ket + "}\\rangle" :
-        "\\left\\vert{" + ket + "}\\right\\rangle";
+    var macro = star ? "\\vert{".concat(ket, "}\\rangle") :
+        "\\left\\vert{".concat(ket, "}\\right\\rangle");
     parser.Push(new TexParser_js_1.default(macro, parser.stack.env, parser.configuration).mml());
 };
 PhysicsMethods.BraKet = function (parser, name) {
@@ -380,13 +380,13 @@ PhysicsMethods.BraKet = function (parser, name) {
     var macro = '';
     if (ket == null) {
         macro = star ?
-            "\\langle{" + bra + "}\\vert{" + bra + "}\\rangle" :
-            "\\left\\langle{" + bra + "}\\middle\\vert{" + bra + "}\\right\\rangle";
+            "\\langle{".concat(bra, "}\\vert{").concat(bra, "}\\rangle") :
+            "\\left\\langle{".concat(bra, "}\\middle\\vert{").concat(bra, "}\\right\\rangle");
     }
     else {
         macro = star ?
-            "\\langle{" + bra + "}\\vert{" + ket + "}\\rangle" :
-            "\\left\\langle{" + bra + "}\\middle\\vert{" + ket + "}\\right\\rangle";
+            "\\langle{".concat(bra, "}\\vert{").concat(ket, "}\\rangle") :
+            "\\left\\langle{".concat(bra, "}\\middle\\vert{").concat(ket, "}\\right\\rangle");
     }
     parser.Push(new TexParser_js_1.default(macro, parser.stack.env, parser.configuration).mml());
 };
@@ -400,22 +400,22 @@ PhysicsMethods.KetBra = function (parser, name) {
     var macro = '';
     if (bra == null) {
         macro = star ?
-            "\\vert{" + ket + "}\\rangle\\!\\langle{" + ket + "}\\vert" :
-            "\\left\\vert{" + ket + "}\\middle\\rangle\\!\\middle\\langle{" + ket + "}\\right\\vert";
+            "\\vert{".concat(ket, "}\\rangle\\!\\langle{").concat(ket, "}\\vert") :
+            "\\left\\vert{".concat(ket, "}\\middle\\rangle\\!\\middle\\langle{").concat(ket, "}\\right\\vert");
     }
     else {
         macro = star ?
-            "\\vert{" + ket + "}\\rangle\\!\\langle{" + bra + "}\\vert" :
-            "\\left\\vert{" + ket + "}\\middle\\rangle\\!\\middle\\langle{" + bra + "}\\right\\vert";
+            "\\vert{".concat(ket, "}\\rangle\\!\\langle{").concat(bra, "}\\vert") :
+            "\\left\\vert{".concat(ket, "}\\middle\\rangle\\!\\middle\\langle{").concat(bra, "}\\right\\vert");
     }
     parser.Push(new TexParser_js_1.default(macro, parser.stack.env, parser.configuration).mml());
 };
 function outputBraket(_a, star1, star2) {
     var _b = __read(_a, 3), arg1 = _b[0], arg2 = _b[1], arg3 = _b[2];
     return (star1 && star2) ?
-        "\\left\\langle{" + arg1 + "}\\middle\\vert{" + arg2 + "}\\middle\\vert{" + arg3 + "}\\right\\rangle" :
-        (star1 ? "\\langle{" + arg1 + "}\\vert{" + arg2 + "}\\vert{" + arg3 + "}\\rangle" :
-            "\\left\\langle{" + arg1 + "}\\right\\vert{" + arg2 + "}\\left\\vert{" + arg3 + "}\\right\\rangle");
+        "\\left\\langle{".concat(arg1, "}\\middle\\vert{").concat(arg2, "}\\middle\\vert{").concat(arg3, "}\\right\\rangle") :
+        (star1 ? "\\langle{".concat(arg1, "}\\vert{").concat(arg2, "}\\vert{").concat(arg3, "}\\rangle") :
+            "\\left\\langle{".concat(arg1, "}\\right\\vert{").concat(arg2, "}\\left\\vert{").concat(arg3, "}\\right\\rangle"));
 }
 PhysicsMethods.Expectation = function (parser, name) {
     var star1 = parser.GetStar();
@@ -427,8 +427,8 @@ PhysicsMethods.Expectation = function (parser, name) {
     }
     var macro = (arg1 && arg2) ?
         outputBraket([arg2, arg1, arg2], star1, star2) :
-        (star1 ? "\\langle {" + arg1 + "} \\rangle" :
-            "\\left\\langle {" + arg1 + "} \\right\\rangle");
+        (star1 ? "\\langle {".concat(arg1, "} \\rangle") :
+            "\\left\\langle {".concat(arg1, "} \\right\\rangle"));
     parser.Push(new TexParser_js_1.default(macro, parser.stack.env, parser.configuration).mml());
 };
 PhysicsMethods.MatrixElement = function (parser, name) {
@@ -526,14 +526,14 @@ PhysicsMethods.XMatrix = function (parser, name) {
     else if (n === 1) {
         var row = [];
         for (var i = 1; i <= m; i++) {
-            row.push(arg1 + "_{" + i + "}");
+            row.push("".concat(arg1, "_{").concat(i, "}"));
         }
         matrix = row.join(' & ');
     }
     else if (m === 1) {
         var row = [];
         for (var i = 1; i <= n; i++) {
-            row.push(arg1 + "_{" + i + "}");
+            row.push("".concat(arg1, "_{").concat(i, "}"));
         }
         matrix = row.join('\\\\ ');
     }
@@ -542,7 +542,7 @@ PhysicsMethods.XMatrix = function (parser, name) {
         for (var i = 1; i <= n; i++) {
             var row = [];
             for (var j = 1; j <= m; j++) {
-                row.push(arg1 + "_{{" + i + "}{" + j + "}}");
+                row.push("".concat(arg1, "_{{").concat(i, "}{").concat(j, "}}"));
             }
             rows.push(row.join(' & '));
         }
@@ -621,7 +621,17 @@ PhysicsMethods.AutoClose = function (parser, fence, _texclass) {
         setProperties({ autoclose: fence });
     parser.Push(item);
 };
+PhysicsMethods.Vnabla = function (parser, _name) {
+    var argument = parser.options.physics.arrowdel ?
+        '\\vec{\\gradientnabla}' : '{\\gradientnabla}';
+    return parser.Push(new TexParser_js_1.default(argument, parser.stack.env, parser.configuration).mml());
+};
+PhysicsMethods.DiffD = function (parser, _name) {
+    var argument = parser.options.physics.italicdiff ? 'd' : '{\\rm d}';
+    return parser.Push(new TexParser_js_1.default(argument, parser.stack.env, parser.configuration).mml());
+};
 PhysicsMethods.Macro = BaseMethods_js_1.default.Macro;
 PhysicsMethods.NamedFn = BaseMethods_js_1.default.NamedFn;
 PhysicsMethods.Array = BaseMethods_js_1.default.Array;
 exports.default = PhysicsMethods;
+//# sourceMappingURL=PhysicsMethods.js.map

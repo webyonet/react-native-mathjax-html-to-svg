@@ -9,3 +9,4 @@ exports.boldItalic = {
     0x2206: [.711, 0, .958, { sk: .192 }],
     0x29F8: [.711, .21, .894],
 };
+//# sourceMappingURL=bold-italic.js.map

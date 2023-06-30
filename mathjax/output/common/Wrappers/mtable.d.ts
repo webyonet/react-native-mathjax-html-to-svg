@@ -35,7 +35,8 @@ export interface CommonMtable<C extends AnyWrapper, R extends CommonMtr<C>> exte
     stretchColumns(): void;
     stretchColumn(i: number, W: number): void;
     getTableData(): TableData;
-    updateHDW(cell: C, i: number, j: number, H: number[], D: number[], W?: number[]): void;
+    updateHDW(cell: C, i: number, j: number, align: string, H: number[], D: number[], W: number[], M: number): number;
+    extendHD(i: number, H: number[], D: number[], M: number): void;
     setColumnPWidths(): void;
     getBBoxHD(height: number): number[];
     getBBoxLR(): number[];
@@ -49,7 +50,7 @@ export interface CommonMtable<C extends AnyWrapper, R extends CommonMtr<C>> exte
     getColumnWidthsPercent(widths: string[]): ColumnWidths;
     getColumnWidthsFixed(swidths: string[], width: number): ColumnWidths;
     getVerticalPosition(i: number, align: string): number;
-    getEmHalfSpacing(fspace: number, space: number[]): string[];
+    getEmHalfSpacing(fspace: number, space: number[], scale?: number): string[];
     getRowHalfSpacing(): number[];
     getColumnHalfSpacing(): number[];
     getAlignmentRow(): [string, number | null];

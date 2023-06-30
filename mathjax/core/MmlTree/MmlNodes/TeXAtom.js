@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -29,9 +31,10 @@ var MmlNode_js_1 = require("../MmlNode.js");
 var mo_js_1 = require("./mo.js");
 var TeXAtom = (function (_super) {
     __extends(TeXAtom, _super);
-    function TeXAtom() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.texClass = MmlNode_js_1.TEXCLASS.ORD;
+    function TeXAtom(factory, attributes, children) {
+        var _this = _super.call(this, factory, attributes, children) || this;
+        _this.texclass = MmlNode_js_1.TEXCLASS.ORD;
+        _this.setProperty('texClass', _this.texClass);
         return _this;
     }
     Object.defineProperty(TeXAtom.prototype, "kind", {
@@ -50,7 +53,7 @@ var TeXAtom = (function (_super) {
     });
     Object.defineProperty(TeXAtom.prototype, "notParent", {
         get: function () {
-            return true;
+            return this.childNodes[0] && this.childNodes[0].childNodes.length === 1;
         },
         enumerable: false,
         configurable: true
@@ -67,3 +70,4 @@ var TeXAtom = (function (_super) {
 }(MmlNode_js_1.AbstractMmlBaseNode));
 exports.TeXAtom = TeXAtom;
 TeXAtom.prototype.adjustTeXclass = mo_js_1.MmlMo.prototype.adjustTeXclass;
+//# sourceMappingURL=TeXAtom.js.map

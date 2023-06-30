@@ -12,6 +12,7 @@ export declare function EnrichedMathItemMixin<N, T, D, B extends Constructor<Abs
 export interface EnrichedMathDocument<N, T, D> extends AbstractMathDocument<N, T, D> {
     enrich(): EnrichedMathDocument<N, T, D>;
     attachSpeech(): EnrichedMathDocument<N, T, D>;
+    enrichError(doc: EnrichedMathDocument<N, T, D>, math: EnrichedMathItem<N, T, D>, err: Error): void;
 }
 export declare function EnrichedMathDocumentMixin<N, T, D, B extends MathDocumentConstructor<AbstractMathDocument<N, T, D>>>(BaseDocument: B, MmlJax: MathML<N, T, D>): MathDocumentConstructor<EnrichedMathDocument<N, T, D>> & B;
 export declare function EnrichHandler<N, T, D>(handler: Handler<N, T, D>, MmlJax: MathML<N, T, D>): Handler<N, T, D>;

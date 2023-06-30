@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -52,7 +54,7 @@ var CHTMLmtr = (function (_super) {
         }
     };
     return CHTMLmtr;
-}(mtr_js_1.CommonMtrMixin(Wrapper_js_1.CHTMLWrapper)));
+}((0, mtr_js_1.CommonMtrMixin)(Wrapper_js_1.CHTMLWrapper)));
 exports.CHTMLmtr = CHTMLmtr;
 var CHTMLmlabeledtr = (function (_super) {
     __extends(CHTMLmlabeledtr, _super);
@@ -67,9 +69,12 @@ var CHTMLmlabeledtr = (function (_super) {
             var align = this.node.attributes.get('rowalign');
             var attr = (align !== 'baseline' && align !== 'axis' ? { rowalign: align } : {});
             var row = this.html('mjx-mtr', attr, [child]);
-            CHTMLmtr.used = true;
             this.adaptor.append(this.parent.labels, row);
         }
+    };
+    CHTMLmlabeledtr.prototype.markUsed = function () {
+        _super.prototype.markUsed.call(this);
+        this.jax.wrapperUsage.add(CHTMLmtr.kind);
     };
     CHTMLmlabeledtr.kind = mtr_js_3.MmlMlabeledtr.prototype.kind;
     CHTMLmlabeledtr.styles = {
@@ -93,5 +98,6 @@ var CHTMLmlabeledtr = (function (_super) {
         }
     };
     return CHTMLmlabeledtr;
-}(mtr_js_2.CommonMlabeledtrMixin(CHTMLmtr)));
+}((0, mtr_js_2.CommonMlabeledtrMixin)(CHTMLmtr)));
 exports.CHTMLmlabeledtr = CHTMLmlabeledtr;
+//# sourceMappingURL=mtr.js.map

@@ -77,3 +77,4 @@ exports.MML = (_a = {},
     _a[MmlNode_js_1.TextNode.prototype.kind] = MmlNode_js_1.TextNode,
     _a[MmlNode_js_1.XMLNode.prototype.kind] = MmlNode_js_1.XMLNode,
     _a);
+//# sourceMappingURL=MML.js.map

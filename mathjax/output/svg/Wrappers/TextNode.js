@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -37,11 +39,16 @@ var SVGTextNode = (function (_super) {
         var e_1, _a;
         var text = this.node.getText();
         var variant = this.parent.variant;
+        if (text.length === 0)
+            return;
         if (variant === '-explicitFont') {
-            this.adaptor.append(parent, this.jax.unknownText(text, variant));
+            this.element = this.adaptor.append(parent, this.jax.unknownText(text, variant));
         }
         else {
             var chars = this.remappedText(text, variant);
+            if (this.parent.childNodes.length > 1) {
+                parent = this.element = this.adaptor.append(parent, this.svg('g', { 'data-mml-node': 'text' }));
+            }
             var x = 0;
             try {
                 for (var chars_1 = __values(chars), chars_1_1 = chars_1.next(); !chars_1_1.done; chars_1_1 = chars_1.next()) {
@@ -57,14 +64,14 @@ var SVGTextNode = (function (_super) {
                 finally { if (e_1) throw e_1.error; }
             }
         }
-        this.element = this.adaptor.lastChild(parent);
     };
     SVGTextNode.kind = MmlNode_js_1.TextNode.prototype.kind;
     SVGTextNode.styles = {
-        '.MathJax path': {
+        'mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c]': {
             'stroke-width': 3
         }
     };
     return SVGTextNode;
-}(TextNode_js_1.CommonTextNodeMixin(Wrapper_js_1.SVGWrapper)));
+}((0, TextNode_js_1.CommonTextNodeMixin)(Wrapper_js_1.SVGWrapper)));
 exports.SVGTextNode = SVGTextNode;
+//# sourceMappingURL=TextNode.js.map

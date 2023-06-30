@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -54,9 +56,10 @@ var tex_variant_js_1 = require("./tex/tex-variant.js");
 var delimiters_js_1 = require("../../common/fonts/tex/delimiters.js");
 var TeXFont = (function (_super) {
     __extends(TeXFont, _super);
-    function TeXFont() {
+    function TeXFont(options) {
         var e_1, _a;
-        var _this = _super.call(this) || this;
+        if (options === void 0) { options = null; }
+        var _this = _super.call(this, options) || this;
         var CLASS = _this.constructor;
         try {
             for (var _b = __values(Object.keys(CLASS.variantCacheIds)), _c = _b.next(); !_c.done; _c = _b.next()) {
@@ -127,5 +130,6 @@ var TeXFont = (function (_super) {
         '-tex-variant': 'V'
     };
     return TeXFont;
-}(tex_js_1.CommonTeXFontMixin(FontData_js_1.SVGFontData)));
+}((0, tex_js_1.CommonTeXFontMixin)(FontData_js_1.SVGFontData)));
 exports.TeXFont = TeXFont;
+//# sourceMappingURL=tex.js.map

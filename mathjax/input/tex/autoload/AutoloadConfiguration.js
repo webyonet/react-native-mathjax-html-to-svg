@@ -65,14 +65,14 @@ function Autoload(parser, name, extension, isMacro) {
             }
             finally { if (e_2) throw e_2.error; }
         }
-        parser.string = (isMacro ? name : '\\begin{' + name.slice(1) + '}') + parser.string.slice(parser.i);
+        parser.string = (isMacro ? name + ' ' : '\\begin{' + name.slice(1) + '}') + parser.string.slice(parser.i);
         parser.i = 0;
     }
-    RequireConfiguration_js_1.RequireLoad(parser, extension);
+    (0, RequireConfiguration_js_1.RequireLoad)(parser, extension);
 }
 function initAutoload(config) {
     if (!config.options.require) {
-        Options_js_1.defaultOptions(config.options, RequireConfiguration_js_1.RequireConfiguration.options);
+        (0, Options_js_1.defaultOptions)(config.options, RequireConfiguration_js_1.RequireConfiguration.options);
     }
 }
 function configAutoload(config, jax) {
@@ -138,7 +138,7 @@ exports.AutoloadConfiguration = Configuration_js_1.Configuration.create('autoloa
         environment: ['autoload-environments']
     },
     options: {
-        autoload: Options_js_1.expandable({
+        autoload: (0, Options_js_1.expandable)({
             action: ['toggle', 'mathtip', 'texttip'],
             amscd: [[], ['CD']],
             bbox: ['bbox'],
@@ -160,3 +160,4 @@ exports.AutoloadConfiguration = Configuration_js_1.Configuration.create('autoloa
     init: initAutoload,
     priority: 10
 });
+//# sourceMappingURL=AutoloadConfiguration.js.map

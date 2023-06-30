@@ -15,13 +15,21 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NodeFactory = void 0;
-var NodeUtil_js_1 = require("./NodeUtil.js");
+var NodeUtil_js_1 = __importDefault(require("./NodeUtil.js"));
 var NodeFactory = (function () {
     function NodeFactory() {
         this.mmlFactory = null;
@@ -35,29 +43,7 @@ var NodeFactory = (function () {
         if (children === void 0) { children = []; }
         if (def === void 0) { def = {}; }
         var node = factory.mmlFactory.create(kind);
-        var arity = node.arity;
-        if (arity === Infinity || arity === -1) {
-            if (children.length === 1 && children[0].isInferred) {
-                node.setChildren(NodeUtil_js_1.default.getChildren(children[0]));
-            }
-            else {
-                node.setChildren(children);
-            }
-        }
-        else {
-            var cleanChildren = [];
-            for (var i = 0, child = void 0; child = children[i]; i++) {
-                if (child.isInferred) {
-                    var mrow = factory.mmlFactory.create('mrow', {}, NodeUtil_js_1.default.getChildren(child));
-                    NodeUtil_js_1.default.copyAttributes(child, mrow);
-                    cleanChildren.push(mrow);
-                }
-                else {
-                    cleanChildren.push(child);
-                }
-            }
-            node.setChildren(cleanChildren);
-        }
+        node.setChildren(children);
         if (text) {
             node.appendChild(text);
         }
@@ -99,7 +85,7 @@ var NodeFactory = (function () {
             rest[_i - 1] = arguments[_i];
         }
         var func = this.factory[kind] || this.factory['node'];
-        var node = func.apply(void 0, __spread([this, rest[0]], rest.slice(1)));
+        var node = func.apply(void 0, __spreadArray([this, rest[0]], __read(rest.slice(1)), false));
         if (kind === 'node') {
             this.configuration.addNode(rest[0], node);
         }
@@ -111,3 +97,4 @@ var NodeFactory = (function () {
     return NodeFactory;
 }());
 exports.NodeFactory = NodeFactory;
+//# sourceMappingURL=NodeFactory.js.map

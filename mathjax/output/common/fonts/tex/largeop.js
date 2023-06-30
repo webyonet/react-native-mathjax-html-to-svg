@@ -53,3 +53,4 @@ exports.largeop = {
     0x3008: [1.15, .649, .611],
     0x3009: [1.15, .649, .611],
 };
+//# sourceMappingURL=largeop.js.map

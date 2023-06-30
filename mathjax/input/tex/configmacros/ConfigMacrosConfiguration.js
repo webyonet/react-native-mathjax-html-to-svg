@@ -10,21 +10,39 @@ var __values = (this && this.__values) || function(o) {
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ConfigMacrosConfiguration = void 0;
 var Configuration_js_1 = require("../Configuration.js");
 var Options_js_1 = require("../../../util/Options.js");
 var SymbolMap_js_1 = require("../SymbolMap.js");
+var ParseMethods_js_1 = __importDefault(require("../ParseMethods.js"));
 var Symbol_js_1 = require("../Symbol.js");
-var NewcommandMethods_js_1 = require("../newcommand/NewcommandMethods.js");
+var NewcommandMethods_js_1 = __importDefault(require("../newcommand/NewcommandMethods.js"));
+var NewcommandItems_js_1 = require("../newcommand/NewcommandItems.js");
 var MACROSMAP = 'configmacros-map';
+var ENVIRONMENTMAP = 'configmacros-env-map';
 function configmacrosInit(config) {
     new SymbolMap_js_1.CommandMap(MACROSMAP, {}, {});
-    config.append(Configuration_js_1.Configuration.local({ handler: { macro: [MACROSMAP] }, priority: 3 }));
+    new SymbolMap_js_1.EnvironmentMap(ENVIRONMENTMAP, ParseMethods_js_1.default.environment, {}, {});
+    config.append(Configuration_js_1.Configuration.local({
+        handler: {
+            macro: [MACROSMAP],
+            environment: [ENVIRONMENTMAP]
+        },
+        priority: 3
+    }));
 }
 function configmacrosConfig(_config, jax) {
+    configMacros(jax);
+    configEnvironments(jax);
+}
+function configMacros(jax) {
     var e_1, _a;
-    var macrosMap = jax.parseOptions.handlers.retrieve(MACROSMAP);
+    var handler = jax.parseOptions.handlers.retrieve(MACROSMAP);
     var macros = jax.parseOptions.options.macros;
     try {
         for (var _b = __values(Object.keys(macros)), _c = _b.next(); !_c.done; _c = _b.next()) {
@@ -33,7 +51,7 @@ function configmacrosConfig(_config, jax) {
             var macro = Array.isArray(def[2]) ?
                 new Symbol_js_1.Macro(cs, NewcommandMethods_js_1.default.MacroWithTemplate, def.slice(0, 2).concat(def[2])) :
                 new Symbol_js_1.Macro(cs, NewcommandMethods_js_1.default.Macro, def);
-            macrosMap.add(cs, macro);
+            handler.add(cs, macro);
         }
     }
     catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -44,8 +62,33 @@ function configmacrosConfig(_config, jax) {
         finally { if (e_1) throw e_1.error; }
     }
 }
+function configEnvironments(jax) {
+    var e_2, _a;
+    var handler = jax.parseOptions.handlers.retrieve(ENVIRONMENTMAP);
+    var environments = jax.parseOptions.options.environments;
+    try {
+        for (var _b = __values(Object.keys(environments)), _c = _b.next(); !_c.done; _c = _b.next()) {
+            var env = _c.value;
+            handler.add(env, new Symbol_js_1.Macro(env, NewcommandMethods_js_1.default.BeginEnv, [true].concat(environments[env])));
+        }
+    }
+    catch (e_2_1) { e_2 = { error: e_2_1 }; }
+    finally {
+        try {
+            if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+        }
+        finally { if (e_2) throw e_2.error; }
+    }
+}
 exports.ConfigMacrosConfiguration = Configuration_js_1.Configuration.create('configmacros', {
     init: configmacrosInit,
     config: configmacrosConfig,
-    options: { macros: Options_js_1.expandable({}) }
+    items: (_a = {},
+        _a[NewcommandItems_js_1.BeginEnvItem.prototype.kind] = NewcommandItems_js_1.BeginEnvItem,
+        _a),
+    options: {
+        macros: (0, Options_js_1.expandable)({}),
+        environments: (0, Options_js_1.expandable)({})
+    }
 });
+//# sourceMappingURL=ConfigMacrosConfiguration.js.map

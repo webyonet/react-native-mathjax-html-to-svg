@@ -1,14 +1,17 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ColorMethods = void 0;
-var NodeUtil_js_1 = require("../NodeUtil.js");
-var ParseUtil_js_1 = require("../ParseUtil.js");
+var NodeUtil_js_1 = __importDefault(require("../NodeUtil.js"));
+var ParseUtil_js_1 = __importDefault(require("../ParseUtil.js"));
 function padding(colorPadding) {
-    var pad = "+" + colorPadding;
+    var pad = "+".concat(colorPadding);
     var unit = colorPadding.replace(/^.*?([a-z]*)$/, '$1');
     var pad2 = 2 * parseFloat(pad);
     return {
-        width: "+" + pad2 + unit,
+        width: "+".concat(pad2).concat(unit),
         height: pad,
         depth: pad,
         lspace: colorPadding,
@@ -67,8 +70,9 @@ exports.ColorMethods.FColorBox = function (parser, name) {
     var colorModel = parser.configuration.packageData.get('color').model;
     var node = parser.create('node', 'mpadded', math, {
         mathbackground: colorModel.getColor('named', cname),
-        style: "border: " + options.borderWidth + " solid " + colorModel.getColor('named', fname)
+        style: "border: ".concat(options.borderWidth, " solid ").concat(colorModel.getColor('named', fname))
     });
     NodeUtil_js_1.default.setProperties(node, padding(options.padding));
     parser.Push(node);
 };
+//# sourceMappingURL=ColorMethods.js.map

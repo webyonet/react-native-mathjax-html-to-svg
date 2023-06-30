@@ -6,3 +6,4 @@ function browserAdaptor() {
     return new HTMLAdaptor_js_1.HTMLAdaptor(window);
 }
 exports.browserAdaptor = browserAdaptor;
+//# sourceMappingURL=browserAdaptor.js.map

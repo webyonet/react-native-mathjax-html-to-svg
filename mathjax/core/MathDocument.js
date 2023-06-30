@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -39,12 +41,17 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AbstractMathDocument = exports.RenderList = void 0;
+exports.AbstractMathDocument = exports.resetAllOptions = exports.resetOptions = exports.RenderList = void 0;
 var Options_js_1 = require("../util/Options.js");
 var InputJax_js_1 = require("./InputJax.js");
 var OutputJax_js_1 = require("./OutputJax.js");
@@ -196,6 +203,18 @@ var RenderList = (function (_super) {
     return RenderList;
 }(PrioritizedList_js_1.PrioritizedList));
 exports.RenderList = RenderList;
+exports.resetOptions = {
+    all: false,
+    processed: false,
+    inputJax: null,
+    outputJax: null
+};
+exports.resetAllOptions = {
+    all: true,
+    processed: true,
+    inputJax: [],
+    outputJax: []
+};
 var DefaultInputJax = (function (_super) {
     __extends(DefaultInputJax, _super);
     function DefaultInputJax() {
@@ -239,7 +258,7 @@ var AbstractMathDocument = (function () {
         var _this = this;
         var CLASS = this.constructor;
         this.document = document;
-        this.options = Options_js_1.userOptions(Options_js_1.defaultOptions({}, CLASS.OPTIONS), options);
+        this.options = (0, Options_js_1.userOptions)((0, Options_js_1.defaultOptions)({}, CLASS.OPTIONS), options);
         this.math = new (this.options['MathList'] || DefaultMathList)();
         this.renderActions = RenderList.create(this.options['renderActions']);
         this.processed = new AbstractMathDocument.ProcessBits();
@@ -290,7 +309,7 @@ var AbstractMathDocument = (function () {
     };
     AbstractMathDocument.prototype.convert = function (math, options) {
         if (options === void 0) { options = {}; }
-        var _a = Options_js_1.userOptions({
+        var _a = (0, Options_js_1.userOptions)({
             format: this.inputJax[0].name, display: true, end: MathItem_js_1.STATE.LAST,
             em: 16, ex: 8, containerWidth: null, lineWidth: 1000000, scale: 1, family: ''
         }, options), format = _a.format, display = _a.display, end = _a.end, ex = _a.ex, em = _a.em, containerWidth = _a.containerWidth, lineWidth = _a.lineWidth, scale = _a.scale, family = _a.family;
@@ -496,8 +515,14 @@ var AbstractMathDocument = (function () {
         }
         return this;
     };
-    AbstractMathDocument.prototype.reset = function () {
-        this.processed.reset();
+    AbstractMathDocument.prototype.reset = function (options) {
+        var _a;
+        if (options === void 0) { options = { processed: true }; }
+        options = (0, Options_js_1.userOptions)(Object.assign({}, exports.resetOptions), options);
+        options.all && Object.assign(options, exports.resetAllOptions);
+        options.processed && this.processed.reset();
+        options.inputJax && this.inputJax.forEach(function (jax) { return jax.reset.apply(jax, __spreadArray([], __read(options.inputJax), false)); });
+        options.outputJax && (_a = this.outputJax).reset.apply(_a, __spreadArray([], __read(options.outputJax), false));
         return this;
     };
     AbstractMathDocument.prototype.clear = function () {
@@ -511,7 +536,9 @@ var AbstractMathDocument = (function () {
     };
     AbstractMathDocument.prototype.clearMathItemsWithin = function (containers) {
         var _a;
-        (_a = this.math).remove.apply(_a, __spread(this.getMathItemsWithin(containers)));
+        var items = this.getMathItemsWithin(containers);
+        (_a = this.math).remove.apply(_a, __spreadArray([], __read(items), false));
+        return items;
     };
     AbstractMathDocument.prototype.getMathItemsWithin = function (elements) {
         var e_11, _a, e_12, _b;
@@ -564,7 +591,7 @@ var AbstractMathDocument = (function () {
         typesetError: function (doc, math, err) {
             doc.typesetError(math, err);
         },
-        renderActions: Options_js_1.expandable({
+        renderActions: (0, Options_js_1.expandable)({
             find: [MathItem_js_1.STATE.FINDMATH, 'findMath', '', false],
             compile: [MathItem_js_1.STATE.COMPILED],
             metrics: [MathItem_js_1.STATE.METRICS, 'getMetrics', '', false],
@@ -572,7 +599,8 @@ var AbstractMathDocument = (function () {
             update: [MathItem_js_1.STATE.INSERTED, 'updateDocument', false]
         })
     };
-    AbstractMathDocument.ProcessBits = BitField_js_1.BitFieldClass('findMath', 'compile', 'getMetrics', 'typeset', 'updateDocument');
+    AbstractMathDocument.ProcessBits = (0, BitField_js_1.BitFieldClass)('findMath', 'compile', 'getMetrics', 'typeset', 'updateDocument');
     return AbstractMathDocument;
 }());
 exports.AbstractMathDocument = AbstractMathDocument;
+//# sourceMappingURL=MathDocument.js.map

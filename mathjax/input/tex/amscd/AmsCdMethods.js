@@ -1,9 +1,12 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var TexParser_js_1 = require("../TexParser.js");
+var TexParser_js_1 = __importDefault(require("../TexParser.js"));
 var BaseConfiguration_js_1 = require("../base/BaseConfiguration.js");
 var MmlNode_js_1 = require("../../../core/MmlTree/MmlNode.js");
-var NodeUtil_js_1 = require("../NodeUtil.js");
+var NodeUtil_js_1 = __importDefault(require("../NodeUtil.js"));
 var AmsCdMethods = {};
 AmsCdMethods.CD = function (parser, begin) {
     parser.Push(begin);
@@ -24,7 +27,7 @@ AmsCdMethods.CD = function (parser, begin) {
 AmsCdMethods.arrow = function (parser, name) {
     var c = parser.string.charAt(parser.i);
     if (!c.match(/[><VA.|=]/)) {
-        return BaseConfiguration_js_1.Other(parser, name);
+        return (0, BaseConfiguration_js_1.Other)(parser, name);
     }
     else {
         parser.i++;
@@ -64,7 +67,7 @@ AmsCdMethods.arrow = function (parser, name) {
                 a = '\\kern ' + top.getProperty('minw');
             }
             if (a || b) {
-                var pad = { width: '.67em', lspace: '.33em' };
+                var pad = { width: '+.67em', lspace: '.33em' };
                 mml = parser.create('node', 'munderover', [mml]);
                 if (a) {
                     var nodeA = new TexParser_js_1.default(a, parser.stack.env, parser.configuration).mml();
@@ -116,3 +119,4 @@ AmsCdMethods.minCDarrowheight = function (parser, name) {
     parser.stack.env.CD_minh = parser.GetDimen(name);
 };
 exports.default = AmsCdMethods;
+//# sourceMappingURL=AmsCdMethods.js.map

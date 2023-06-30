@@ -135,7 +135,7 @@ exports.SafeMethods = {
     filterStyleLength: function (safe, style, value) {
         if (!value.match(/^(.+)(em|ex|ch|rem|px|mm|cm|in|pt|pc|%)$/))
             return null;
-        var em = lengths_js_1.length2em(value, 1);
+        var em = (0, lengths_js_1.length2em)(value, 1);
         var lengths = safe.options.styleLengths[style];
         var _a = __read((Array.isArray(lengths) ? lengths : [-safe.options.lengthMax, safe.options.lengthMax]), 2), m = _a[0], M = _a[1];
         return (m <= em && em <= M ? value : (em < m ? m : M).toFixed(3).replace(/\.?0+$/, '') + 'em');
@@ -145,13 +145,14 @@ exports.SafeMethods = {
     },
     filterSizeMultiplier: function (safe, size) {
         var _a = __read(safe.options.scriptsizemultiplierRange || [-Infinity, Infinity], 2), m = _a[0], M = _a[1];
-        return Math.min(M, Math.max(m, parseFloat(size)));
+        return Math.min(M, Math.max(m, parseFloat(size))).toString();
     },
     filterScriptLevel: function (safe, level) {
         var _a = __read(safe.options.scriptlevelRange || [-Infinity, Infinity], 2), m = _a[0], M = _a[1];
-        return Math.min(M, Math.max(m, parseInt(level)));
+        return Math.min(M, Math.max(m, parseInt(level))).toString();
     },
     filterData: function (safe, value, id) {
         return (id.match(safe.options.dataPattern) ? value : null);
     }
 };
+//# sourceMappingURL=SafeMethods.js.map

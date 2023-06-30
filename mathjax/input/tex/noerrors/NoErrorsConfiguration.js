@@ -8,3 +8,4 @@ function noErrors(factory, message, _id, expr) {
     return error;
 }
 exports.NoErrorsConfiguration = Configuration_js_1.Configuration.create('noerrors', { nodes: { 'error': noErrors } });
+//# sourceMappingURL=NoErrorsConfiguration.js.map

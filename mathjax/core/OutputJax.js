@@ -8,7 +8,7 @@ var AbstractOutputJax = (function () {
         if (options === void 0) { options = {}; }
         this.adaptor = null;
         var CLASS = this.constructor;
-        this.options = Options_js_1.userOptions(Options_js_1.defaultOptions({}, CLASS.OPTIONS), options);
+        this.options = (0, Options_js_1.userOptions)((0, Options_js_1.defaultOptions)({}, CLASS.OPTIONS), options);
         this.postFilters = new FunctionList_js_1.FunctionList();
     }
     Object.defineProperty(AbstractOutputJax.prototype, "name", {
@@ -22,6 +22,12 @@ var AbstractOutputJax = (function () {
         this.adaptor = adaptor;
     };
     AbstractOutputJax.prototype.initialize = function () {
+    };
+    AbstractOutputJax.prototype.reset = function () {
+        var _args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            _args[_i] = arguments[_i];
+        }
     };
     AbstractOutputJax.prototype.getMetrics = function (_document) {
     };
@@ -41,3 +47,4 @@ var AbstractOutputJax = (function () {
     return AbstractOutputJax;
 }());
 exports.AbstractOutputJax = AbstractOutputJax;
+//# sourceMappingURL=OutputJax.js.map

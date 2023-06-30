@@ -81,3 +81,4 @@ exports.monospace = {
     0x2057: [.623, 0, 2.1],
     0x2206: [.623, 0, .525],
 };
+//# sourceMappingURL=monospace.js.map

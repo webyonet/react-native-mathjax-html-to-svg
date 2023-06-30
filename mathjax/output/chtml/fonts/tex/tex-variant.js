@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.texVariant = void 0;
 var FontData_js_1 = require("../../FontData.js");
 var tex_variant_js_1 = require("../../../common/fonts/tex/tex-variant.js");
-exports.texVariant = FontData_js_1.AddCSS(tex_variant_js_1.texVariant, {
+exports.texVariant = (0, FontData_js_1.AddCSS)(tex_variant_js_1.texVariant, {
     0x3F0: { c: '\\E009' },
     0x210F: { f: '' },
     0x2224: { c: '\\E006' },
@@ -21,3 +21,4 @@ exports.texVariant = FontData_js_1.AddCSS(tex_variant_js_1.texVariant, {
     0x2ACB: { c: '\\E017' },
     0x2ACC: { c: '\\E019' },
 });
+//# sourceMappingURL=tex-variant.js.map

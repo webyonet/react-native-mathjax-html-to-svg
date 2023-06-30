@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -50,9 +52,17 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EnrichHandler = exports.EnrichedMathDocumentMixin = exports.EnrichedMathItemMixin = void 0;
@@ -60,10 +70,10 @@ var mathjax_js_1 = require("../mathjax.js");
 var MathItem_js_1 = require("../core/MathItem.js");
 var SerializedMmlVisitor_js_1 = require("../core/MmlTree/SerializedMmlVisitor.js");
 var Options_js_1 = require("../util/Options.js");
-var sre_js_1 = require("./sre.js");
+var sre_js_1 = __importDefault(require("./sre.js"));
 var currentSpeech = 'none';
-MathItem_js_1.newState('ENRICHED', 30);
-MathItem_js_1.newState('ATTACHSPEECH', 155);
+(0, MathItem_js_1.newState)('ENRICHED', 30);
+(0, MathItem_js_1.newState)('ATTACHSPEECH', 155);
 function EnrichedMathItemMixin(BaseMathItem, MmlJax, toMathML) {
     return (function (_super) {
         __extends(class_1, _super);
@@ -86,19 +96,22 @@ function EnrichedMathItemMixin(BaseMathItem, MmlJax, toMathML) {
             if (this.state() >= MathItem_js_1.STATE.ENRICHED)
                 return;
             if (!this.isEscaped && (document.options.enableEnrichment || force)) {
-                if (typeof sre === 'undefined' || !sre.Engine.isReady()) {
-                    mathjax_js_1.mathjax.retryAfter(sre_js_1.sreReady());
-                }
-                if (document.options.enrichSpeech !== currentSpeech) {
-                    SRE.setupEngine({ speech: document.options.enrichSpeech });
-                    currentSpeech = document.options.enrichSpeech;
+                if (document.options.sre.speech !== currentSpeech) {
+                    currentSpeech = document.options.sre.speech;
+                    mathjax_js_1.mathjax.retryAfter(sre_js_1.default.setupEngine(document.options.sre).then(function () { return sre_js_1.default.sreReady(); }));
                 }
                 var math = new document.options.MathItem('', MmlJax);
-                math.math = this.serializeMml(SRE.toEnriched(toMathML(this.root)));
-                math.display = this.display;
-                math.compile(document);
-                this.root = math.root;
-                this.inputData.originalMml = math.math;
+                try {
+                    var mml = this.inputData.originalMml = toMathML(this.root);
+                    math.math = this.serializeMml(sre_js_1.default.toEnriched(mml));
+                    math.display = this.display;
+                    math.compile(document);
+                    this.root = math.root;
+                    this.inputData.enrichedMml = math.math;
+                }
+                catch (err) {
+                    document.options.enrichError(document, this, err);
+                }
             }
             this.state(MathItem_js_1.STATE.ENRICHED);
         };
@@ -169,7 +182,7 @@ function EnrichedMathDocumentMixin(BaseDocument, MmlJax) {
                 for (var _i = 0; _i < arguments.length; _i++) {
                     args[_i] = arguments[_i];
                 }
-                var _this = _super.apply(this, __spread(args)) || this;
+                var _this = _super.apply(this, __spreadArray([], __read(args), false)) || this;
                 MmlJax.setMmlFactory(_this.mmlFactory);
                 var ProcessBits = _this.constructor.ProcessBits;
                 if (!ProcessBits.has('enriched')) {
@@ -224,6 +237,9 @@ function EnrichedMathDocumentMixin(BaseDocument, MmlJax) {
                 }
                 return this;
             };
+            class_2.prototype.enrichError = function (_doc, _math, err) {
+                console.warn('Enrichment error:', err);
+            };
             class_2.prototype.state = function (state, restore) {
                 if (restore === void 0) { restore = false; }
                 _super.prototype.state.call(this, state, restore);
@@ -234,7 +250,12 @@ function EnrichedMathDocumentMixin(BaseDocument, MmlJax) {
             };
             return class_2;
         }(BaseDocument)),
-        _a.OPTIONS = __assign(__assign({}, BaseDocument.OPTIONS), { enableEnrichment: true, enrichSpeech: 'none', renderActions: Options_js_1.expandable(__assign(__assign({}, BaseDocument.OPTIONS.renderActions), { enrich: [MathItem_js_1.STATE.ENRICHED], attachSpeech: [MathItem_js_1.STATE.ATTACHSPEECH] })) }),
+        _a.OPTIONS = __assign(__assign({}, BaseDocument.OPTIONS), { enableEnrichment: true, enrichError: function (doc, math, err) { return doc.enrichError(doc, math, err); }, renderActions: (0, Options_js_1.expandable)(__assign(__assign({}, BaseDocument.OPTIONS.renderActions), { enrich: [MathItem_js_1.STATE.ENRICHED], attachSpeech: [MathItem_js_1.STATE.ATTACHSPEECH] })), sre: (0, Options_js_1.expandable)({
+                speech: 'none',
+                domain: 'mathspeak',
+                style: 'default',
+                locale: 'en'
+            }) }),
         _a;
 }
 exports.EnrichedMathDocumentMixin = EnrichedMathDocumentMixin;
@@ -245,3 +266,4 @@ function EnrichHandler(handler, MmlJax) {
     return handler;
 }
 exports.EnrichHandler = EnrichHandler;
+//# sourceMappingURL=semantic-enrich.js.map

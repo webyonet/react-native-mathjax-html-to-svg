@@ -13,7 +13,7 @@ export declare class MmlAnnotationXML extends AbstractMmlNode {
 }
 export declare class MmlAnnotation extends MmlAnnotationXML {
     static defaults: {
-        [x: string]: string | number | boolean;
+        [x: string]: import("../../Tree/Node.js").Property;
     };
     properties: {
         isChars: boolean;

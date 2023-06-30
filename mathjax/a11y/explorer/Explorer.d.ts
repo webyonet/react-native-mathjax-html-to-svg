@@ -1,5 +1,5 @@
 import { A11yDocument, Region } from './Region.js';
-import '../sre.js';
+import Sre from '../sre.js';
 export interface Explorer {
     active: boolean;
     stoppable: boolean;
@@ -17,7 +17,7 @@ export declare class AbstractExplorer<T> implements Explorer {
     protected node: HTMLElement;
     stoppable: boolean;
     protected events: [string, (x: Event) => void][];
-    protected highlighter: sre.Highlighter;
+    protected highlighter: Sre.highlighter;
     private _active;
     protected static stopEvent(event: Event): void;
     static create<T>(document: A11yDocument, region: Region<T>, node: HTMLElement, ...rest: any[]): Explorer;
@@ -32,6 +32,6 @@ export declare class AbstractExplorer<T> implements Explorer {
     AddEvents(): void;
     RemoveEvents(): void;
     Update(force?: boolean): void;
-    protected getHighlighter(): sre.Highlighter;
+    protected getHighlighter(): Sre.highlighter;
     protected stopEvent(event: Event): void;
 }

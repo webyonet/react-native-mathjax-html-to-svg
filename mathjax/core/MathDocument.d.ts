@@ -16,20 +16,58 @@ export declare type RenderData<N, T, D> = {
     renderMath: RenderMath<N, T, D>;
     convert: boolean;
 };
-export declare type RenderAction<N, T, D> = [number] | [number, string] | [number, string, string] | [number, RenderDoc<N, T, D>, RenderMath<N, T, D>] | [number, boolean] | [number, string, boolean] | [number, string, string, boolean] | [number, RenderDoc<N, T, D>, RenderMath<N, T, D>, boolean];
+export declare type RenderAction<N, T, D> = [
+    number
+] | [
+    number,
+    string
+] | [
+    number,
+    string,
+    string
+] | [
+    number,
+    RenderDoc<N, T, D>,
+    RenderMath<N, T, D>
+] | [
+    number,
+    boolean
+] | [
+    number,
+    string,
+    boolean
+] | [
+    number,
+    string,
+    string,
+    boolean
+] | [
+    number,
+    RenderDoc<N, T, D>,
+    RenderMath<N, T, D>,
+    boolean
+];
 export declare type RenderActions<N, T, D> = {
     [id: string]: RenderAction<N, T, D>;
 };
 export declare class RenderList<N, T, D> extends PrioritizedList<RenderData<N, T, D>> {
     static create<N, T, D>(actions: RenderActions<N, T, D>): RenderList<N, T, D>;
     static action<N, T, D>(id: string, action: RenderAction<N, T, D>): [RenderData<N, T, D>, number];
-    protected static methodActions(method1: string, method2?: string): (((document: any) => boolean) | ((math: any, document: any) => boolean))[];
+    protected static methodActions(method1: string, method2?: string): ((math: any, document: any) => boolean)[];
     renderDoc(document: MathDocument<N, T, D>, start?: number): void;
     renderMath(math: MathItem<N, T, D>, document: MathDocument<N, T, D>, start?: number): void;
     renderConvert(math: MathItem<N, T, D>, document: MathDocument<N, T, D>, end?: number): void;
     findID(id: string): RenderData<N, T, D> | null;
 }
 export declare type ContainerList<N> = string | N | (string | N | N[])[];
+export declare type ResetList = {
+    all?: boolean;
+    processed?: boolean;
+    inputJax?: any[];
+    outputJax?: any[];
+};
+export declare const resetOptions: ResetList;
+export declare const resetAllOptions: ResetList;
 export interface MathDocument<N, T, D> {
     document: D;
     kind: string;
@@ -53,11 +91,10 @@ export interface MathDocument<N, T, D> {
     updateDocument(): MathDocument<N, T, D>;
     removeFromDocument(restore?: boolean): MathDocument<N, T, D>;
     state(state: number, restore?: boolean): MathDocument<N, T, D>;
-    rerender(start?: number, end?: number): MathDocument<N, T, D>;
-    reset(): MathDocument<N, T, D>;
+    reset(options?: ResetList): MathDocument<N, T, D>;
     clear(): MathDocument<N, T, D>;
     concat(list: MathList<N, T, D>): MathDocument<N, T, D>;
-    clearMathItemsWithin(containers: ContainerList<N>): void;
+    clearMathItemsWithin(containers: ContainerList<N>): MathItem<N, T, D>[];
     getMathItemsWithin(elements: ContainerList<N>): MathItem<N, T, D>[];
 }
 export declare abstract class AbstractMathDocument<N, T, D> implements MathDocument<N, T, D> {
@@ -90,10 +127,10 @@ export declare abstract class AbstractMathDocument<N, T, D> implements MathDocum
     updateDocument(): this;
     removeFromDocument(_restore?: boolean): this;
     state(state: number, restore?: boolean): this;
-    reset(): this;
+    reset(options?: ResetList): this;
     clear(): this;
     concat(list: MathList<N, T, D>): this;
-    clearMathItemsWithin(containers: ContainerList<N>): void;
+    clearMathItemsWithin(containers: ContainerList<N>): MathItem<N, T, D>[];
     getMathItemsWithin(elements: ContainerList<N>): MathItem<N, T, D>[];
 }
 export interface MathDocumentConstructor<D extends MathDocument<any, any, any>> {

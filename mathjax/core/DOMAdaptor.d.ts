@@ -39,6 +39,7 @@ export interface DOMAdaptor<N, T, D> {
     textContent(node: N): string;
     innerHTML(node: N): string;
     outerHTML(node: N): string;
+    serializeXML(node: N): string;
     setAttribute(node: N, name: string, value: string | number, ns?: string): void;
     setAttributes(node: N, def: OptionList): void;
     getAttribute(node: N, name: string): string;
@@ -52,6 +53,7 @@ export interface DOMAdaptor<N, T, D> {
     setStyle(node: N, name: string, value: string): void;
     getStyle(node: N, name: string): string;
     allStyles(node: N): string;
+    insertRules(node: N, rules: string[]): void;
     fontSize(node: N): number;
     fontFamily(node: N): string;
     nodeSize(node: N, em?: number, local?: boolean): [number, number];
@@ -90,6 +92,7 @@ export declare abstract class AbstractDOMAdaptor<N, T, D> implements DOMAdaptor<
     abstract textContent(node: N): string;
     abstract innerHTML(node: N): string;
     abstract outerHTML(node: N): string;
+    abstract serializeXML(node: N): string;
     abstract setAttribute(node: N, name: string, value: string, ns?: string): void;
     abstract getAttribute(node: N, name: string): string;
     abstract removeAttribute(node: N, name: string): void;
@@ -102,6 +105,7 @@ export declare abstract class AbstractDOMAdaptor<N, T, D> implements DOMAdaptor<
     abstract setStyle(node: N, name: string, value: string): void;
     abstract getStyle(node: N, name: string): string;
     abstract allStyles(node: N): string;
+    abstract insertRules(node: N, rules: string[]): void;
     abstract fontSize(node: N): number;
     abstract fontFamily(node: N): string;
     abstract nodeSize(node: N, em?: number, local?: boolean): [number, number];

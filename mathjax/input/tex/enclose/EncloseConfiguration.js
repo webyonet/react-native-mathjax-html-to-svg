@@ -1,9 +1,12 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EncloseConfiguration = exports.EncloseMethods = exports.ENCLOSE_OPTIONS = void 0;
 var Configuration_js_1 = require("../Configuration.js");
 var SymbolMap_js_1 = require("../SymbolMap.js");
-var ParseUtil_js_1 = require("../ParseUtil.js");
+var ParseUtil_js_1 = __importDefault(require("../ParseUtil.js"));
 exports.ENCLOSE_OPTIONS = {
     'data-arrowhead': 1,
     color: 1,
@@ -24,3 +27,4 @@ exports.EncloseMethods.Enclose = function (parser, name) {
 };
 new SymbolMap_js_1.CommandMap('enclose', { enclose: 'Enclose' }, exports.EncloseMethods);
 exports.EncloseConfiguration = Configuration_js_1.Configuration.create('enclose', { handler: { macro: ['enclose'] } });
+//# sourceMappingURL=EncloseConfiguration.js.map

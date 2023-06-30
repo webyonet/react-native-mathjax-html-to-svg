@@ -44,7 +44,7 @@ export interface MmlNode extends Node {
     hasSpacingAttributes(): boolean;
     setInheritedAttributes(attributes: AttributeList, display: boolean, level: number, prime: boolean): void;
     inheritAttributesFrom(node: MmlNode): void;
-    mError(message: string, options: PropertyList, short?: boolean): void;
+    mError(message: string, options: PropertyList, short?: boolean): MmlNode;
     verifyTree(options?: PropertyList): void;
 }
 export interface MmlNodeClass extends NodeClass {
@@ -64,14 +64,17 @@ export declare abstract class AbstractMmlNode extends AbstractNode implements Mm
         [name: string]: boolean;
     };
     static verifyDefaults: PropertyList;
-    texClass: number;
     prevClass: number;
     prevLevel: number;
     attributes: Attributes;
     childNodes: MmlNode[];
     parent: MmlNode;
-    factory: MmlFactory;
+    readonly factory: MmlFactory;
+    protected texclass: number;
     constructor(factory: MmlFactory, attributes?: PropertyList, children?: MmlNode[]);
+    copy(keepIds?: boolean): AbstractMmlNode;
+    get texClass(): number;
+    set texClass(texClass: number);
     get isToken(): boolean;
     get isEmbellished(): boolean;
     get isSpacelike(): boolean;
@@ -150,13 +153,14 @@ export declare abstract class AbstractMmlEmptyNode extends AbstractEmptyNode imp
     setInheritedAttributes(_attributes: AttributeList, _display: boolean, _level: number, _prime: boolean): void;
     inheritAttributesFrom(_node: MmlNode): void;
     verifyTree(_options: PropertyList): void;
-    mError(_message: string, _options: PropertyList, _short?: boolean): void;
+    mError(_message: string, _options: PropertyList, _short?: boolean): MmlNode;
 }
 export declare class TextNode extends AbstractMmlEmptyNode {
     protected text: string;
     get kind(): string;
     getText(): string;
     setText(text: string): TextNode;
+    copy(): TextNode;
     toString(): string;
 }
 export declare class XMLNode extends AbstractMmlEmptyNode {
@@ -166,5 +170,6 @@ export declare class XMLNode extends AbstractMmlEmptyNode {
     getXML(): Object;
     setXML(xml: Object, adaptor?: DOMAdaptor<any, any, any>): XMLNode;
     getSerializedXML(): string;
+    copy(): XMLNode;
     toString(): string;
 }

@@ -36,8 +36,8 @@ export declare class LiteParser implements MinDOMParser<LiteDocument> {
     protected handlePCDATA(adaptor: LiteAdaptor, node: LiteElement, kind: string, parts: string[]): void;
     protected checkDocument(adaptor: LiteAdaptor, root: LiteDocument): void;
     protected getOnlyChild(adaptor: LiteAdaptor, body: LiteElement): LiteElement;
-    serialize(adaptor: LiteAdaptor, node: LiteElement): string;
-    serializeInner(adaptor: LiteAdaptor, node: LiteElement): string;
+    serialize(adaptor: LiteAdaptor, node: LiteElement, xml?: boolean): string;
+    serializeInner(adaptor: LiteAdaptor, node: LiteElement, xml?: boolean): string;
     protectAttribute(text: string): string;
     protectHTML(text: string): string;
 }

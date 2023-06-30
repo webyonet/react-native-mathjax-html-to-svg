@@ -1,6 +1,6 @@
-import { SVGWrapper } from '../Wrapper.js';
+import { SVGWrapper, SVGConstructor } from '../Wrapper.js';
 import { SVGinferredMrow } from './mrow.js';
-declare const SVGmfenced_base: import("mathjax-full/ts/output/common/Wrapper").Constructor<import("mathjax-full/ts/output/common/Wrappers/mfenced").CommonMfenced> & import("mathjax-full/ts/output/common/Wrapper").Constructor<SVGWrapper<any, any, any>>;
+declare const SVGmfenced_base: import("../../common/Wrappers/mfenced.js").MfencedConstructor & SVGConstructor<any, any, any>;
 export declare class SVGmfenced<N, T, D> extends SVGmfenced_base {
     static kind: string;
     mrow: SVGinferredMrow<N, T, D>;

@@ -70,6 +70,9 @@ var CssStyles = (function () {
         this.styles = {};
     };
     CssStyles.prototype.getStyleString = function () {
+        return this.getStyleRules().join('\n\n');
+    };
+    CssStyles.prototype.getStyleRules = function () {
         var e_3, _a;
         var selectors = Object.keys(this.styles);
         var defs = new Array(selectors.length);
@@ -87,7 +90,7 @@ var CssStyles = (function () {
             }
             finally { if (e_3) throw e_3.error; }
         }
-        return defs.join('\n\n');
+        return defs;
     };
     CssStyles.prototype.getStyleDefString = function (styles) {
         var e_4, _a;
@@ -112,3 +115,4 @@ var CssStyles = (function () {
     return CssStyles;
 }());
 exports.CssStyles = CssStyles;
+//# sourceMappingURL=StyleList.js.map

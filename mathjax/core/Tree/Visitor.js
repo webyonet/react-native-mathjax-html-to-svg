@@ -26,9 +26,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AbstractVisitor = void 0;
@@ -62,7 +67,7 @@ var AbstractVisitor = (function () {
         for (var _i = 1; _i < arguments.length; _i++) {
             args[_i - 1] = arguments[_i];
         }
-        return this.visitNode.apply(this, __spread([tree], args));
+        return this.visitNode.apply(this, __spreadArray([tree], __read(args), false));
     };
     AbstractVisitor.prototype.visitNode = function (node) {
         var args = [];
@@ -70,7 +75,7 @@ var AbstractVisitor = (function () {
             args[_i - 1] = arguments[_i];
         }
         var handler = this.nodeHandlers.get(node.kind) || this.visitDefault;
-        return handler.call.apply(handler, __spread([this, node], args));
+        return handler.call.apply(handler, __spreadArray([this, node], __read(args), false));
     };
     AbstractVisitor.prototype.visitDefault = function (node) {
         var e_2, _a;
@@ -82,7 +87,7 @@ var AbstractVisitor = (function () {
             try {
                 for (var _b = __values(node.childNodes), _c = _b.next(); !_c.done; _c = _b.next()) {
                     var child = _c.value;
-                    this.visitNode.apply(this, __spread([child], args));
+                    this.visitNode.apply(this, __spreadArray([child], __read(args), false));
                 }
             }
             catch (e_2_1) { e_2 = { error: e_2_1 }; }
@@ -103,3 +108,4 @@ var AbstractVisitor = (function () {
     return AbstractVisitor;
 }());
 exports.AbstractVisitor = AbstractVisitor;
+//# sourceMappingURL=Visitor.js.map

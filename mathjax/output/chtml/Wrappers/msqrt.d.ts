@@ -1,7 +1,7 @@
-import { CHTMLWrapper } from '../Wrapper.js';
+import { CHTMLWrapper, CHTMLConstructor } from '../Wrapper.js';
 import { BBox } from '../../../util/BBox.js';
 import { StyleList } from '../../../util/StyleList.js';
-declare const CHTMLmsqrt_base: import("mathjax-full/ts/output/common/Wrapper").Constructor<import("mathjax-full/ts/output/common/Wrappers/msqrt").CommonMsqrt> & import("mathjax-full/ts/output/common/Wrapper").Constructor<CHTMLWrapper<any, any, any>>;
+declare const CHTMLmsqrt_base: import("../../common/Wrappers/msqrt.js").MsqrtConstructor & CHTMLConstructor<any, any, any>;
 export declare class CHTMLmsqrt<N, T, D> extends CHTMLmsqrt_base {
     static kind: string;
     static styles: StyleList;

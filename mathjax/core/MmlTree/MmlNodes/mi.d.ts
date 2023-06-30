@@ -4,7 +4,7 @@ export declare class MmlMi extends AbstractMmlTokenNode {
     static defaults: PropertyList;
     static operatorName: RegExp;
     static singleCharacter: RegExp;
-    texClass: number;
+    protected texclass: number;
     get kind(): string;
     setInheritedAttributes(attributes?: AttributeList, display?: boolean, level?: number, prime?: boolean): void;
     setTeXclass(prev: AbstractMmlNode): this;

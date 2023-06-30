@@ -41,3 +41,4 @@ exports.texVariant = {
     0x2ACB: [.752, .332, .778],
     0x2ACC: [.752, .333, .778],
 };
+//# sourceMappingURL=tex-variant.js.map

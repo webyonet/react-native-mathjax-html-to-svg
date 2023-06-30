@@ -71,3 +71,4 @@ exports.COLORS = new Map([
     ['YellowGreen', '#98CC70'],
     ['YellowOrange', '#FAA21A'],
 ]);
+//# sourceMappingURL=ColorConstants.js.map

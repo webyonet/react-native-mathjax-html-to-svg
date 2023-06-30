@@ -43,3 +43,4 @@ exports.fraktur = {
     0xE306: [.577, .021, .334, { ic: .013 }],
     0xE307: [.475, .022, .501, { ic: .013 }],
 };
+//# sourceMappingURL=fraktur.js.map

@@ -3,10 +3,20 @@ import { StyleList } from '../../util/StyleList.js';
 export interface CharOptions {
     ic?: number;
     sk?: number;
+    dx?: number;
     unknown?: boolean;
     smp?: number;
 }
-export declare type CharData<C extends CharOptions> = [number, number, number] | [number, number, number, C];
+export declare type CharData<C extends CharOptions> = [
+    number,
+    number,
+    number
+] | [
+    number,
+    number,
+    number,
+    C
+];
 export declare type CharMap<C extends CharOptions> = {
     [n: number]: CharData<C>;
 };
@@ -37,9 +47,11 @@ export declare type DelimiterData = {
     variants?: number[];
     schar?: number[];
     stretch?: number[];
+    stretchv?: number[];
     HDW?: number[];
     min?: number;
     c?: number;
+    fullExt?: [number, number];
 };
 export declare type DelimiterMap<D extends DelimiterData> = {
     [n: number]: D;
@@ -86,9 +98,13 @@ export declare type FontParameters = {
     delimiterfactor: number;
     delimitershortfall: number;
     min_rule_thickness: number;
+    separation_factor: number;
+    extra_ic: number;
 };
 export declare class FontData<C extends CharOptions, V extends VariantData<C>, D extends DelimiterData> {
     static OPTIONS: OptionList;
+    static JAX: string;
+    static NAME: string;
     static defaultVariants: string[][];
     static defaultCssFonts: CssFontMap;
     protected static defaultCssFamilyPrefix: string;
@@ -99,57 +115,29 @@ export declare class FontData<C extends CharOptions, V extends VariantData<C>, D
     static SmpRemap: SmpMap;
     static SmpRemapGreekU: SmpMap;
     static SmpRemapGreekL: SmpMap;
-    protected static defaultAccentMap: {
-        768: string;
-        769: string;
-        770: string;
-        771: string;
-        772: string;
-        774: string;
-        775: string;
-        776: string;
-        778: string;
-        780: string;
-        8594: string;
-        8242: string;
-        8243: string;
-        8244: string;
-        8245: string;
-        8246: string;
-        8247: string;
-        8279: string;
-        8400: string;
-        8401: string;
-        8406: string;
-        8417: string;
-        8432: string;
-        8411: string;
-        8412: string;
-        8428: string;
-        8429: string;
-        8430: string;
-        8431: string;
-    };
-    protected static defaultMoMap: {
-        45: string;
-    };
-    protected static defaultMnMap: {
-        45: string;
-    };
+    protected static defaultAccentMap: RemapMap;
+    protected static defaultMoMap: RemapMap;
+    protected static defaultMnMap: RemapMap;
     static defaultParams: FontParameters;
     protected static defaultDelimiters: DelimiterMap<any>;
     protected static defaultChars: CharMapMap<any>;
     protected static defaultSizeVariants: string[];
+    protected static defaultStretchVariants: string[];
+    protected options: OptionList;
     protected variant: VariantMap<C, V>;
     protected delimiters: DelimiterMap<D>;
     protected sizeVariants: string[];
+    protected stretchVariants: string[];
     protected cssFontMap: CssFontMap;
     cssFamilyPrefix: string;
     protected remapChars: RemapMapMap;
     params: FontParameters;
-    styles: StyleList;
+    skewIcFactor: number;
+    protected _styles: StyleList;
     static charOptions(font: CharMap<CharOptions>, n: number): CharOptions;
-    constructor();
+    constructor(options?: OptionList);
+    get styles(): StyleList;
+    set styles(style: StyleList);
     createVariant(name: string, inherit?: string, link?: string): void;
     protected remapSmpChars(chars: CharMap<C>, name: string): void;
     protected smpChar(n: number): CharData<C>;
@@ -159,6 +147,7 @@ export declare class FontData<C extends CharOptions, V extends VariantData<C>, D
     defineRemap(name: string, remap: RemapMap): void;
     getDelimiter(n: number): DelimiterData;
     getSizeVariant(n: number, i: number): string;
+    getStretchVariant(n: number, i: number): string;
     getChar(name: string, n: number): CharData<C>;
     getVariant(name: string): V;
     getCssFont(variant: string): CssFontData;

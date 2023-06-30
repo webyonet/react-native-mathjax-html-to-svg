@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.monospace = void 0;
 var FontData_js_1 = require("../../FontData.js");
 var monospace_js_1 = require("../../../common/fonts/tex/monospace.js");
-exports.monospace = FontData_js_1.AddCSS(monospace_js_1.monospace, {
+exports.monospace = (0, FontData_js_1.AddCSS)(monospace_js_1.monospace, {
     0x2B9: { c: '\\2032' },
     0x391: { c: 'A' },
     0x392: { c: 'B' },
@@ -25,3 +25,4 @@ exports.monospace = FontData_js_1.AddCSS(monospace_js_1.monospace, {
     0x2057: { c: '\\2032\\2032\\2032\\2032' },
     0x2206: { c: '\\394' },
 });
+//# sourceMappingURL=monospace.js.map

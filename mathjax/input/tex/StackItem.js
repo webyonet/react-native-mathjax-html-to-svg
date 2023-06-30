@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -28,9 +30,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
@@ -43,9 +50,12 @@ var __values = (this && this.__values) || function(o) {
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseItem = exports.MmlStack = void 0;
-var TexError_js_1 = require("./TexError.js");
+var TexError_js_1 = __importDefault(require("./TexError.js"));
 var MmlStack = (function () {
     function MmlStack(_nodes) {
         this._nodes = _nodes;
@@ -63,7 +73,7 @@ var MmlStack = (function () {
         for (var _i = 0; _i < arguments.length; _i++) {
             nodes[_i] = arguments[_i];
         }
-        (_a = this._nodes).push.apply(_a, __spread(nodes));
+        (_a = this._nodes).push.apply(_a, __spreadArray([], __read(nodes), false));
     };
     MmlStack.prototype.Pop = function () {
         return this._nodes.pop();
@@ -113,7 +123,7 @@ var MmlStack = (function () {
         for (var _i = 1; _i < arguments.length; _i++) {
             rest[_i - 1] = arguments[_i];
         }
-        return (_a = this.factory.configuration.nodeFactory).create.apply(_a, __spread([kind], rest));
+        return (_a = this.factory.configuration.nodeFactory).create.apply(_a, __spreadArray([kind], __read(rest), false));
     };
     return MmlStack;
 }());
@@ -245,8 +255,10 @@ var BaseItem = (function (_super) {
     BaseItem.errors = {
         end: ['MissingBeginExtraEnd', 'Missing \\begin{%1} or extra \\end{%1}'],
         close: ['ExtraCloseMissingOpen', 'Extra close brace or missing open brace'],
-        right: ['MissingLeftExtraRight', 'Missing \\left or extra \\right']
+        right: ['MissingLeftExtraRight', 'Missing \\left or extra \\right'],
+        middle: ['ExtraMiddle', 'Extra \\middle']
     };
     return BaseItem;
 }(MmlStack));
 exports.BaseItem = BaseItem;
+//# sourceMappingURL=StackItem.js.map

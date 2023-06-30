@@ -53,3 +53,4 @@ exports.smallop = {
     0x3008: [.85, .35, .472],
     0x3009: [.85, .35, .472],
 };
+//# sourceMappingURL=smallop.js.map

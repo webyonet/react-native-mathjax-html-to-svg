@@ -1,9 +1,12 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var SymbolMap_js_1 = require("../SymbolMap.js");
-var PhysicsMethods_js_1 = require("./PhysicsMethods.js");
+var PhysicsMethods_js_1 = __importDefault(require("./PhysicsMethods.js"));
 var TexConstants_js_1 = require("../TexConstants.js");
-var ParseMethods_js_1 = require("../ParseMethods.js");
+var ParseMethods_js_1 = __importDefault(require("../ParseMethods.js"));
 var MmlNode_js_1 = require("../../../core/MmlTree/MmlNode.js");
 new SymbolMap_js_1.CommandMap('Physics-automatic-bracing-macros', {
     'quantity': 'Quantity',
@@ -11,7 +14,7 @@ new SymbolMap_js_1.CommandMap('Physics-automatic-bracing-macros', {
     'pqty': ['Quantity', '(', ')', true],
     'bqty': ['Quantity', '[', ']', true],
     'vqty': ['Quantity', '|', '|', true],
-    'Bqty': ['Quantity', '{', '}', true],
+    'Bqty': ['Quantity', '\\{', '\\}', true],
     'absolutevalue': ['Quantity', '|', '|', true],
     'abs': ['Quantity', '|', '|', true],
     'norm': ['Quantity', '\\|', '\\|', true],
@@ -26,29 +29,31 @@ new SymbolMap_js_1.CommandMap('Physics-automatic-bracing-macros', {
     'poissonbracket': ['Commutator', '\\{', '\\}'],
     'pb': ['Commutator', '\\{', '\\}']
 }, PhysicsMethods_js_1.default);
-new SymbolMap_js_1.CharacterMap('Physics-vector-chars', ParseMethods_js_1.default.mathchar0mi, {
+new SymbolMap_js_1.CharacterMap('Physics-vector-mo', ParseMethods_js_1.default.mathchar0mo, {
     dotproduct: ['\u22C5', { mathvariant: TexConstants_js_1.TexConstant.Variant.BOLD }],
     vdot: ['\u22C5', { mathvariant: TexConstants_js_1.TexConstant.Variant.BOLD }],
     crossproduct: '\u00D7',
     cross: '\u00D7',
     cp: '\u00D7',
-    gradientnabla: ['\u2207', { mathvariant: TexConstants_js_1.TexConstant.Variant.BOLD }],
+    gradientnabla: ['\u2207', { mathvariant: TexConstants_js_1.TexConstant.Variant.BOLD }]
+});
+new SymbolMap_js_1.CharacterMap('Physics-vector-mi', ParseMethods_js_1.default.mathchar0mi, {
     real: ['\u211C', { mathvariant: TexConstants_js_1.TexConstant.Variant.NORMAL }],
     imaginary: ['\u2111', { mathvariant: TexConstants_js_1.TexConstant.Variant.NORMAL }]
 });
 new SymbolMap_js_1.CommandMap('Physics-vector-macros', {
+    'vnabla': 'Vnabla',
     'vectorbold': 'VectorBold',
     'vb': 'VectorBold',
     'vectorarrow': ['StarMacro', 1, '\\vec{\\vb', '{#1}}'],
     'va': ['StarMacro', 1, '\\vec{\\vb', '{#1}}'],
     'vectorunit': ['StarMacro', 1, '\\hat{\\vb', '{#1}}'],
     'vu': ['StarMacro', 1, '\\hat{\\vb', '{#1}}'],
-    'gradient': ['OperatorApplication', '\\gradientnabla', '(', '['],
-    'grad': ['OperatorApplication', '\\gradientnabla', '(', '['],
-    'divergence': ['VectorOperator', '\\gradientnabla\\vdot', '(', '['],
-    'div': ['VectorOperator', '\\gradientnabla\\vdot', '(', '['],
-    'curl': ['VectorOperator',
-        '\\gradientnabla\\crossproduct', '(', '['],
+    'gradient': ['OperatorApplication', '\\vnabla', '(', '['],
+    'grad': ['OperatorApplication', '\\vnabla', '(', '['],
+    'divergence': ['VectorOperator', '\\vnabla\\vdot', '(', '['],
+    'div': ['VectorOperator', '\\vnabla\\vdot', '(', '['],
+    'curl': ['VectorOperator', '\\vnabla\\crossproduct', '(', '['],
     'laplacian': ['OperatorApplication', '\\nabla^2', '(', '['],
 }, PhysicsMethods_js_1.default);
 new SymbolMap_js_1.CommandMap('Physics-expressions-macros', {
@@ -87,12 +92,13 @@ new SymbolMap_js_1.CommandMap('Physics-expressions-macros', {
     'Trace': ['Expression', false, 'Tr'],
     'rank': 'NamedFn',
     'erf': ['Expression', false],
-    'Res': ['OperatorApplication', '{\\rm Res}', '(', '[', '{'],
+    'Residue': ['Macro', '\\mathrm{Res}'],
+    'Res': ['OperatorApplication', '\\Residue', '(', '[', '{'],
     'principalvalue': ['OperatorApplication', '{\\cal P}'],
     'pv': ['OperatorApplication', '{\\cal P}'],
     'PV': ['OperatorApplication', '{\\rm P.V.}'],
-    'Re': ['OperatorApplication', '{\\rm Re}', '{'],
-    'Im': ['OperatorApplication', '{\\rm Im}', '{'],
+    'Re': ['OperatorApplication', '\\mathrm{Re}', '{'],
+    'Im': ['OperatorApplication', '\\mathrm{Im}', '{'],
     'sine': ['NamedFn', 'sin'],
     'hypsine': ['NamedFn', 'sinh'],
     'arcsine': ['NamedFn', 'arcsin'],
@@ -137,7 +143,7 @@ new SymbolMap_js_1.CommandMap('Physics-quick-quad-macros', {
     'qgiven': ['Qqtext', 'given'],
     'qusing': ['Qqtext', 'using'],
     'qassume': ['Qqtext', 'assume'],
-    'qsince,': ['Qqtext', 'since,'],
+    'qsince': ['Qqtext', 'since'],
     'qlet': ['Qqtext', 'let'],
     'qfor': ['Qqtext', 'for'],
     'qall': ['Qqtext', 'all'],
@@ -150,13 +156,14 @@ new SymbolMap_js_1.CommandMap('Physics-quick-quad-macros', {
     'qin': ['Qqtext', 'in'],
 }, PhysicsMethods_js_1.default);
 new SymbolMap_js_1.CommandMap('Physics-derivative-macros', {
+    'diffd': 'DiffD',
     'flatfrac': ['Macro', '\\left.#1\\middle/#2\\right.', 2],
-    'differential': ['Differential', '{\\rm d}'],
-    'dd': ['Differential', '{\\rm d}'],
+    'differential': ['Differential', '\\diffd'],
+    'dd': ['Differential', '\\diffd'],
     'variation': ['Differential', '\\delta'],
     'var': ['Differential', '\\delta'],
-    'derivative': ['Derivative', 2, '{\\rm d}'],
-    'dv': ['Derivative', 2, '{\\rm d}'],
+    'derivative': ['Derivative', 2, '\\diffd'],
+    'dv': ['Derivative', 2, '\\diffd'],
     'partialderivative': ['Derivative', 3, '\\partial'],
     'pderivative': ['Derivative', 3, '\\partial'],
     'pdv': ['Derivative', 3, '\\partial'],
@@ -168,6 +175,7 @@ new SymbolMap_js_1.CommandMap('Physics-bra-ket-macros', {
     'bra': 'Bra',
     'ket': 'Ket',
     'innerproduct': 'BraKet',
+    'ip': 'BraKet',
     'braket': 'BraKet',
     'outerproduct': 'KetBra',
     'dyad': 'KetBra',
@@ -217,3 +225,4 @@ new SymbolMap_js_1.MacroMap('Physics-characters', {
     ')': 'AutoClose',
     ']': 'AutoClose'
 }, PhysicsMethods_js_1.default);
+//# sourceMappingURL=PhysicsMappings.js.map

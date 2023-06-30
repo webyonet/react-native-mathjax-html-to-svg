@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -26,12 +28,16 @@ var SVGmaction = (function (_super) {
     SVGmaction.prototype.toSVG = function (parent) {
         var svg = this.standardSVGnode(parent);
         var child = this.selected;
-        var _a = child.getBBox(), h = _a.h, d = _a.d, w = _a.w;
+        var _a = child.getOuterBBox(), h = _a.h, d = _a.d, w = _a.w;
         this.adaptor.append(this.element, this.svg('rect', {
             width: this.fixed(w), height: this.fixed(h + d), y: this.fixed(-d),
             fill: 'none', 'pointer-events': 'all'
         }));
         child.toSVG(svg);
+        var bbox = child.getOuterBBox();
+        if (child.element) {
+            child.place(bbox.L * bbox.rscale, 0);
+        }
         this.action(this, this.data);
     };
     SVGmaction.prototype.setEventHandler = function (type, handler) {
@@ -93,7 +99,7 @@ var SVGmaction = (function (_super) {
                     var tip = node.childNodes[1];
                     if (!tip)
                         return;
-                    var rect = node.adaptor.firstChild(node.element);
+                    var rect = node.firstChild();
                     if (tip.node.isKind('mtext')) {
                         var text = tip.node.getText();
                         node.adaptor.insert(node.svg('title', {}, [node.text(text)]), rect);
@@ -157,5 +163,6 @@ var SVGmaction = (function (_super) {
                 }]]
     ]);
     return SVGmaction;
-}(maction_js_1.CommonMactionMixin(Wrapper_js_1.SVGWrapper)));
+}((0, maction_js_1.CommonMactionMixin)(Wrapper_js_1.SVGWrapper)));
 exports.SVGmaction = SVGmaction;
+//# sourceMappingURL=maction.js.map

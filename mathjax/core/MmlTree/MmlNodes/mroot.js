@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -30,7 +32,7 @@ var MmlMroot = (function (_super) {
     __extends(MmlMroot, _super);
     function MmlMroot() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.texClass = MmlNode_js_1.TEXCLASS.ORD;
+        _this.texclass = MmlNode_js_1.TEXCLASS.ORD;
         return _this;
     }
     Object.defineProperty(MmlMroot.prototype, "kind", {
@@ -47,6 +49,12 @@ var MmlMroot = (function (_super) {
         enumerable: false,
         configurable: true
     });
+    MmlMroot.prototype.setTeXclass = function (prev) {
+        this.getPrevClass(prev);
+        this.childNodes[0].setTeXclass(null);
+        this.childNodes[1].setTeXclass(null);
+        return this;
+    };
     MmlMroot.prototype.setChildInheritedAttributes = function (attributes, display, level, prime) {
         this.childNodes[0].setInheritedAttributes(attributes, display, level, true);
         this.childNodes[1].setInheritedAttributes(attributes, false, level + 2, prime);
@@ -55,3 +63,4 @@ var MmlMroot = (function (_super) {
     return MmlMroot;
 }(MmlNode_js_1.AbstractMmlNode));
 exports.MmlMroot = MmlMroot;
+//# sourceMappingURL=mroot.js.map

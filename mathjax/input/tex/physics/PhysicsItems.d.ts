@@ -1,7 +1,9 @@
 import { CheckType, BaseItem, StackItem } from '../StackItem.js';
 export declare class AutoOpen extends BaseItem {
+    protected static errors: any;
+    protected openCount: number;
     get kind(): string;
     get isOpen(): boolean;
-    toMml(): import("mathjax-full/ts/core/MmlTree/MmlNode").MmlNode;
+    toMml(): import("../../../core/MmlTree/MmlNode.js").MmlNode;
     checkItem(item: StackItem): CheckType;
 }

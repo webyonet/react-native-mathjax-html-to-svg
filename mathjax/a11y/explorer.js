@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -22,6 +24,29 @@ var __assign = (this && this.__assign) || function () {
         return t;
     };
     return __assign.apply(this, arguments);
+};
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
 };
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
@@ -50,9 +75,17 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.setA11yOption = exports.setA11yOptions = exports.ExplorerHandler = exports.ExplorerMathDocumentMixin = exports.ExplorerMathItemMixin = void 0;
@@ -61,11 +94,12 @@ var semantic_enrich_js_1 = require("./semantic-enrich.js");
 var Options_js_1 = require("../util/Options.js");
 var SerializedMmlVisitor_js_1 = require("../core/MmlTree/SerializedMmlVisitor.js");
 var MJContextMenu_js_1 = require("../ui/menu/MJContextMenu.js");
-var ke = require("./explorer/KeyExplorer.js");
-var me = require("./explorer/MouseExplorer.js");
+var ke = __importStar(require("./explorer/KeyExplorer.js"));
+var me = __importStar(require("./explorer/MouseExplorer.js"));
 var TreeExplorer_js_1 = require("./explorer/TreeExplorer.js");
 var Region_js_1 = require("./explorer/Region.js");
-MathItem_js_1.newState('EXPLORER', 160);
+var sre_js_1 = __importDefault(require("./sre.js"));
+(0, MathItem_js_1.newState)('EXPLORER', 160);
 function ExplorerMathItemMixin(BaseMathItem, toMathML) {
     return (function (_super) {
         __extends(class_1, _super);
@@ -73,7 +107,7 @@ function ExplorerMathItemMixin(BaseMathItem, toMathML) {
             var _this = _super !== null && _super.apply(this, arguments) || this;
             _this.explorers = {};
             _this.attached = [];
-            _this.restart = false;
+            _this.restart = [];
             _this.refocus = false;
             _this.savedId = null;
             return _this;
@@ -95,15 +129,21 @@ function ExplorerMathItemMixin(BaseMathItem, toMathML) {
             this.state(MathItem_js_1.STATE.EXPLORER);
         };
         class_1.prototype.attachExplorers = function (document) {
-            var e_1, _a;
+            var e_1, _a, e_2, _b;
             this.attached = [];
+            var keyExplorers = [];
             try {
-                for (var _b = __values(Object.keys(this.explorers)), _c = _b.next(); !_c.done; _c = _b.next()) {
-                    var key = _c.value;
+                for (var _c = __values(Object.keys(this.explorers)), _d = _c.next(); !_d.done; _d = _c.next()) {
+                    var key = _d.value;
                     var explorer = this.explorers[key];
+                    if (explorer instanceof ke.AbstractKeyExplorer) {
+                        explorer.AddEvents();
+                        explorer.stoppable = false;
+                        keyExplorers.unshift(explorer);
+                    }
                     if (document.options.a11y[key]) {
                         explorer.Attach();
-                        this.attached.push(explorer);
+                        this.attached.push(key);
                     }
                     else {
                         explorer.Detach();
@@ -113,53 +153,40 @@ function ExplorerMathItemMixin(BaseMathItem, toMathML) {
             catch (e_1_1) { e_1 = { error: e_1_1 }; }
             finally {
                 try {
-                    if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+                    if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
                 }
                 finally { if (e_1) throw e_1.error; }
             }
-            this.addExplorers(this.attached);
-        };
-        class_1.prototype.rerender = function (document, start) {
-            var e_2, _a;
-            if (start === void 0) { start = MathItem_js_1.STATE.RERENDER; }
-            this.savedId = this.typesetRoot.getAttribute('sre-explorer-id');
-            this.refocus = (window.document.activeElement === this.typesetRoot);
             try {
-                for (var _b = __values(this.attached), _c = _b.next(); !_c.done; _c = _b.next()) {
-                    var explorer = _c.value;
-                    if (explorer.active) {
-                        this.restart = true;
-                        explorer.Stop();
+                for (var keyExplorers_1 = __values(keyExplorers), keyExplorers_1_1 = keyExplorers_1.next(); !keyExplorers_1_1.done; keyExplorers_1_1 = keyExplorers_1.next()) {
+                    var explorer = keyExplorers_1_1.value;
+                    if (explorer.attached) {
+                        explorer.stoppable = true;
+                        break;
                     }
                 }
             }
             catch (e_2_1) { e_2 = { error: e_2_1 }; }
             finally {
                 try {
-                    if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+                    if (keyExplorers_1_1 && !keyExplorers_1_1.done && (_b = keyExplorers_1.return)) _b.call(keyExplorers_1);
                 }
                 finally { if (e_2) throw e_2.error; }
             }
-            _super.prototype.rerender.call(this, document, start);
         };
-        class_1.prototype.updateDocument = function (document) {
-            _super.prototype.updateDocument.call(this, document);
-            this.refocus && this.typesetRoot.focus();
-            this.restart && this.attached.forEach(function (x) { return x.Start(); });
-            this.refocus = this.restart = false;
-        };
-        class_1.prototype.addExplorers = function (explorers) {
+        class_1.prototype.rerender = function (document, start) {
             var e_3, _a;
-            if (explorers.length <= 1)
-                return;
-            var lastKeyExplorer = null;
+            if (start === void 0) { start = MathItem_js_1.STATE.RERENDER; }
+            this.savedId = this.typesetRoot.getAttribute('sre-explorer-id');
+            this.refocus = (window.document.activeElement === this.typesetRoot);
             try {
                 for (var _b = __values(this.attached), _c = _b.next(); !_c.done; _c = _b.next()) {
-                    var explorer = _c.value;
-                    if (!(explorer instanceof ke.AbstractKeyExplorer))
-                        continue;
-                    explorer.stoppable = false;
-                    lastKeyExplorer = explorer;
+                    var key = _c.value;
+                    var explorer = this.explorers[key];
+                    if (explorer.active) {
+                        this.restart.push(key);
+                        explorer.Stop();
+                    }
                 }
             }
             catch (e_3_1) { e_3 = { error: e_3_1 }; }
@@ -169,9 +196,15 @@ function ExplorerMathItemMixin(BaseMathItem, toMathML) {
                 }
                 finally { if (e_3) throw e_3.error; }
             }
-            if (lastKeyExplorer) {
-                lastKeyExplorer.stoppable = true;
-            }
+            _super.prototype.rerender.call(this, document, start);
+        };
+        class_1.prototype.updateDocument = function (document) {
+            var _this = this;
+            _super.prototype.updateDocument.call(this, document);
+            this.refocus && this.typesetRoot.focus();
+            this.restart.forEach(function (x) { return _this.explorers[x].Start(); });
+            this.restart = [];
+            this.refocus = false;
         };
         return class_1;
     }(BaseMathItem));
@@ -186,7 +219,7 @@ function ExplorerMathDocumentMixin(BaseDocument) {
                 for (var _i = 0; _i < arguments.length; _i++) {
                     args[_i] = arguments[_i];
                 }
-                var _this = _super.apply(this, __spread(args)) || this;
+                var _this = _super.apply(this, __spreadArray([], __read(args), false)) || this;
                 var ProcessBits = _this.constructor.ProcessBits;
                 if (!ProcessBits.has('explorer')) {
                     ProcessBits.allocate('explorer');
@@ -229,7 +262,7 @@ function ExplorerMathDocumentMixin(BaseDocument) {
             };
             return class_2;
         }(BaseDocument)),
-        _a.OPTIONS = __assign(__assign({}, BaseDocument.OPTIONS), { enrichSpeech: 'shallow', enableExplorer: true, renderActions: Options_js_1.expandable(__assign(__assign({}, BaseDocument.OPTIONS.renderActions), { explorable: [MathItem_js_1.STATE.EXPLORER] })), a11y: {
+        _a.OPTIONS = __assign(__assign({}, BaseDocument.OPTIONS), { enableExplorer: true, renderActions: (0, Options_js_1.expandable)(__assign(__assign({}, BaseDocument.OPTIONS.renderActions), { explorable: [MathItem_js_1.STATE.EXPLORER] })), sre: (0, Options_js_1.expandable)(__assign(__assign({}, BaseDocument.OPTIONS.sre), { speech: 'shallow' })), a11y: {
                 align: 'top',
                 backgroundColor: 'Blue',
                 backgroundOpacity: 20,
@@ -243,12 +276,10 @@ function ExplorerMathDocumentMixin(BaseDocument) {
                 infoRole: false,
                 infoType: false,
                 keyMagnifier: false,
-                locale: 'en',
                 magnification: 'None',
                 magnify: '400%',
                 mouseMagnifier: false,
                 speech: true,
-                speechRules: 'mathspeak-default',
                 subtitles: true,
                 treeColoring: false,
                 viewBraille: false
@@ -259,7 +290,7 @@ exports.ExplorerMathDocumentMixin = ExplorerMathDocumentMixin;
 function ExplorerHandler(handler, MmlJax) {
     if (MmlJax === void 0) { MmlJax = null; }
     if (!handler.documentClass.prototype.enrich && MmlJax) {
-        handler = semantic_enrich_js_1.EnrichHandler(handler, MmlJax);
+        handler = (0, semantic_enrich_js_1.EnrichHandler)(handler, MmlJax);
     }
     handler.documentClass = ExplorerMathDocumentMixin(handler.documentClass);
     return handler;
@@ -282,12 +313,16 @@ var allExplorers = {
         for (var _i = 2; _i < arguments.length; _i++) {
             rest[_i - 2] = arguments[_i];
         }
-        var explorer = (_a = ke.SpeechExplorer).create.apply(_a, __spread([doc, doc.explorerRegions.speechRegion, node], rest));
-        var _b = __read(doc.options.a11y.speechRules.split('-'), 2), domain = _b[0], style = _b[1];
+        var explorer = (_a = ke.SpeechExplorer).create.apply(_a, __spreadArray([doc, doc.explorerRegions.speechRegion, node], __read(rest), false));
         explorer.speechGenerator.setOptions({
-            locale: doc.options.a11y.locale, domain: domain,
-            style: style, modality: 'speech', cache: false
+            locale: doc.options.sre.locale, domain: doc.options.sre.domain,
+            style: doc.options.sre.style, modality: 'speech'
         });
+        var locale = explorer.speechGenerator.getOptions().locale;
+        if (locale !== sre_js_1.default.engineSetup().locale) {
+            doc.options.sre.locale = sre_js_1.default.engineSetup().locale;
+            explorer.speechGenerator.setOptions({ locale: doc.options.sre.locale });
+        }
         explorer.showRegion = 'subtitles';
         return explorer;
     },
@@ -297,7 +332,7 @@ var allExplorers = {
         for (var _i = 2; _i < arguments.length; _i++) {
             rest[_i - 2] = arguments[_i];
         }
-        var explorer = (_a = ke.SpeechExplorer).create.apply(_a, __spread([doc, doc.explorerRegions.brailleRegion, node], rest));
+        var explorer = (_a = ke.SpeechExplorer).create.apply(_a, __spreadArray([doc, doc.explorerRegions.brailleRegion, node], __read(rest), false));
         explorer.speechGenerator.setOptions({ locale: 'nemeth', domain: 'default',
             style: 'default', modality: 'braille' });
         explorer.showRegion = 'viewBraille';
@@ -309,7 +344,7 @@ var allExplorers = {
         for (var _i = 2; _i < arguments.length; _i++) {
             rest[_i - 2] = arguments[_i];
         }
-        return (_a = ke.Magnifier).create.apply(_a, __spread([doc, doc.explorerRegions.magnifier, node], rest));
+        return (_a = ke.Magnifier).create.apply(_a, __spreadArray([doc, doc.explorerRegions.magnifier, node], __read(rest), false));
     },
     mouseMagnifier: function (doc, node) {
         var _rest = [];
@@ -358,7 +393,7 @@ var allExplorers = {
         for (var _i = 2; _i < arguments.length; _i++) {
             rest[_i - 2] = arguments[_i];
         }
-        return TreeExplorer_js_1.TreeColorer.create.apply(TreeExplorer_js_1.TreeColorer, __spread([doc, null, node], rest));
+        return TreeExplorer_js_1.TreeColorer.create.apply(TreeExplorer_js_1.TreeColorer, __spreadArray([doc, null, node], __read(rest), false));
     }
 };
 function initExplorers(document, node, mml) {
@@ -381,9 +416,17 @@ function initExplorers(document, node, mml) {
 }
 function setA11yOptions(document, options) {
     var e_6, _a;
+    var sreOptions = sre_js_1.default.engineSetup();
     for (var key in options) {
         if (document.options.a11y[key] !== undefined) {
             setA11yOption(document, key, options[key]);
+            if (key === 'locale') {
+                document.options.sre[key] = options[key];
+            }
+            continue;
+        }
+        if (sreOptions[key] !== undefined) {
+            document.options.sre[key] = options[key];
         }
     }
     try {
@@ -458,7 +501,7 @@ var csPrefsVariables = function (menu, prefs) {
             setter: function (value) {
                 csPrefsSetting[pref] = value;
                 srVariable.setValue('clearspeak-' +
-                    sre.ClearspeakPreferences.addPreference(sre.Engine.DOMAIN_TO_STYLES['clearspeak'], pref, value));
+                    sre_js_1.default.clearspeakPreferences.addPreference(sre_js_1.default.clearspeakStyle(), pref, value));
             },
             getter: function () { return csPrefsSetting[pref] || 'Auto'; }
         }, menu.pool);
@@ -479,7 +522,7 @@ var csPrefsVariables = function (menu, prefs) {
 };
 var csSelectionBox = function (menu, locale) {
     var e_8, _a;
-    var prefs = sre.ClearspeakPreferences.getLocalePreferences();
+    var prefs = sre_js_1.default.clearspeakPreferences.getLocalePreferences();
     var props = prefs[locale];
     if (!props) {
         var csEntry = menu.findID('Accessibility', 'Speech', 'Clearspeak');
@@ -519,12 +562,19 @@ var csSelectionBox = function (menu, locale) {
     }, menu);
     return { 'type': 'command',
         'id': 'ClearspeakPreferences',
-        'content': 'Select Preferences', 'action': function () { return sb.post(0, 0); } };
+        'content': 'Select Preferences',
+        'action': function () { return sb.post(0, 0); } };
 };
 var csMenu = function (menu, sub) {
     var locale = menu.pool.lookup('locale').getValue();
     var box = csSelectionBox(menu, locale);
-    var items = sre.ClearspeakPreferences.smartPreferences(menu.mathItem, locale);
+    var items = [];
+    try {
+        items = sre_js_1.default.clearspeakPreferences.smartPreferences(menu.mathItem, locale);
+    }
+    catch (e) {
+        console.log(e);
+    }
     if (box) {
         items.splice(2, 0, box);
     }
@@ -534,22 +584,16 @@ var csMenu = function (menu, sub) {
     }, sub);
 };
 MJContextMenu_js_1.MJContextMenu.DynamicSubmenus.set('Clearspeak', csMenu);
-var iso = {
-    'de': 'German',
-    'en': 'English',
-    'es': 'Spanish',
-    'fr': 'French'
-};
 var language = function (menu, sub) {
     var e_9, _a;
     var radios = [];
     try {
-        for (var _b = __values(sre.Variables.LOCALES), _c = _b.next(); !_c.done; _c = _b.next()) {
+        for (var _b = __values(sre_js_1.default.locales.keys()), _c = _b.next(); !_c.done; _c = _b.next()) {
             var lang = _c.value;
             if (lang === 'nemeth')
                 continue;
             radios.push({ type: 'radio', id: lang,
-                content: iso[lang] || lang, variable: 'locale' });
+                content: sre_js_1.default.locales.get(lang) || lang, variable: 'locale' });
         }
     }
     catch (e_9_1) { e_9 = { error: e_9_1 }; }
@@ -565,3 +609,4 @@ var language = function (menu, sub) {
     }, sub);
 };
 MJContextMenu_js_1.MJContextMenu.DynamicSubmenus.set('A11yLanguage', language);
+//# sourceMappingURL=explorer.js.map

@@ -1,6 +1,6 @@
 import { CHTMLFontData, CHTMLCharOptions, CHTMLVariantData, CHTMLDelimiterData, DelimiterMap, CharMapMap } from '../FontData.js';
 import { StringMap } from '../Wrapper.js';
-declare const TeXFont_base: import("mathjax-full/ts/output/common/FontData").FontDataClass<CHTMLCharOptions, CHTMLVariantData, CHTMLDelimiterData> & typeof CHTMLFontData;
+declare const TeXFont_base: import("../FontData.js").FontDataClass<CHTMLCharOptions, CHTMLVariantData, CHTMLDelimiterData> & typeof CHTMLFontData;
 export declare class TeXFont extends TeXFont_base {
     protected static defaultCssFamilyPrefix: string;
     protected static defaultVariantClasses: StringMap;

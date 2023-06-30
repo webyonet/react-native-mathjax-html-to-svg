@@ -10,7 +10,8 @@ exports.PhysicsConfiguration = Configuration_js_1.Configuration.create('physics'
         macro: [
             'Physics-automatic-bracing-macros',
             'Physics-vector-macros',
-            'Physics-vector-chars',
+            'Physics-vector-mo',
+            'Physics-vector-mi',
             'Physics-derivative-macros',
             'Physics-expressions-macros',
             'Physics-quick-quad-macros',
@@ -22,5 +23,12 @@ exports.PhysicsConfiguration = Configuration_js_1.Configuration.create('physics'
     },
     items: (_a = {},
         _a[PhysicsItems_js_1.AutoOpen.prototype.kind] = PhysicsItems_js_1.AutoOpen,
-        _a)
+        _a),
+    options: {
+        physics: {
+            italicdiff: false,
+            arrowdel: false
+        }
+    }
 });
+//# sourceMappingURL=PhysicsConfiguration.js.map

@@ -22,7 +22,8 @@ export declare class TeX<N, T, D> extends AbstractInputJax<N, T, D> {
     constructor(options?: OptionList);
     setMmlFactory(mmlFactory: MmlFactory): void;
     get parseOptions(): ParseOptions;
+    reset(tag?: number): void;
     compile(math: MathItem<N, T, D>, document: MathDocument<N, T, D>): MmlNode;
-    findMath(strings: string[]): import("mathjax-full/ts/core/MathItem").ProtoItem<N, T>[];
+    findMath(strings: string[]): import("../core/MathItem.js").ProtoItem<N, T>[];
     formatError(err: TexError): MmlNode;
 }

@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -31,7 +33,7 @@ var CHTMLsemantics = (function (_super) {
     };
     CHTMLsemantics.kind = semantics_js_2.MmlSemantics.prototype.kind;
     return CHTMLsemantics;
-}(semantics_js_1.CommonSemanticsMixin(Wrapper_js_1.CHTMLWrapper)));
+}((0, semantics_js_1.CommonSemanticsMixin)(Wrapper_js_1.CHTMLWrapper)));
 exports.CHTMLsemantics = CHTMLsemantics;
 var CHTMLannotation = (function (_super) {
     __extends(CHTMLannotation, _super);
@@ -86,3 +88,4 @@ var CHTMLxml = (function (_super) {
     return CHTMLxml;
 }(Wrapper_js_1.CHTMLWrapper));
 exports.CHTMLxml = CHTMLxml;
+//# sourceMappingURL=semantics.js.map

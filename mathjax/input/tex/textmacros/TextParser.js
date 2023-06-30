@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -39,17 +41,25 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TextParser = void 0;
-var TexParser_js_1 = require("../TexParser.js");
-var TexError_js_1 = require("../TexError.js");
-var ParseUtil_js_1 = require("../ParseUtil.js");
+var TexParser_js_1 = __importDefault(require("../TexParser.js"));
+var TexError_js_1 = __importDefault(require("../TexError.js"));
+var ParseUtil_js_1 = __importDefault(require("../ParseUtil.js"));
 var MmlNode_js_1 = require("../../../core/MmlTree/MmlNode.js");
-var NodeUtil_js_1 = require("../NodeUtil.js");
+var NodeUtil_js_1 = __importDefault(require("../NodeUtil.js"));
 var BaseItems_js_1 = require("../base/BaseItems.js");
 var TextParser = (function (_super) {
     __extends(TextParser, _super);
@@ -75,7 +85,7 @@ var TextParser = (function (_super) {
     TextParser.prototype.mml = function () {
         return (this.level != null ?
             this.create('node', 'mstyle', this.nodes, { displaystyle: false, scriptlevel: this.level }) :
-            this.nodes.length === 1 ? this.nodes[0] : this.create('node', 'inferredMrow', this.nodes));
+            this.nodes.length === 1 ? this.nodes[0] : this.create('node', 'mrow', this.nodes));
     };
     TextParser.prototype.Parse = function () {
         this.text = '';
@@ -110,6 +120,9 @@ var TextParser = (function (_super) {
     TextParser.prototype.PushMath = function (mml) {
         var e_1, _a;
         var env = this.stack.env;
+        if (!mml.isKind('TeXAtom')) {
+            mml = this.create('node', 'TeXAtom', [mml]);
+        }
         try {
             for (var _b = __values(['mathsize', 'mathcolor']), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var name_1 = _c.value;
@@ -128,7 +141,7 @@ var TextParser = (function (_super) {
             }
             finally { if (e_1) throw e_1.error; }
         }
-        if (mml.isKind('inferredMrow')) {
+        if (mml.isInferred) {
             mml = this.create('node', 'mrow', mml.childNodes);
         }
         this.nodes.push(mml);
@@ -167,8 +180,9 @@ var TextParser = (function (_super) {
         for (var _i = 2; _i < arguments.length; _i++) {
             args[_i - 2] = arguments[_i];
         }
-        throw new (TexError_js_1.default.bind.apply(TexError_js_1.default, __spread([void 0, id, message], args)))();
+        throw new (TexError_js_1.default.bind.apply(TexError_js_1.default, __spreadArray([void 0, id, message], __read(args), false)))();
     };
     return TextParser;
 }(TexParser_js_1.default));
 exports.TextParser = TextParser;
+//# sourceMappingURL=TextParser.js.map

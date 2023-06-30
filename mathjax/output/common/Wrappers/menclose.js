@@ -3,15 +3,40 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __read = (this && this.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
@@ -28,9 +53,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
@@ -45,7 +75,7 @@ var __values = (this && this.__values) || function(o) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CommonMencloseMixin = void 0;
-var Notation = require("../Notation.js");
+var Notation = __importStar(require("../Notation.js"));
 var string_js_1 = require("../../../util/string.js");
 function CommonMencloseMixin(Base) {
     return (function (_super) {
@@ -55,17 +85,19 @@ function CommonMencloseMixin(Base) {
             for (var _i = 0; _i < arguments.length; _i++) {
                 args[_i] = arguments[_i];
             }
-            var _this = _super.apply(this, __spread(args)) || this;
+            var _this = _super.apply(this, __spreadArray([], __read(args), false)) || this;
             _this.notations = {};
             _this.renderChild = null;
             _this.msqrt = null;
             _this.padding = Notation.PADDING;
             _this.thickness = Notation.THICKNESS;
             _this.arrowhead = { x: Notation.ARROWX, y: Notation.ARROWY, dx: Notation.ARROWDX };
+            _this.TRBL = [0, 0, 0, 0];
             _this.getParameters();
             _this.getNotations();
             _this.removeRedundantNotations();
             _this.initializeNotations();
+            _this.TRBL = _this.getBBoxExtenders();
             return _this;
         }
         class_1.prototype.getParameters = function () {
@@ -80,7 +112,7 @@ function CommonMencloseMixin(Base) {
             }
             var arrowhead = attributes.get('data-arrowhead');
             if (arrowhead !== undefined) {
-                var _b = __read(string_js_1.split(arrowhead), 3), x = _b[0], y = _b[1], dx = _b[2];
+                var _b = __read((0, string_js_1.split)(arrowhead), 3), x = _b[0], y = _b[1], dx = _b[2];
                 this.arrowhead = {
                     x: (x ? parseFloat(x) : Notation.ARROWX),
                     y: (y ? parseFloat(y) : Notation.ARROWY),
@@ -92,7 +124,7 @@ function CommonMencloseMixin(Base) {
             var e_1, _b;
             var Notations = this.constructor.notations;
             try {
-                for (var _c = __values(string_js_1.split(this.node.attributes.get('notation'))), _d = _c.next(); !_d.done; _d = _c.next()) {
+                for (var _c = __values((0, string_js_1.split)(this.node.attributes.get('notation'))), _d = _c.next(); !_d.done; _d = _c.next()) {
                     var name_1 = _d.value;
                     var notation = Notations.get(name_1);
                     if (notation) {
@@ -161,7 +193,7 @@ function CommonMencloseMixin(Base) {
         };
         class_1.prototype.computeBBox = function (bbox, recompute) {
             if (recompute === void 0) { recompute = false; }
-            var _b = __read(this.getBBoxExtenders(), 4), T = _b[0], R = _b[1], B = _b[2], L = _b[3];
+            var _b = __read(this.TRBL, 4), T = _b[0], R = _b[1], B = _b[2], L = _b[3];
             var child = this.childNodes[0].getBBox();
             bbox.combine(child, L, 0);
             bbox.h += T;
@@ -189,12 +221,11 @@ function CommonMencloseMixin(Base) {
         };
         class_1.prototype.getPadding = function () {
             var e_6, _b;
-            var TRBL = [0, 0, 0, 0];
+            var _this = this;
             var BTRBL = [0, 0, 0, 0];
             try {
                 for (var _c = __values(Object.keys(this.notations)), _d = _c.next(); !_d.done; _d = _c.next()) {
                     var name_5 = _d.value;
-                    this.maximizeEntries(TRBL, this.notations[name_5].bbox(this));
                     var border = this.notations[name_5].border;
                     if (border) {
                         this.maximizeEntries(BTRBL, border(this));
@@ -208,7 +239,7 @@ function CommonMencloseMixin(Base) {
                 }
                 finally { if (e_6) throw e_6.error; }
             }
-            return [0, 1, 2, 3].map(function (i) { return TRBL[i] - BTRBL[i]; });
+            return [0, 1, 2, 3].map(function (i) { return _this.TRBL[i] - BTRBL[i]; });
         };
         class_1.prototype.maximizeEntries = function (X, Y) {
             for (var i = 0; i < X.length; i++) {
@@ -217,11 +248,17 @@ function CommonMencloseMixin(Base) {
                 }
             }
         };
+        class_1.prototype.getOffset = function (direction) {
+            var _b = __read(this.TRBL, 4), T = _b[0], R = _b[1], B = _b[2], L = _b[3];
+            var d = (direction === 'X' ? R - L : B - T) / 2;
+            return (Math.abs(d) > .001 ? d : 0);
+        };
         class_1.prototype.getArgMod = function (w, h) {
             return [Math.atan2(h, w), Math.sqrt(w * w + h * h)];
         };
-        class_1.prototype.arrow = function (_w, _a, _double) {
-            if (_double === void 0) { _double = false; }
+        class_1.prototype.arrow = function (_w, _a, _double, _offset, _dist) {
+            if (_offset === void 0) { _offset = ''; }
+            if (_dist === void 0) { _dist = 0; }
             return null;
         };
         class_1.prototype.arrowData = function () {
@@ -234,6 +271,11 @@ function CommonMencloseMixin(Base) {
             var y = Math.max(p, r * H / R);
             var _d = __read(this.getArgMod(w + 2 * x, H + 2 * y), 2), a = _d[0], W = _d[1];
             return { a: a, W: W, x: x, y: y };
+        };
+        class_1.prototype.arrowAW = function () {
+            var _b = this.childNodes[0].getBBox(), h = _b.h, d = _b.d, w = _b.w;
+            var _c = __read(this.TRBL, 4), T = _c[0], R = _c[1], B = _c[2], L = _c[3];
+            return this.getArgMod(L + w + R, T + h + d + B);
         };
         class_1.prototype.createMsqrt = function (child) {
             var mmlFactory = this.node.factory;
@@ -253,3 +295,4 @@ function CommonMencloseMixin(Base) {
     }(Base));
 }
 exports.CommonMencloseMixin = CommonMencloseMixin;
+//# sourceMappingURL=menclose.js.map

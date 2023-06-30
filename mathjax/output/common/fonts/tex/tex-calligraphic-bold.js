@@ -31,3 +31,4 @@ exports.texCalligraphicBold = {
     0x131: [.452, .008, .394, { sk: .0319 }],
     0x237: [.451, .201, .439, { sk: .0958 }],
 };
+//# sourceMappingURL=tex-calligraphic-bold.js.map

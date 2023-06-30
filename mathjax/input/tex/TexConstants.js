@@ -23,7 +23,10 @@ var TexConstant;
         LOOPED: 'looped',
         STRETCHED: 'stretched',
         CALLIGRAPHIC: '-tex-calligraphic',
-        OLDSTYLE: '-tex-oldstyle'
+        BOLDCALLIGRAPHIC: '-tex-bold-calligraphic',
+        OLDSTYLE: '-tex-oldstyle',
+        BOLDOLDSTYLE: '-tex-bold-oldstyle',
+        MATHITALIC: '-tex-mathit'
     };
     TexConstant.Form = {
         PREFIX: 'prefix',
@@ -109,22 +112,6 @@ var TexConstant;
         TOOLTIP: 'tooltip',
         INPUT: 'input'
     };
-    TexConstant.Length = {
-        VERYVERYTHINMATHSPACE: 'veryverythinmathspace',
-        VERYTHINMATHSPACE: 'verythinmathspace',
-        THINMATHSPACE: 'thinmathspace',
-        MEDIUMMATHSPACE: 'mediummathspace',
-        THICKMATHSPACE: 'thickmathspace',
-        VERYTHICKMATHSPACE: 'verythickmathspace',
-        VERYVERYTHICKMATHSPACE: 'veryverythickmathspace',
-        NEGATIVEVERYVERYTHINMATHSPACE: 'negativeveryverythinmathspace',
-        NEGATIVEVERYTHINMATHSPACE: 'negativeverythinmathspace',
-        NEGATIVETHINMATHSPACE: 'negativethinmathspace',
-        NEGATIVEMEDIUMMATHSPACE: 'negativemediummathspace',
-        NEGATIVETHICKMATHSPACE: 'negativethickmathspace',
-        NEGATIVEVERYTHICKMATHSPACE: 'negativeverythickmathspace',
-        NEGATIVEVERYVERYTHICKMATHSPACE: 'negativeveryverythickmathspace'
-    };
     TexConstant.Overflow = {
         LINBREAK: 'linebreak',
         SCROLL: 'scroll',
@@ -143,3 +130,4 @@ var TexConstant;
         PC: 'pc'
     };
 })(TexConstant = exports.TexConstant || (exports.TexConstant = {}));
+//# sourceMappingURL=TexConstants.js.map

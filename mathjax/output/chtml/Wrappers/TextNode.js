@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -39,9 +41,10 @@ var CHTMLTextNode = (function (_super) {
         var adaptor = this.adaptor;
         var variant = this.parent.variant;
         var text = this.node.getText();
+        if (text.length === 0)
+            return;
         if (variant === '-explicitFont') {
-            var font = this.jax.getFontData(this.parent.styles);
-            adaptor.append(parent, this.jax.unknownText(text, variant, font));
+            adaptor.append(parent, this.jax.unknownText(text, variant, this.getBBox().w));
         }
         else {
             var chars = this.remappedText(text, variant);
@@ -54,7 +57,7 @@ var CHTMLTextNode = (function (_super) {
                         this.jax.unknownText(String.fromCodePoint(n), variant) :
                         this.html('mjx-c', { class: this.char(n) + font }));
                     adaptor.append(parent, node);
-                    data.used = true;
+                    !data.unknown && this.font.charUsage.add([variant, n]);
                 }
             }
             catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -78,5 +81,6 @@ var CHTMLTextNode = (function (_super) {
         }
     };
     return CHTMLTextNode;
-}(TextNode_js_1.CommonTextNodeMixin(Wrapper_js_1.CHTMLWrapper)));
+}((0, TextNode_js_1.CommonTextNodeMixin)(Wrapper_js_1.CHTMLWrapper)));
 exports.CHTMLTextNode = CHTMLTextNode;
+//# sourceMappingURL=TextNode.js.map

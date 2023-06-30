@@ -3,15 +3,28 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
@@ -30,11 +43,10 @@ var AbstractNode = (function () {
         var e_1, _a;
         if (properties === void 0) { properties = {}; }
         if (children === void 0) { children = []; }
+        this.factory = factory;
         this.parent = null;
         this.properties = {};
-        this._factory = null;
         this.childNodes = [];
-        this._factory = factory;
         try {
             for (var _b = __values(Object.keys(properties)), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var name_1 = _c.value;
@@ -52,13 +64,6 @@ var AbstractNode = (function () {
             this.setChildren(children);
         }
     }
-    Object.defineProperty(AbstractNode.prototype, "factory", {
-        get: function () {
-            return this._factory;
-        },
-        enumerable: false,
-        configurable: true
-    });
     Object.defineProperty(AbstractNode.prototype, "kind", {
         get: function () {
             return 'unknown';
@@ -128,12 +133,42 @@ var AbstractNode = (function () {
         if (i !== null) {
             this.childNodes[i] = newChild;
             newChild.parent = this;
+            oldChild.parent = null;
         }
         return newChild;
+    };
+    AbstractNode.prototype.removeChild = function (child) {
+        var i = this.childIndex(child);
+        if (i !== null) {
+            this.childNodes.splice(i, 1);
+            child.parent = null;
+        }
+        return child;
     };
     AbstractNode.prototype.childIndex = function (node) {
         var i = this.childNodes.indexOf(node);
         return (i === -1 ? null : i);
+    };
+    AbstractNode.prototype.copy = function () {
+        var e_4, _a;
+        var node = this.factory.create(this.kind);
+        node.properties = __assign({}, this.properties);
+        try {
+            for (var _b = __values(this.childNodes || []), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var child = _c.value;
+                if (child) {
+                    node.appendChild(child.copy());
+                }
+            }
+        }
+        catch (e_4_1) { e_4 = { error: e_4_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_4) throw e_4.error; }
+        }
+        return node;
     };
     AbstractNode.prototype.findNodes = function (kind) {
         var nodes = [];
@@ -145,7 +180,7 @@ var AbstractNode = (function () {
         return nodes;
     };
     AbstractNode.prototype.walkTree = function (func, data) {
-        var e_4, _a;
+        var e_5, _a;
         func(this, data);
         try {
             for (var _b = __values(this.childNodes), _c = _b.next(); !_c.done; _c = _b.next()) {
@@ -155,12 +190,12 @@ var AbstractNode = (function () {
                 }
             }
         }
-        catch (e_4_1) { e_4 = { error: e_4_1 }; }
+        catch (e_5_1) { e_5 = { error: e_5_1 }; }
         finally {
             try {
                 if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
             }
-            finally { if (e_4) throw e_4.error; }
+            finally { if (e_5) throw e_5.error; }
         }
         return data;
     };
@@ -196,3 +231,4 @@ var AbstractEmptyNode = (function (_super) {
     return AbstractEmptyNode;
 }(AbstractNode));
 exports.AbstractEmptyNode = AbstractEmptyNode;
+//# sourceMappingURL=Node.js.map

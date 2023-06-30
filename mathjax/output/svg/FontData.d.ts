@@ -15,6 +15,10 @@ export interface SVGVariantData extends VariantData<SVGCharOptions> {
 export interface SVGDelimiterData extends DelimiterData {
 }
 export declare class SVGFontData extends FontData<SVGCharOptions, SVGVariantData, SVGDelimiterData> {
+    static OPTIONS: {
+        dynamicPrefix: string;
+    };
+    static JAX: string;
     static charOptions(font: SVGCharMap, n: number): SVGCharOptions;
 }
 export declare type SVGFontDataClass = typeof SVGFontData;

@@ -9,7 +9,7 @@ var AbstractInputJax = (function () {
         this.adaptor = null;
         this.mmlFactory = null;
         var CLASS = this.constructor;
-        this.options = Options_js_1.userOptions(Options_js_1.defaultOptions({}, CLASS.OPTIONS), options);
+        this.options = (0, Options_js_1.userOptions)((0, Options_js_1.defaultOptions)({}, CLASS.OPTIONS), options);
         this.preFilters = new FunctionList_js_1.FunctionList();
         this.postFilters = new FunctionList_js_1.FunctionList();
     }
@@ -27,6 +27,12 @@ var AbstractInputJax = (function () {
         this.mmlFactory = mmlFactory;
     };
     AbstractInputJax.prototype.initialize = function () {
+    };
+    AbstractInputJax.prototype.reset = function () {
+        var _args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            _args[_i] = arguments[_i];
+        }
     };
     Object.defineProperty(AbstractInputJax.prototype, "processStrings", {
         get: function () {
@@ -48,3 +54,4 @@ var AbstractInputJax = (function () {
     return AbstractInputJax;
 }());
 exports.AbstractInputJax = AbstractInputJax;
+//# sourceMappingURL=InputJax.js.map

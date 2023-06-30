@@ -22,12 +22,12 @@ export declare type ScriptListName = keyof ScriptLists;
 export declare const NextScript: {
     [key: string]: ScriptListName;
 };
-export declare const ScriptNames: ("sub" | "sup" | "base" | "psub" | "psup" | "numPrescripts" | "numScripts")[];
+export declare const ScriptNames: (keyof ScriptData)[];
 export interface CommonMmultiscripts<W extends AnyWrapper> extends CommonMsubsup<W> {
     scriptData: ScriptData;
     firstPrescript: number;
     combinePrePost(pre: BBox, post: BBox): BBox;
-    getScriptData(): ScriptData;
+    getScriptData(): void;
     getScriptBBoxLists(): ScriptLists;
     padLists(list1: BBox[], list2: BBox[]): void;
     combineBBoxLists(bbox1: BBox, bbox2: BBox, list1: BBox[], list2: BBox[]): void;

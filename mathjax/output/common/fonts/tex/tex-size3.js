@@ -27,3 +27,4 @@ exports.texSize3 = {
     0x3008: [1.45, .95, .75],
     0x3009: [1.45, .949, .75],
 };
+//# sourceMappingURL=tex-size3.js.map

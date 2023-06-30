@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -39,9 +41,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Package = exports.PackageError = void 0;
@@ -80,20 +87,9 @@ var Package = (function () {
     });
     Package.resolvePath = function (name, addExtension) {
         if (addExtension === void 0) { addExtension = true; }
-        var file = loader_js_1.CONFIG.source[name] || name;
-        if (!file.match(/^(?:[a-z]+:\/)?\/|[a-z]:\\|\[/i)) {
-            file = '[mathjax]/' + file.replace(/^\.\//, '');
-        }
-        if (addExtension && !file.match(/\.[^\/]+$/)) {
-            file += '.js';
-        }
-        var match;
-        while ((match = file.match(/^\[([^\]]*)\]/))) {
-            if (!loader_js_1.CONFIG.paths.hasOwnProperty(match[1]))
-                break;
-            file = loader_js_1.CONFIG.paths[match[1]] + file.substr(match[0].length);
-        }
-        return file;
+        var data = { name: name, original: name, addExtension: addExtension };
+        loader_js_1.Loader.pathFilters.execute(data);
+        return data.name;
     };
     Package.loadAll = function () {
         var e_1, _a;
@@ -121,7 +117,7 @@ var Package = (function () {
         var name = this.name;
         var dependencies = [];
         if (loader_js_1.CONFIG.dependencies.hasOwnProperty(name)) {
-            dependencies.push.apply(dependencies, __spread(loader_js_1.CONFIG.dependencies[name]));
+            dependencies.push.apply(dependencies, __spreadArray([], __read(loader_js_1.CONFIG.dependencies[name]), false));
         }
         else if (name !== 'core') {
             dependencies.push('core');
@@ -312,3 +308,4 @@ var Package = (function () {
     return Package;
 }());
 exports.Package = Package;
+//# sourceMappingURL=package.js.map

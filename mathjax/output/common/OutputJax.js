@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -65,7 +67,7 @@ var CommonOutputJax = (function (_super) {
         if (defaultFactory === void 0) { defaultFactory = null; }
         if (defaultFont === void 0) { defaultFont = null; }
         var _this = this;
-        var _a = __read(Options_js_1.separateOptions(options, defaultFont.OPTIONS), 2), jaxOptions = _a[0], fontOptions = _a[1];
+        var _a = __read((0, Options_js_1.separateOptions)(options, defaultFont.OPTIONS), 2), jaxOptions = _a[0], fontOptions = _a[1];
         _this = _super.call(this, jaxOptions) || this;
         _this.factory = _this.options.wrapperFactory ||
             new defaultFactory();
@@ -88,7 +90,7 @@ var CommonOutputJax = (function (_super) {
     CommonOutputJax.prototype.setScale = function (node) {
         var scale = this.math.metrics.scale * this.options.scale;
         if (scale !== 1) {
-            this.adaptor.setStyle(node, 'fontSize', lengths_js_1.percent(scale));
+            this.adaptor.setStyle(node, 'fontSize', (0, lengths_js_1.percent)(scale));
         }
     };
     CommonOutputJax.prototype.toDOM = function (math, node, html) {
@@ -109,7 +111,7 @@ var CommonOutputJax = (function (_super) {
         this.math = math;
         math.root.setTeXclass(null);
         this.nodeMap = new Map();
-        var bbox = this.factory.wrap(math.root).getBBox();
+        var bbox = this.factory.wrap(math.root).getOuterBBox();
         this.nodeMap = null;
         return bbox;
     };
@@ -277,8 +279,9 @@ var CommonOutputJax = (function (_super) {
         var adaptor = this.adaptor;
         var family = (getFamily ? adaptor.fontFamily(node) : '');
         var em = adaptor.fontSize(node);
-        var ex = (adaptor.nodeSize(adaptor.childNode(node, 1))[1] / 60) || (em * this.options.exFactor);
-        var containerWidth = (adaptor.getStyle(node, 'display') === 'table' ?
+        var _a = __read(adaptor.nodeSize(adaptor.childNode(node, 1)), 2), w = _a[0], h = _a[1];
+        var ex = (w ? h / 60 : em * this.options.exFactor);
+        var containerWidth = (!w ? 1000000 : adaptor.getStyle(node, 'display') === 'table' ?
             adaptor.nodeSize(adaptor.lastChild(node))[0] - 1 :
             adaptor.nodeBBox(adaptor.lastChild(node)).left -
                 adaptor.nodeBBox(adaptor.firstChild(node)).left - 2);
@@ -287,44 +290,51 @@ var CommonOutputJax = (function (_super) {
         return { em: em, ex: ex, containerWidth: containerWidth, lineWidth: lineWidth, scale: scale, family: family };
     };
     CommonOutputJax.prototype.styleSheet = function (html) {
-        var e_7, _a, e_8, _b;
+        var e_7, _a;
         this.setDocument(html);
         this.cssStyles.clear();
         this.cssStyles.addStyles(this.constructor.commonStyles);
         if ('getStyles' in html) {
             try {
-                for (var _c = __values(html.getStyles()), _d = _c.next(); !_d.done; _d = _c.next()) {
-                    var styles = _d.value;
+                for (var _b = __values(html.getStyles()), _c = _b.next(); !_c.done; _c = _b.next()) {
+                    var styles = _c.value;
                     this.cssStyles.addStyles(styles);
                 }
             }
             catch (e_7_1) { e_7 = { error: e_7_1 }; }
             finally {
                 try {
-                    if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
+                    if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
                 }
                 finally { if (e_7) throw e_7.error; }
             }
         }
+        this.addWrapperStyles(this.cssStyles);
+        this.addFontStyles(this.cssStyles);
+        var sheet = this.html('style', { id: 'MJX-styles' }, [this.text('\n' + this.cssStyles.cssText + '\n')]);
+        return sheet;
+    };
+    CommonOutputJax.prototype.addFontStyles = function (styles) {
+        styles.addStyles(this.font.styles);
+    };
+    CommonOutputJax.prototype.addWrapperStyles = function (styles) {
+        var e_8, _a;
         try {
-            for (var _e = __values(this.factory.getKinds()), _f = _e.next(); !_f.done; _f = _e.next()) {
-                var kind = _f.value;
-                this.addClassStyles(this.factory.getNodeClass(kind));
+            for (var _b = __values(this.factory.getKinds()), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var kind = _c.value;
+                this.addClassStyles(this.factory.getNodeClass(kind), styles);
             }
         }
         catch (e_8_1) { e_8 = { error: e_8_1 }; }
         finally {
             try {
-                if (_f && !_f.done && (_b = _e.return)) _b.call(_e);
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
             }
             finally { if (e_8) throw e_8.error; }
         }
-        this.cssStyles.addStyles(this.font.styles);
-        var sheet = this.html('style', { id: 'MJX-styles' }, [this.text('\n' + this.cssStyles.cssText + '\n')]);
-        return sheet;
     };
-    CommonOutputJax.prototype.addClassStyles = function (CLASS) {
-        this.cssStyles.addStyles(CLASS.styles);
+    CommonOutputJax.prototype.addClassStyles = function (CLASS, styles) {
+        styles.addStyles(CLASS.styles);
     };
     CommonOutputJax.prototype.setDocument = function (html) {
         if (html) {
@@ -413,8 +423,9 @@ var CommonOutputJax = (function (_super) {
             styles.get('font-weight') === 'bold'];
     };
     CommonOutputJax.NAME = 'Common';
-    CommonOutputJax.OPTIONS = __assign(__assign({}, OutputJax_js_1.AbstractOutputJax.OPTIONS), { scale: 1, minScale: .5, matchFontHeight: true, mtextInheritFont: false, merrorInheritFont: false, mtextFont: '', merrorFont: 'serif', mathmlSpacing: false, skipAttributes: {}, exFactor: .5, displayAlign: 'center', displayIndent: '0', wrapperFactory: null, font: null, cssStyles: null });
+    CommonOutputJax.OPTIONS = __assign(__assign({}, OutputJax_js_1.AbstractOutputJax.OPTIONS), { scale: 1, minScale: .5, mtextInheritFont: false, merrorInheritFont: false, mtextFont: '', merrorFont: 'serif', mathmlSpacing: false, skipAttributes: {}, exFactor: .5, displayAlign: 'center', displayIndent: '0', wrapperFactory: null, font: null, cssStyles: null });
     CommonOutputJax.commonStyles = {};
     return CommonOutputJax;
 }(OutputJax_js_1.AbstractOutputJax));
 exports.CommonOutputJax = CommonOutputJax;
+//# sourceMappingURL=OutputJax.js.map

@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -41,7 +43,7 @@ var MmlMstyle = (function (_super) {
     });
     Object.defineProperty(MmlMstyle.prototype, "notParent", {
         get: function () {
-            return true;
+            return this.childNodes[0] && this.childNodes[0].childNodes.length === 1;
         },
         enumerable: false,
         configurable: true
@@ -56,10 +58,16 @@ var MmlMstyle = (function (_super) {
             else {
                 level = parseInt(scriptlevel);
             }
+            prime = false;
         }
         var displaystyle = this.attributes.getExplicit('displaystyle');
         if (displaystyle != null) {
             display = (displaystyle === true);
+            prime = false;
+        }
+        var cramped = this.attributes.getExplicit('data-cramped');
+        if (cramped != null) {
+            prime = cramped;
         }
         attributes = this.addInheritedAttributes(attributes, this.attributes.getAllAttributes());
         this.childNodes[0].setInheritedAttributes(attributes, display, level, prime);
@@ -68,3 +76,4 @@ var MmlMstyle = (function (_super) {
     return MmlMstyle;
 }(MmlNode_js_1.AbstractMmlLayoutNode));
 exports.MmlMstyle = MmlMstyle;
+//# sourceMappingURL=mstyle.js.map

@@ -26,11 +26,14 @@ var __values = (this && this.__values) || function(o) {
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.clearDocument = exports.saveDocument = exports.makeBsprAttributes = exports.removeProperty = exports.getProperty = exports.setProperty = exports.balanceRules = void 0;
-var NodeUtil_js_1 = require("../NodeUtil.js");
-var ParseUtil_js_1 = require("../ParseUtil.js");
+var NodeUtil_js_1 = __importDefault(require("../NodeUtil.js"));
+var ParseUtil_js_1 = __importDefault(require("../ParseUtil.js"));
 var doc = null;
 var item = null;
 var getBBox = function (node) {
@@ -83,7 +86,7 @@ var previousSibling = function (inf) {
     return inf.parent.childNodes[inf.parent.childNodes.indexOf(inf) - 1];
 };
 var getParentInf = function (inf) {
-    while (inf && exports.getProperty(inf, 'inference') == null) {
+    while (inf && (0, exports.getProperty)(inf, 'inference') == null) {
         inf = inf.parent;
     }
     return inf;
@@ -115,7 +118,7 @@ var getSpaces = function (inf, rule, right) {
 var adjustValue = function (inf, right) {
     if (right === void 0) { right = false; }
     var rule = getRule(inf);
-    var conc = getConclusion(rule, exports.getProperty(rule, 'inferenceRule'));
+    var conc = getConclusion(rule, (0, exports.getProperty)(rule, 'inferenceRule'));
     var w = getSpaces(inf, rule, right);
     var x = getBBox(rule);
     var y = getBBox(conc);
@@ -123,8 +126,8 @@ var adjustValue = function (inf, right) {
 };
 var addSpace = function (config, inf, space, right) {
     if (right === void 0) { right = false; }
-    if (exports.getProperty(inf, 'inferenceRule') ||
-        exports.getProperty(inf, 'labelledRule')) {
+    if ((0, exports.getProperty)(inf, 'inferenceRule') ||
+        (0, exports.getProperty)(inf, 'labelledRule')) {
         var mrow = config.nodeFactory.create('node', 'mrow');
         inf.parent.replaceChild(mrow, inf);
         mrow.setChildren([inf]);
@@ -148,10 +151,10 @@ var addSpace = function (config, inf, space, right) {
 var moveProperties = function (src, dest) {
     var props = ['inference', 'proof', 'maxAdjust', 'labelledRule'];
     props.forEach(function (x) {
-        var value = exports.getProperty(src, x);
+        var value = (0, exports.getProperty)(src, x);
         if (value != null) {
-            exports.setProperty(dest, x, value);
-            exports.removeProperty(src, x);
+            (0, exports.setProperty)(dest, x, value);
+            (0, exports.removeProperty)(src, x);
         }
     });
 };
@@ -161,26 +164,26 @@ var adjustSequents = function (config) {
         return;
     }
     for (var i = sequents.length - 1, seq = void 0; seq = sequents[i]; i--) {
-        if (exports.getProperty(seq, 'sequentProcessed')) {
-            exports.removeProperty(seq, 'sequentProcessed');
+        if ((0, exports.getProperty)(seq, 'sequentProcessed')) {
+            (0, exports.removeProperty)(seq, 'sequentProcessed');
             continue;
         }
         var collect = [];
         var inf = getParentInf(seq);
-        if (exports.getProperty(inf, 'inference') !== 1) {
+        if ((0, exports.getProperty)(inf, 'inference') !== 1) {
             continue;
         }
         collect.push(seq);
-        while (exports.getProperty(inf, 'inference') === 1) {
+        while ((0, exports.getProperty)(inf, 'inference') === 1) {
             inf = getRule(inf);
-            var premise = firstPremise(getPremises(inf, exports.getProperty(inf, 'inferenceRule')));
-            var sequent = (exports.getProperty(premise, 'inferenceRule')) ?
-                getConclusion(premise, exports.getProperty(premise, 'inferenceRule')) :
+            var premise = firstPremise(getPremises(inf, (0, exports.getProperty)(inf, 'inferenceRule')));
+            var sequent = ((0, exports.getProperty)(premise, 'inferenceRule')) ?
+                getConclusion(premise, (0, exports.getProperty)(premise, 'inferenceRule')) :
                 premise;
-            if (exports.getProperty(sequent, 'sequent')) {
+            if ((0, exports.getProperty)(sequent, 'sequent')) {
                 seq = sequent.childNodes[0];
                 collect.push(seq);
-                exports.setProperty(seq, 'sequentProcessed', true);
+                (0, exports.setProperty)(seq, 'sequentProcessed', true);
             }
             inf = premise;
         }
@@ -197,14 +200,14 @@ var addSequentSpace = function (config, sequent, position, direction, width) {
     else {
         sequent.childNodes[position].appendChild(mspace);
     }
-    exports.setProperty(sequent.parent, 'sequentAdjust_' + direction, width);
+    (0, exports.setProperty)(sequent.parent, 'sequentAdjust_' + direction, width);
 };
 var adjustSequentPairwise = function (config, sequents) {
     var top = sequents.pop();
     while (sequents.length) {
         var bottom = sequents.pop();
         var _a = __read(compareSequents(top, bottom), 2), left = _a[0], right = _a[1];
-        if (exports.getProperty(top.parent, 'axiom')) {
+        if ((0, exports.getProperty)(top.parent, 'axiom')) {
             addSequentSpace(config, left < 0 ? top : bottom, 0, 'left', Math.abs(left));
             addSequentSpace(config, right < 0 ? top : bottom, 2, 'right', Math.abs(right));
         }
@@ -220,7 +223,7 @@ var compareSequents = function (top, bottom) {
     var dr = tr - br;
     return [dl, dr];
 };
-exports.balanceRules = function (arg) {
+var balanceRules = function (arg) {
     var e_1, _a;
     item = new arg.document.options.MathItem('', null, arg.math.display);
     var config = arg.data;
@@ -229,11 +232,11 @@ exports.balanceRules = function (arg) {
     try {
         for (var inferences_1 = __values(inferences), inferences_1_1 = inferences_1.next(); !inferences_1_1.done; inferences_1_1 = inferences_1.next()) {
             var inf = inferences_1_1.value;
-            var isProof = exports.getProperty(inf, 'proof');
+            var isProof = (0, exports.getProperty)(inf, 'proof');
             var rule = getRule(inf);
-            var premises = getPremises(rule, exports.getProperty(rule, 'inferenceRule'));
+            var premises = getPremises(rule, (0, exports.getProperty)(rule, 'inferenceRule'));
             var premiseF = firstPremise(premises);
-            if (exports.getProperty(premiseF, 'inference')) {
+            if ((0, exports.getProperty)(premiseF, 'inference')) {
                 var adjust_1 = adjustValue(premiseF);
                 if (adjust_1) {
                     addSpace(config, premiseF, -adjust_1);
@@ -242,19 +245,19 @@ exports.balanceRules = function (arg) {
                 }
             }
             var premiseL = lastPremise(premises);
-            if (exports.getProperty(premiseL, 'inference') == null) {
+            if ((0, exports.getProperty)(premiseL, 'inference') == null) {
                 continue;
             }
             var adjust = adjustValue(premiseL, true);
             addSpace(config, premiseL, -adjust, true);
             var w = getSpaces(inf, rule, true);
-            var maxAdjust = exports.getProperty(inf, 'maxAdjust');
+            var maxAdjust = (0, exports.getProperty)(inf, 'maxAdjust');
             if (maxAdjust != null) {
                 adjust = Math.max(adjust, maxAdjust);
             }
             var column = void 0;
             if (isProof || !(column = getColumn(inf))) {
-                addSpace(config, exports.getProperty(inf, 'proof') ? inf : inf.parent, adjust - w, true);
+                addSpace(config, (0, exports.getProperty)(inf, 'proof') ? inf : inf.parent, adjust - w, true);
                 continue;
             }
             var sibling = nextSibling(column);
@@ -268,9 +271,9 @@ exports.balanceRules = function (arg) {
             if (!parentRule) {
                 continue;
             }
-            adjust = exports.getProperty(parentRule, 'maxAdjust') ?
-                Math.max(exports.getProperty(parentRule, 'maxAdjust'), adjust) : adjust;
-            exports.setProperty(parentRule, 'maxAdjust', adjust);
+            adjust = (0, exports.getProperty)(parentRule, 'maxAdjust') ?
+                Math.max((0, exports.getProperty)(parentRule, 'maxAdjust'), adjust) : adjust;
+            (0, exports.setProperty)(parentRule, 'maxAdjust', adjust);
         }
     }
     catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -281,20 +284,24 @@ exports.balanceRules = function (arg) {
         finally { if (e_1) throw e_1.error; }
     }
 };
+exports.balanceRules = balanceRules;
 var property_prefix = 'bspr_';
 var blacklistedProperties = (_a = {},
     _a[property_prefix + 'maxAdjust'] = true,
     _a);
-exports.setProperty = function (node, property, value) {
+var setProperty = function (node, property, value) {
     NodeUtil_js_1.default.setProperty(node, property_prefix + property, value);
 };
-exports.getProperty = function (node, property) {
+exports.setProperty = setProperty;
+var getProperty = function (node, property) {
     return NodeUtil_js_1.default.getProperty(node, property_prefix + property);
 };
-exports.removeProperty = function (node, property) {
+exports.getProperty = getProperty;
+var removeProperty = function (node, property) {
     node.removeProperty(property_prefix + property);
 };
-exports.makeBsprAttributes = function (arg) {
+exports.removeProperty = removeProperty;
+var makeBsprAttributes = function (arg) {
     arg.data.root.walkTree(function (mml, _data) {
         var attr = [];
         mml.getPropertyNames().forEach(function (x) {
@@ -307,12 +314,16 @@ exports.makeBsprAttributes = function (arg) {
         }
     });
 };
-exports.saveDocument = function (arg) {
+exports.makeBsprAttributes = makeBsprAttributes;
+var saveDocument = function (arg) {
     doc = arg.document;
     if (!('getBBox' in doc.outputJax)) {
         throw Error('The bussproofs extension requires an output jax with a getBBox() method');
     }
 };
-exports.clearDocument = function (_arg) {
+exports.saveDocument = saveDocument;
+var clearDocument = function (_arg) {
     doc = null;
 };
+exports.clearDocument = clearDocument;
+//# sourceMappingURL=BussproofsUtil.js.map

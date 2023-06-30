@@ -10,12 +10,10 @@ export declare type CHTMLConstructor<N, T, D> = Constructor<CHTMLWrapper<N, T, D
 export interface CHTMLWrapperClass extends AnyWrapperClass {
     kind: string;
     autoStyle: boolean;
-    used: boolean;
 }
 export declare class CHTMLWrapper<N, T, D> extends CommonWrapper<CHTML<N, T, D>, CHTMLWrapper<N, T, D>, CHTMLWrapperClass, CHTMLCharOptions, CHTMLDelimiterData, CHTMLFontData> {
     static kind: string;
     static autoStyle: boolean;
-    static used: boolean;
     protected factory: CHTMLWrapperFactory<N, T, D>;
     parent: CHTMLWrapper<N, T, D>;
     childNodes: CHTMLWrapper<N, T, D>[];

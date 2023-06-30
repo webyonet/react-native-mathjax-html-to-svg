@@ -1,15 +1,19 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.textBase = void 0;
+exports.TextMacrosConfiguration = exports.TextBaseConfiguration = void 0;
 var Configuration_js_1 = require("../Configuration.js");
-var ParseOptions_js_1 = require("../ParseOptions.js");
+var ParseOptions_js_1 = __importDefault(require("../ParseOptions.js"));
 var Tags_js_1 = require("../Tags.js");
 var BaseItems_js_1 = require("../base/BaseItems.js");
 var TextParser_js_1 = require("./TextParser.js");
 var TextMacrosMethods_js_1 = require("./TextMacrosMethods.js");
 require("./TextMacrosMappings.js");
-exports.textBase = Configuration_js_1.Configuration.local({
+exports.TextBaseConfiguration = Configuration_js_1.Configuration.create('text-base', {
+    parser: 'text',
     handler: {
         character: ['command', 'text-special'],
         macro: ['text-macros']
@@ -24,7 +28,7 @@ exports.textBase = Configuration_js_1.Configuration.local({
             if (macro && macro._func !== TextMacrosMethods_js_1.TextMacrosMethods.Macro) {
                 parser.Error('MathMacro', '%1 is only supported in math mode', '\\' + name);
             }
-            texParser.parse('macro', [macro ? parser : texParser, name]);
+            texParser.parse('macro', [parser, name]);
         }
     },
     items: (_a = {},
@@ -41,10 +45,9 @@ function internalMath(parser, text, level, mathvariant) {
     }
     return [(new TextParser_js_1.TextParser(text, mathvariant ? { mathvariant: mathvariant } : {}, config.parseOptions, level)).mml()];
 }
-Configuration_js_1.Configuration.create('textmacros', {
+exports.TextMacrosConfiguration = Configuration_js_1.Configuration.create('textmacros', {
     config: function (_config, jax) {
-        var textConf = new Configuration_js_1.ParserConfiguration([]);
-        textConf.append(exports.textBase);
+        var textConf = new Configuration_js_1.ParserConfiguration(jax.parseOptions.options.textmacros.packages, ['tex', 'text']);
         textConf.init();
         var parseOptions = new ParseOptions_js_1.default(textConf, []);
         parseOptions.options = jax.parseOptions.options;
@@ -59,5 +62,11 @@ Configuration_js_1.Configuration.create('textmacros', {
     preprocessors: [function (data) {
             var config = data.data.packageData.get('textmacros');
             config.parseOptions.nodeFactory.setMmlFactory(config.jax.mmlFactory);
-        }]
+        }],
+    options: {
+        textmacros: {
+            packages: ['text-base']
+        }
+    }
 });
+//# sourceMappingURL=TextMacrosConfiguration.js.map

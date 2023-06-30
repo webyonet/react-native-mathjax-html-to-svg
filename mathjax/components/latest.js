@@ -285,3 +285,4 @@ function loadLatest() {
     }
 }
 exports.loadLatest = loadLatest;
+//# sourceMappingURL=latest.js.map

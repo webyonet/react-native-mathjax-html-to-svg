@@ -1,11 +1,11 @@
-import { CHTMLWrapper } from '../Wrapper.js';
+import { CHTMLWrapper, CHTMLConstructor } from '../Wrapper.js';
 import { EventHandler } from '../../common/Wrappers/maction.js';
 import { StyleList } from '../../../util/StyleList.js';
-declare const CHTMLmaction_base: import("mathjax-full/ts/output/common/Wrapper").Constructor<import("mathjax-full/ts/output/common/Wrappers/maction").CommonMaction<CHTMLWrapper<any, any, any>>> & import("mathjax-full/ts/output/common/Wrapper").Constructor<CHTMLWrapper<any, any, any>>;
+declare const CHTMLmaction_base: import("../../common/Wrappers/maction.js").MactionConstructor<CHTMLWrapper<any, any, any>> & CHTMLConstructor<any, any, any>;
 export declare class CHTMLmaction<N, T, D> extends CHTMLmaction_base {
     static kind: string;
     static styles: StyleList;
-    static actions: Map<string, [import("mathjax-full/ts/output/common/Wrappers/maction").ActionHandler<CHTMLmaction<any, any, any>>, import("mathjax-full/ts/output/common/Wrappers/maction").ActionData]>;
+    static actions: Map<string, [import("../../common/Wrappers/maction.js").ActionHandler<CHTMLmaction<any, any, any>>, import("../../common/Wrappers/maction.js").ActionData]>;
     toCHTML(parent: N): void;
     setEventHandler(type: string, handler: EventHandler): void;
 }

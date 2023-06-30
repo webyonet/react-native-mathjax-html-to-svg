@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -62,7 +64,7 @@ var HTMLDocument = (function (_super) {
     __extends(HTMLDocument, _super);
     function HTMLDocument(document, adaptor, options) {
         var _this = this;
-        var _a = __read(Options_js_1.separateOptions(options, HTMLDomStrings_js_1.HTMLDomStrings.OPTIONS), 2), html = _a[0], dom = _a[1];
+        var _a = __read((0, Options_js_1.separateOptions)(options, HTMLDomStrings_js_1.HTMLDomStrings.OPTIONS), 2), html = _a[0], dom = _a[1];
         _this = _super.call(this, document, adaptor, html) || this;
         _this.domStrings = _this.options['DomStrings'] || new HTMLDomStrings_js_1.HTMLDomStrings(dom);
         _this.domStrings.adaptor = adaptor;
@@ -101,7 +103,7 @@ var HTMLDocument = (function (_super) {
         var e_2, _a, e_3, _b, _c, e_4, _d, e_5, _e;
         if (!this.processed.isSet('findMath')) {
             this.adaptor.document = this.document;
-            options = Options_js_1.userOptions({ elements: this.options.elements || [this.adaptor.body(this.document)] }, options);
+            options = (0, Options_js_1.userOptions)({ elements: this.options.elements || [this.adaptor.body(this.document)] }, options);
             try {
                 for (var _f = __values(this.adaptor.getElements(options['elements'], this.document)), _g = _f.next(); !_g.done; _g = _f.next()) {
                     var container = _g.value;
@@ -185,14 +187,15 @@ var HTMLDocument = (function (_super) {
     };
     HTMLDocument.prototype.addStyleSheet = function () {
         var sheet = this.documentStyleSheet();
-        if (sheet) {
-            var head = this.adaptor.head(this.document);
-            var styles = this.findSheet(head, this.adaptor.getAttribute(sheet, 'id'));
+        var adaptor = this.adaptor;
+        if (sheet && !adaptor.parent(sheet)) {
+            var head = adaptor.head(this.document);
+            var styles = this.findSheet(head, adaptor.getAttribute(sheet, 'id'));
             if (styles) {
-                this.adaptor.replace(sheet, styles);
+                adaptor.replace(sheet, styles);
             }
             else {
-                this.adaptor.append(head, sheet);
+                adaptor.append(head, sheet);
             }
         }
     };
@@ -253,7 +256,8 @@ var HTMLDocument = (function (_super) {
         return this.styles;
     };
     HTMLDocument.KIND = 'HTML';
-    HTMLDocument.OPTIONS = __assign(__assign({}, MathDocument_js_1.AbstractMathDocument.OPTIONS), { renderActions: Options_js_1.expandable(__assign(__assign({}, MathDocument_js_1.AbstractMathDocument.OPTIONS.renderActions), { styles: [MathItem_js_1.STATE.INSERTED + 1, '', 'updateStyleSheet', false] })), MathList: HTMLMathList_js_1.HTMLMathList, MathItem: HTMLMathItem_js_1.HTMLMathItem, DomStrings: null });
+    HTMLDocument.OPTIONS = __assign(__assign({}, MathDocument_js_1.AbstractMathDocument.OPTIONS), { renderActions: (0, Options_js_1.expandable)(__assign(__assign({}, MathDocument_js_1.AbstractMathDocument.OPTIONS.renderActions), { styles: [MathItem_js_1.STATE.INSERTED + 1, '', 'updateStyleSheet', false] })), MathList: HTMLMathList_js_1.HTMLMathList, MathItem: HTMLMathItem_js_1.HTMLMathItem, DomStrings: null });
     return HTMLDocument;
 }(MathDocument_js_1.AbstractMathDocument));
 exports.HTMLDocument = HTMLDocument;
+//# sourceMappingURL=HTMLDocument.js.map

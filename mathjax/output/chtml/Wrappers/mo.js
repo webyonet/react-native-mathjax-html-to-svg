@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -28,7 +30,6 @@ exports.CHTMLmo = void 0;
 var Wrapper_js_1 = require("../Wrapper.js");
 var mo_js_1 = require("../../common/Wrappers/mo.js");
 var mo_js_2 = require("../../../core/MmlTree/MmlNodes/mo.js");
-var BBox_js_1 = require("../../../util/BBox.js");
 var CHTMLmo = (function (_super) {
     __extends(CHTMLmo, _super);
     function CHTMLmo() {
@@ -43,20 +44,19 @@ var CHTMLmo = (function (_super) {
             this.getStretchedVariant([]);
         }
         var chtml = this.standardCHTMLnode(parent);
-        if (this.noIC) {
-            this.adaptor.setAttribute(chtml, 'noIC', 'true');
-        }
         if (stretchy && this.size < 0) {
             this.stretchHTML(chtml);
         }
         else {
             if (symmetric || attributes.get('largeop')) {
-                var bbox = BBox_js_1.BBox.empty();
-                _super.prototype.computeBBox.call(this, bbox);
-                var u = this.em((bbox.d - bbox.h) / 2 + this.font.params.axis_height);
+                var u = this.em(this.getCenterOffset());
                 if (u !== '0') {
                     this.adaptor.setStyle(chtml, 'verticalAlign', u);
                 }
+            }
+            if (this.node.getProperty('mathaccent')) {
+                this.adaptor.setStyle(chtml, 'width', '0');
+                this.adaptor.setStyle(chtml, 'margin-left', this.em(this.getAccentOffset()));
             }
             try {
                 for (var _b = __values(this.childNodes), _c = _b.next(); !_c.done; _c = _b.next()) {
@@ -75,8 +75,9 @@ var CHTMLmo = (function (_super) {
     };
     CHTMLmo.prototype.stretchHTML = function (chtml) {
         var c = this.getText().codePointAt(0);
+        this.font.delimUsage.add(c);
+        this.childNodes[0].markUsed();
         var delim = this.stretch;
-        delim.used = true;
         var stretch = delim.stretch;
         var content = [];
         if (stretch[0]) {
@@ -120,11 +121,11 @@ var CHTMLmo = (function (_super) {
         },
         'mjx-stretchy-h > * > mjx-c::before': {
             display: 'inline-block',
-            padding: '.001em 0',
             width: 'initial'
         },
         'mjx-stretchy-h > mjx-ext': {
-            overflow: 'hidden',
+            '/* IE */ overflow': 'hidden',
+            '/* others */ overflow': 'clip visible',
             width: '100%'
         },
         'mjx-stretchy-h > mjx-ext > mjx-c::before': {
@@ -161,13 +162,15 @@ var CHTMLmo = (function (_super) {
             height: '100%',
             'box-sizing': 'border-box',
             border: '0px solid transparent',
-            overflow: 'hidden'
+            '/* IE */ overflow': 'hidden',
+            '/* others */ overflow': 'visible clip',
         },
         'mjx-stretchy-v > mjx-ext > mjx-c::before': {
-            width: 'initial'
+            width: 'initial',
+            'box-sizing': 'border-box'
         },
         'mjx-stretchy-v > mjx-ext > mjx-c': {
-            transform: 'scaleY(500) translateY(.1em)',
+            transform: 'scaleY(500) translateY(.075em)',
             overflow: 'visible'
         },
         'mjx-mark': {
@@ -176,5 +179,6 @@ var CHTMLmo = (function (_super) {
         }
     };
     return CHTMLmo;
-}(mo_js_1.CommonMoMixin(Wrapper_js_1.CHTMLWrapper)));
+}((0, mo_js_1.CommonMoMixin)(Wrapper_js_1.CHTMLWrapper)));
 exports.CHTMLmo = CHTMLmo;
+//# sourceMappingURL=mo.js.map

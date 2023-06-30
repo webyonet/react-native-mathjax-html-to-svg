@@ -21,3 +21,4 @@ exports.ColorV2Methods = {
 };
 new SymbolMap_js_1.CommandMap('colorv2', { color: 'Color' }, exports.ColorV2Methods);
 exports.ColorConfiguration = Configuration_js_1.Configuration.create('colorv2', { handler: { macro: ['colorv2'] } });
+//# sourceMappingURL=ColorV2Configuration.js.map

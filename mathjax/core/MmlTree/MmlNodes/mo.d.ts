@@ -1,13 +1,18 @@
 import { PropertyList } from '../../Tree/Node.js';
 import { AbstractMmlTokenNode, MmlNode, AttributeList } from '../MmlNode.js';
-import { OperatorList, RangeDef } from '../OperatorDictionary.js';
+import { OperatorList } from '../OperatorDictionary.js';
 export declare class MmlMo extends AbstractMmlTokenNode {
     static defaults: PropertyList;
-    static RANGES: RangeDef[];
     static MMLSPACING: number[][];
     static OPTABLE: {
         [form: string]: OperatorList;
     };
+    static pseudoScripts: RegExp;
+    protected static primes: RegExp;
+    protected static remapPrimes: {
+        [n: number]: number;
+    };
+    protected static mathaccents: RegExp;
     _texClass: number;
     get texClass(): number;
     set texClass(value: number);
@@ -23,7 +28,10 @@ export declare class MmlMo extends AbstractMmlTokenNode {
     setTeXclass(prev: MmlNode): MmlNode;
     adjustTeXclass(prev: MmlNode): MmlNode;
     setInheritedAttributes(attributes?: AttributeList, display?: boolean, level?: number, prime?: boolean): void;
+    protected checkOperatorTable(mo: string): void;
     getForms(): [string, string, string];
     protected handleExplicitForm(forms: string[]): string[];
-    protected getRange(mo: string): RangeDef;
+    protected checkPseudoScripts(mo: string): void;
+    protected checkPrimes(mo: string): void;
+    protected checkMathAccent(mo: string): void;
 }

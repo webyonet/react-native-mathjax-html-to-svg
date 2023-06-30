@@ -15,9 +15,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
@@ -30,9 +35,12 @@ var __values = (this && this.__values) || function(o) {
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AbstractExplorer = void 0;
-require("../sre.js");
+var sre_js_1 = __importDefault(require("../sre.js"));
 var AbstractExplorer = (function () {
     function AbstractExplorer(document, region, node) {
         var _rest = [];
@@ -67,7 +75,7 @@ var AbstractExplorer = (function () {
         for (var _i = 3; _i < arguments.length; _i++) {
             rest[_i - 3] = arguments[_i];
         }
-        var explorer = new (this.bind.apply(this, __spread([void 0, document, region, node], rest)))();
+        var explorer = new (this.bind.apply(this, __spreadArray([void 0, document, region, node], __read(rest), false)))();
         return explorer;
     };
     AbstractExplorer.prototype.Events = function () {
@@ -141,7 +149,7 @@ var AbstractExplorer = (function () {
             alpha: opts.foregroundOpacity / 100 };
         var background = { color: opts.backgroundColor.toLowerCase(),
             alpha: opts.backgroundOpacity / 100 };
-        return sre.HighlighterFactory.highlighter(background, foreground, { renderer: this.document.outputJax.name, browser: 'v3' });
+        return sre_js_1.default.getHighlighter(background, foreground, { renderer: this.document.outputJax.name, browser: 'v3' });
     };
     AbstractExplorer.prototype.stopEvent = function (event) {
         if (this.stoppable) {
@@ -151,3 +159,4 @@ var AbstractExplorer = (function () {
     return AbstractExplorer;
 }());
 exports.AbstractExplorer = AbstractExplorer;
+//# sourceMappingURL=Explorer.js.map

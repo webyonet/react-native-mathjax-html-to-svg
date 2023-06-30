@@ -111,14 +111,14 @@ var Safe = (function () {
         classPattern: /^mjx-[-a-zA-Z0-9_.]+$/,
         idPattern: /^mjx-[-a-zA-Z0-9_.]+$/,
         dataPattern: /^data-mjx-/,
-        safeProtocols: Options_js_1.expandable({
+        safeProtocols: (0, Options_js_1.expandable)({
             http: true,
             https: true,
             file: true,
             javascript: false,
             data: false
         }),
-        safeStyles: Options_js_1.expandable({
+        safeStyles: (0, Options_js_1.expandable)({
             color: true,
             backgroundColor: true,
             border: true,
@@ -133,13 +133,13 @@ var Safe = (function () {
             opacity: true,
             outline: true
         }),
-        styleParts: Options_js_1.expandable({
+        styleParts: (0, Options_js_1.expandable)({
             border: true,
             padding: true,
             margin: true,
             outline: true
         }),
-        styleLengths: Options_js_1.expandable({
+        styleLengths: (0, Options_js_1.expandable)({
             borderTop: 'borderTopWidth',
             borderRight: 'borderRightWidth',
             borderBottom: 'borderBottomWidth',
@@ -162,3 +162,4 @@ var Safe = (function () {
     return Safe;
 }());
 exports.Safe = Safe;
+//# sourceMappingURL=safe.js.map

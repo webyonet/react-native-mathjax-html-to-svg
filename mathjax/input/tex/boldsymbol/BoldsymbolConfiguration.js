@@ -10,10 +10,13 @@ var __values = (this && this.__values) || function(o) {
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BoldsymbolConfiguration = exports.rewriteBoldTokens = exports.createBoldToken = exports.BoldsymbolMethods = void 0;
 var Configuration_js_1 = require("../Configuration.js");
-var NodeUtil_js_1 = require("../NodeUtil.js");
+var NodeUtil_js_1 = __importDefault(require("../NodeUtil.js"));
 var TexConstants_js_1 = require("../TexConstants.js");
 var SymbolMap_js_1 = require("../SymbolMap.js");
 var NodeFactory_js_1 = require("../NodeFactory.js");
@@ -25,6 +28,7 @@ BOLDVARIANT[TexConstants_js_1.TexConstant.Variant.SCRIPT] = TexConstants_js_1.Te
 BOLDVARIANT[TexConstants_js_1.TexConstant.Variant.SANSSERIF] = TexConstants_js_1.TexConstant.Variant.BOLDSANSSERIF;
 BOLDVARIANT['-tex-calligraphic'] = '-tex-bold-calligraphic';
 BOLDVARIANT['-tex-oldstyle'] = '-tex-bold-oldstyle';
+BOLDVARIANT['-tex-mathit'] = TexConstants_js_1.TexConstant.Variant.BOLDITALIC;
 exports.BoldsymbolMethods = {};
 exports.BoldsymbolMethods.Boldsymbol = function (parser, name) {
     var boldsymbol = parser.stack.env['boldsymbol'];
@@ -75,3 +79,4 @@ exports.BoldsymbolConfiguration = Configuration_js_1.Configuration.create('bolds
     nodes: { 'token': createBoldToken },
     postprocessors: [rewriteBoldTokens]
 });
+//# sourceMappingURL=BoldsymbolConfiguration.js.map

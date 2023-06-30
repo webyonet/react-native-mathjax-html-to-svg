@@ -10,6 +10,29 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
@@ -25,12 +48,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MathMLCompile = void 0;
 var MmlNode_js_1 = require("../../core/MmlTree/MmlNode.js");
 var Options_js_1 = require("../../util/Options.js");
-var Entities = require("../../util/Entities.js");
+var Entities = __importStar(require("../../util/Entities.js"));
 var MathMLCompile = (function () {
     function MathMLCompile(options) {
         if (options === void 0) { options = {}; }
         var Class = this.constructor;
-        this.options = Options_js_1.userOptions(Options_js_1.defaultOptions({}, Class.OPTIONS), options);
+        this.options = (0, Options_js_1.userOptions)((0, Options_js_1.defaultOptions)({}, Class.OPTIONS), options);
     }
     MathMLCompile.prototype.setMmlFactory = function (mmlFactory) {
         this.factory = mmlFactory;
@@ -55,7 +78,7 @@ var MathMLCompile = (function () {
         try {
             for (var _b = __values(this.filterClassList(adaptor.allClasses(node))), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var name_1 = _c.value;
-                if (name_1.match(/^MJX-TeXAtom-/)) {
+                if (name_1.match(/^MJX-TeXAtom-/) && kind === 'mrow') {
                     texClass = name_1.substr(12);
                     type = 'TeXAtom';
                 }
@@ -73,10 +96,11 @@ var MathMLCompile = (function () {
         }
         this.factory.getNodeClass(type) || this.error('Unknown node type "' + type + '"');
         var mml = this.factory.create(type);
-        if (type === 'TeXAtom') {
-            this.texAtom(mml, texClass, limits);
+        if (type === 'TeXAtom' && texClass === 'OP' && !limits) {
+            mml.setProperty('movesupsub', true);
+            mml.attributes.setInherited('movablelimits', true);
         }
-        else if (texClass) {
+        if (texClass) {
             mml.texClass = MmlNode_js_1.TEXCLASS[texClass];
             mml.setProperty('texClass', mml.texClass);
         }
@@ -93,16 +117,31 @@ var MathMLCompile = (function () {
                 var attr = _c.value;
                 var name_2 = attr.name;
                 var value = this.filterAttribute(name_2, attr.value);
-                if (value === null) {
-                    return;
+                if (value === null || name_2 === 'xmlns') {
+                    continue;
                 }
                 if (name_2.substr(0, 9) === 'data-mjx-') {
-                    if (name_2 === 'data-mjx-alternate') {
-                        mml.setProperty('variantForm', true);
-                    }
-                    else if (name_2 === 'data-mjx-variant') {
-                        mml.attributes.set('mathvariant', value);
-                        ignoreVariant = true;
+                    switch (name_2.substr(9)) {
+                        case 'alternate':
+                            mml.setProperty('variantForm', true);
+                            break;
+                        case 'variant':
+                            mml.attributes.set('mathvariant', value);
+                            ignoreVariant = true;
+                            break;
+                        case 'smallmatrix':
+                            mml.setProperty('scriptlevel', 1);
+                            mml.setProperty('useHeight', false);
+                            break;
+                        case 'accent':
+                            mml.setProperty('mathaccent', value === 'true');
+                            break;
+                        case 'auto-op':
+                            mml.setProperty('autoOP', value === 'true');
+                            break;
+                        case 'script-align':
+                            mml.setProperty('scriptalign', value);
+                            break;
                     }
                 }
                 else if (name_2 !== 'class') {
@@ -216,20 +255,12 @@ var MathMLCompile = (function () {
     MathMLCompile.prototype.fixCalligraphic = function (variant) {
         return variant.replace(/caligraphic/, 'calligraphic');
     };
-    MathMLCompile.prototype.texAtom = function (mml, texClass, limits) {
-        mml.texClass = MmlNode_js_1.TEXCLASS[texClass];
-        mml.setProperty('texClass', mml.texClass);
-        if (texClass === 'OP' && !limits) {
-            mml.setProperty('movesupsub', true);
-            mml.attributes.setInherited('movablelimits', true);
-        }
-    };
     MathMLCompile.prototype.markMrows = function (mml) {
         if (mml.isKind('mrow') && !mml.isInferred && mml.childNodes.length >= 2) {
             var first = mml.childNodes[0];
             var last = mml.childNodes[mml.childNodes.length - 1];
-            if (first.isKind('mo') && first.attributes.get('fence') &&
-                last.isKind('mo') && last.attributes.get('fence')) {
+            if (first.isKind('mo') && first.attributes.get('fence') && first.attributes.get('stretchy') &&
+                last.isKind('mo') && last.attributes.get('fence') && last.attributes.get('stretchy')) {
                 if (first.childNodes.length) {
                     mml.setProperty('open', first.getText());
                 }
@@ -257,3 +288,4 @@ var MathMLCompile = (function () {
     return MathMLCompile;
 }());
 exports.MathMLCompile = MathMLCompile;
+//# sourceMappingURL=MathMLCompile.js.map

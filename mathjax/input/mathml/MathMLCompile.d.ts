@@ -18,7 +18,6 @@ export declare class MathMLCompile<N, T, D> {
     protected addText(mml: MmlNode, child: N): void;
     protected checkClass(mml: MmlNode, node: N): void;
     protected fixCalligraphic(variant: string): string;
-    protected texAtom(mml: MmlNode, texClass: string, limits: boolean): void;
     protected markMrows(mml: MmlNode): void;
     protected trimSpace(text: string): string;
     protected error(message: string): void;

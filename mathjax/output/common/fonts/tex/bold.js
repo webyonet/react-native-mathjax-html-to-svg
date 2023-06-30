@@ -258,3 +258,4 @@ exports.bold = {
     0x3008: [.75, .249, .447],
     0x3009: [.75, .249, .447],
 };
+//# sourceMappingURL=bold.js.map

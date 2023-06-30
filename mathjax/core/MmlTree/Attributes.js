@@ -104,3 +104,4 @@ var Attributes = (function () {
     return Attributes;
 }());
 exports.Attributes = Attributes;
+//# sourceMappingURL=Attributes.js.map

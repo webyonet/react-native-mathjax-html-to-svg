@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -24,6 +26,10 @@ var SVGmglyph = (function (_super) {
     }
     SVGmglyph.prototype.toSVG = function (parent) {
         var svg = this.standardSVGnode(parent);
+        if (this.charWrapper) {
+            this.charWrapper.toSVG(svg);
+            return;
+        }
         var _a = this.node.attributes.getList('src', 'alt'), src = _a.src, alt = _a.alt;
         var h = this.fixed(this.height);
         var w = this.fixed(this.width);
@@ -32,7 +38,7 @@ var SVGmglyph = (function (_super) {
             width: w, height: h,
             transform: 'translate(0 ' + y + ') matrix(1 0 0 -1 0 0)',
             preserveAspectRatio: 'none',
-            alt: alt, title: alt,
+            'aria-label': alt,
             href: src
         };
         var img = this.svg('image', properties);
@@ -40,5 +46,6 @@ var SVGmglyph = (function (_super) {
     };
     SVGmglyph.kind = mglyph_js_2.MmlMglyph.prototype.kind;
     return SVGmglyph;
-}(mglyph_js_1.CommonMglyphMixin(Wrapper_js_1.SVGWrapper)));
+}((0, mglyph_js_1.CommonMglyphMixin)(Wrapper_js_1.SVGWrapper)));
 exports.SVGmglyph = SVGmglyph;
+//# sourceMappingURL=mglyph.js.map

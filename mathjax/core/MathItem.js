@@ -117,3 +117,4 @@ function newState(name, state) {
     exports.STATE[name] = state;
 }
 exports.newState = newState;
+//# sourceMappingURL=MathItem.js.map

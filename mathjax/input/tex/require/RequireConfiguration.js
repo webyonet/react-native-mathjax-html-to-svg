@@ -26,15 +26,23 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RequireConfiguration = exports.options = exports.RequireMethods = exports.RequireLoad = void 0;
 var Configuration_js_1 = require("../Configuration.js");
 var SymbolMap_js_1 = require("../SymbolMap.js");
-var TexError_js_1 = require("../TexError.js");
+var TexError_js_1 = __importDefault(require("../TexError.js"));
 var global_js_1 = require("../../../components/global.js");
 var package_js_1 = require("../../../components/package.js");
 var loader_js_1 = require("../../../components/loader.js");
@@ -55,7 +63,7 @@ function RegisterExtension(jax, name) {
             if (handler.options && Object.keys(handler.options).length === 1 && handler.options[extension]) {
                 options_1 = (_a = {}, _a[extension] = options_1, _a);
             }
-            jax.configuration.add(handler, jax, options_1);
+            jax.configuration.add(extension, jax, options_1);
             var configured = jax.parseOptions.packageData.get('require').configured;
             if (handler.preprocessors.length && !configured.has(extension)) {
                 configured.set(extension, true);
@@ -91,7 +99,7 @@ function RequireLoad(parser, name) {
     var allowed = (allow.hasOwnProperty(extension) ? allow[extension] :
         allow.hasOwnProperty(name) ? allow[name] : options.defaultAllow);
     if (!allowed) {
-        throw new TexError_js_1.default('BadRequire', 'Extension "%1" is now allowed to be loaded', extension);
+        throw new TexError_js_1.default('BadRequire', 'Extension "%1" is not allowed to be loaded', extension);
     }
     if (package_js_1.Package.packages.has(extension)) {
         RegisterExtension(parser.configuration.packageData.get('require').jax, extension);
@@ -104,7 +112,7 @@ exports.RequireLoad = RequireLoad;
 function config(_config, jax) {
     jax.parseOptions.packageData.set('require', {
         jax: jax,
-        required: __spread(jax.options.packages),
+        required: __spreadArray([], __read(jax.options.packages), false),
         configured: new Map()
     });
     var options = jax.parseOptions.options.require;
@@ -128,9 +136,13 @@ exports.RequireMethods = {
 };
 exports.options = {
     require: {
-        allow: Options_js_1.expandable({
+        allow: (0, Options_js_1.expandable)({
             base: false,
-            'all-packages': false
+            'all-packages': false,
+            autoload: false,
+            configmacros: false,
+            tagformat: false,
+            setoptions: false
         }),
         defaultAllow: true,
         prefix: 'tex'
@@ -138,3 +150,4 @@ exports.options = {
 };
 new SymbolMap_js_1.CommandMap('require', { require: 'Require' }, exports.RequireMethods);
 exports.RequireConfiguration = Configuration_js_1.Configuration.create('require', { handler: { macro: ['require'] }, config: config, options: exports.options });
+//# sourceMappingURL=RequireConfiguration.js.map

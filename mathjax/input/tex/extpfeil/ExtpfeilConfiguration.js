@@ -1,12 +1,15 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExtpfeilConfiguration = exports.ExtpfeilMethods = void 0;
 var Configuration_js_1 = require("../Configuration.js");
 var SymbolMap_js_1 = require("../SymbolMap.js");
 var AmsMethods_js_1 = require("../ams/AmsMethods.js");
-var NewcommandUtil_js_1 = require("../newcommand/NewcommandUtil.js");
+var NewcommandUtil_js_1 = __importDefault(require("../newcommand/NewcommandUtil.js"));
 var NewcommandConfiguration_js_1 = require("../newcommand/NewcommandConfiguration.js");
-var TexError_js_1 = require("../TexError.js");
+var TexError_js_1 = __importDefault(require("../TexError.js"));
 exports.ExtpfeilMethods = {};
 exports.ExtpfeilMethods.xArrow = AmsMethods_js_1.AmsMethods.xArrow;
 exports.ExtpfeilMethods.NewExtArrow = function (parser, name) {
@@ -41,3 +44,4 @@ exports.ExtpfeilConfiguration = Configuration_js_1.Configuration.create('extpfei
     handler: { macro: ['extpfeil'] },
     init: init
 });
+//# sourceMappingURL=ExtpfeilConfiguration.js.map

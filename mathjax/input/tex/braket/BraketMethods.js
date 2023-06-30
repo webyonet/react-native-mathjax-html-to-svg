@@ -1,8 +1,11 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var BaseMethods_js_1 = require("../base/BaseMethods.js");
+var BaseMethods_js_1 = __importDefault(require("../base/BaseMethods.js"));
 var MmlNode_js_1 = require("../../../core/MmlTree/MmlNode.js");
-var TexError_js_1 = require("../TexError.js");
+var TexError_js_1 = __importDefault(require("../TexError.js"));
 var BraketMethods = {};
 BraketMethods.Macro = BaseMethods_js_1.default.Macro;
 BraketMethods.Braket = function (parser, _name, open, close, stretchy, barmax) {
@@ -47,3 +50,4 @@ BraketMethods.Bar = function (parser, name) {
     parser.Push(node);
 };
 exports.default = BraketMethods;
+//# sourceMappingURL=BraketMethods.js.map

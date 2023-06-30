@@ -2,7 +2,7 @@ import { PropertyList } from '../../Tree/Node.js';
 import { MmlNode, AbstractMmlNode, AttributeList } from '../MmlNode.js';
 export declare class MmlMfenced extends AbstractMmlNode {
     static defaults: PropertyList;
-    texClass: number;
+    protected texclass: number;
     separators: MmlNode[];
     open: MmlNode;
     close: MmlNode;

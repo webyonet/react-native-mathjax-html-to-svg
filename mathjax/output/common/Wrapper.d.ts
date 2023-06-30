@@ -42,12 +42,13 @@ export declare class CommonWrapper<J extends CommonOutputJax<any, any, any, W, C
     stretch: DD;
     font: FD;
     get jax(): J;
-    get adaptor(): import("mathjax-full/ts/core/DOMAdaptor").DOMAdaptor<any, any, any>;
-    get metrics(): import("mathjax-full/ts/core/MathItem").Metrics;
+    get adaptor(): import("../../core/DOMAdaptor.js").DOMAdaptor<any, any, any>;
+    get metrics(): import("../../core/MathItem.js").Metrics;
     get fixesPWidth(): boolean;
     constructor(factory: CommonWrapperFactory<J, W, C, CC, DD, FD>, node: MmlNode, parent?: W);
     wrap(node: MmlNode, parent?: W): W;
     getBBox(save?: boolean): BBox;
+    getOuterBBox(save?: boolean): BBox;
     protected computeBBox(bbox: BBox, recompute?: boolean): void;
     setChildPWidths(recompute: boolean, w?: (number | null), clear?: boolean): boolean;
     invalidateBBox(): void;

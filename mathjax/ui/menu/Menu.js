@@ -1,4 +1,20 @@
 "use strict";
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
@@ -9,6 +25,9 @@ var __values = (this && this.__values) || function(o) {
         }
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Menu = void 0;
@@ -23,13 +42,14 @@ var info_js_1 = require("mj-context-menu/js/info.js");
 var parse_js_1 = require("mj-context-menu/js/parse.js");
 var item_rule_js_1 = require("mj-context-menu/js/item_rule.js");
 var css_util_js_1 = require("mj-context-menu/js/css_util.js");
+var sre_js_1 = __importDefault(require("../../a11y/sre.js"));
 var MathJax = global_js_1.MathJax;
 var isMac = (typeof window !== 'undefined' &&
     window.navigator && window.navigator.platform.substr(0, 3) === 'Mac');
 var Menu = (function () {
     function Menu(document, options) {
-        var _this = this;
         if (options === void 0) { options = {}; }
+        var _this = this;
         this.settings = null;
         this.defaultSettings = null;
         this.menu = null;
@@ -108,10 +128,11 @@ var Menu = (function () {
             return '<div style="font-size: ' + scale + '%">' + element.outerHTML + '</div>';
         }, '');
         this.document = document;
-        this.options = Options_js_1.userOptions(Options_js_1.defaultOptions({}, this.constructor.OPTIONS), options);
+        this.options = (0, Options_js_1.userOptions)((0, Options_js_1.defaultOptions)({}, this.constructor.OPTIONS), options);
         this.initSettings();
         this.mergeUserSettings();
         this.initMenu();
+        this.applySettings();
     }
     Object.defineProperty(Menu.prototype, "isLoading", {
         get: function () {
@@ -175,8 +196,12 @@ var Menu = (function () {
                 this.a11yVar('subtitles'),
                 this.a11yVar('braille'),
                 this.a11yVar('viewBraille'),
-                this.a11yVar('locale'),
-                this.a11yVar('speechRules'),
+                this.a11yVar('locale', function (value) { return sre_js_1.default.setupEngine({ locale: value }); }),
+                this.a11yVar('speechRules', function (value) {
+                    var _a = __read(value.split('-'), 2), domain = _a[0], style = _a[1];
+                    _this.document.options.sre.domain = domain;
+                    _this.document.options.sre.style = style;
+                }),
                 this.a11yVar('magnification'),
                 this.a11yVar('magnify'),
                 this.a11yVar('treeColoring'),
@@ -231,7 +256,7 @@ var Menu = (function () {
                     this.checkbox('Activate', 'Activate', 'explorer'),
                     this.submenu('Speech', 'Speech', [
                         this.checkbox('Speech', 'Speech Output', 'speech'),
-                        this.checkbox('Subtitles', 'Speech Subtities', 'subtitles'),
+                        this.checkbox('Subtitles', 'Speech Subtitles', 'subtitles'),
                         this.checkbox('Braille', 'Braille Output', 'braille'),
                         this.checkbox('View Braille', 'Braille Subtitles', 'viewBraille'),
                         this.rule(),
@@ -246,8 +271,8 @@ var Menu = (function () {
                             ['clearspeak-default', 'Auto']
                         ])),
                         this.submenu('ChromeVox', 'ChromeVox Rules', this.radioGroup('speechRules', [
-                            ['default-default', 'Standard'],
-                            ['default-alternative', 'Alternative']
+                            ['chromevox-default', 'Standard'],
+                            ['chromevox-alternative', 'Alternative']
                         ]))
                     ]),
                     this.submenu('Highlight', 'Highlight', [
@@ -417,7 +442,18 @@ var Menu = (function () {
     };
     Menu.prototype.getA11y = function (option) {
         if (MathJax._.a11y && MathJax._.a11y.explorer) {
-            return this.document.options.a11y[option];
+            if (this.document.options.a11y[option] !== undefined) {
+                return this.document.options.a11y[option];
+            }
+            return this.document.options.sre[option];
+        }
+    };
+    Menu.prototype.applySettings = function () {
+        this.setTabOrder(this.settings.inTabOrder);
+        this.document.options.enableAssistiveMml = this.settings.assistiveMml;
+        this.document.outputJax.options.scale = parseFloat(this.settings.scale);
+        if (this.settings.renderer !== this.defaultSettings.renderer) {
+            this.setRenderer(this.settings.renderer);
         }
     };
     Menu.prototype.setScale = function (scale) {
@@ -485,7 +521,7 @@ var Menu = (function () {
             if (percent.match(/^\s*\d+(\.\d*)?\s*%?\s*$/)) {
                 var scale_1 = parseFloat(percent) / 100;
                 if (scale_1) {
-                    this.setScale(String(scale_1));
+                    this.menu.pool.lookup('scale').setValue(String(scale_1));
                 }
                 else {
                     alert('The scale should not be zero');
@@ -570,9 +606,11 @@ var Menu = (function () {
             var document = _this.document;
             _this.document = startup.document = startup.getDocument();
             _this.document.menu = _this;
+            _this.document.outputJax.reset();
             _this.transferMathList(document);
             _this.document.processed = document.processed;
             if (!Menu._loadingPromise) {
+                _this.document.outputJax.reset();
                 _this.rerender(component === 'complexity' || noEnrich ? MathItem_js_1.STATE.COMPILED : MathItem_js_1.STATE.TYPESET);
             }
         });
@@ -625,6 +663,9 @@ var Menu = (function () {
         if (start === void 0) { start = MathItem_js_1.STATE.TYPESET; }
         this.rerenderStart = Math.min(start, this.rerenderStart);
         if (!Menu.loading) {
+            if (this.rerenderStart <= MathItem_js_1.STATE.COMPILED) {
+                this.document.reset({ inputJax: [] });
+            }
             this.document.rerender(this.rerenderStart);
             this.rerenderStart = MathItem_js_1.STATE.LAST;
         }
@@ -633,10 +674,10 @@ var Menu = (function () {
         this.copyToClipboard(this.toMML(this.menu.mathItem));
     };
     Menu.prototype.copyOriginal = function () {
-        this.copyToClipboard(this.menu.mathItem.math);
+        this.copyToClipboard(this.menu.mathItem.math.trim());
     };
     Menu.prototype.copyAnnotation = function () {
-        this.copyToClipboard(this.menu.annotation);
+        this.copyToClipboard(this.menu.annotation.trim());
     };
     Menu.prototype.copyToClipboard = function (text) {
         var input = document.createElement('textarea');
@@ -677,7 +718,7 @@ var Menu = (function () {
             }
         };
     };
-    Menu.prototype.a11yVar = function (name) {
+    Menu.prototype.a11yVar = function (name, action) {
         var _this = this;
         return {
             name: name,
@@ -687,6 +728,7 @@ var Menu = (function () {
                 var options = {};
                 options[name] = value;
                 _this.setA11y(options);
+                action && action(value);
                 _this.saveUserSettings();
             }
         };
@@ -761,7 +803,7 @@ var Menu = (function () {
             CHTML: null,
             SVG: null
         },
-        annotationTypes: Options_js_1.expandable({
+        annotationTypes: (0, Options_js_1.expandable)({
             TeX: ['TeX', 'LaTeX', 'application/x-tex'],
             StarMath: ['StarMath 5.0'],
             Maple: ['Maple'],
@@ -777,3 +819,4 @@ var Menu = (function () {
     return Menu;
 }());
 exports.Menu = Menu;
+//# sourceMappingURL=Menu.js.map

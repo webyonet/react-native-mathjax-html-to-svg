@@ -1,11 +1,14 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UnicodeConfiguration = exports.UnicodeMethods = void 0;
 var Configuration_js_1 = require("../Configuration.js");
-var TexError_js_1 = require("../TexError.js");
+var TexError_js_1 = __importDefault(require("../TexError.js"));
 var SymbolMap_js_1 = require("../SymbolMap.js");
-var ParseUtil_js_1 = require("../ParseUtil.js");
-var NodeUtil_js_1 = require("../NodeUtil.js");
+var ParseUtil_js_1 = __importDefault(require("../ParseUtil.js"));
+var NodeUtil_js_1 = __importDefault(require("../NodeUtil.js"));
 var Entities_js_1 = require("../../../util/Entities.js");
 exports.UnicodeMethods = {};
 var UnicodeCache = {};
@@ -54,9 +57,10 @@ exports.UnicodeMethods.Unicode = function (parser, name) {
     else if (variant) {
         def.mathvariant = variant;
     }
-    var node = parser.create('token', 'mtext', def, Entities_js_1.numeric(n));
+    var node = parser.create('token', 'mtext', def, (0, Entities_js_1.numeric)(n));
     NodeUtil_js_1.default.setProperty(node, 'unicode', true);
     parser.Push(node);
 };
 new SymbolMap_js_1.CommandMap('unicode', { unicode: 'Unicode' }, exports.UnicodeMethods);
 exports.UnicodeConfiguration = Configuration_js_1.Configuration.create('unicode', { handler: { macro: ['unicode'] } });
+//# sourceMappingURL=UnicodeConfiguration.js.map

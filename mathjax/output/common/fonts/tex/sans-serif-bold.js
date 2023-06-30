@@ -51,3 +51,4 @@ exports.sansSerifBold = {
     0x2044: [.75, .249, .55],
     0x2206: [.694, 0, .917],
 };
+//# sourceMappingURL=sans-serif-bold.js.map

@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.smallop = void 0;
 var FontData_js_1 = require("../../FontData.js");
 var smallop_js_1 = require("../../../common/fonts/tex/smallop.js");
-exports.smallop = FontData_js_1.AddPaths(smallop_js_1.smallop, {
+exports.smallop = (0, FontData_js_1.AddPaths)(smallop_js_1.smallop, {
     0x28: '152 251Q152 646 388 850H416Q422 844 422 841Q422 837 403 816T357 753T302 649T255 482T236 250Q236 124 255 19T301 -147T356 -251T403 -315T422 -340Q422 -343 416 -349H388Q359 -325 332 -296T271 -213T212 -97T170 56T152 251',
     0x29: '305 251Q305 -145 69 -349H56Q43 -349 39 -347T35 -338Q37 -333 60 -307T108 -239T160 -136T204 27T221 250T204 473T160 636T108 740T60 807T35 839Q35 850 50 850H56H69Q197 743 256 566Q305 425 305 251',
     0x2F: '481 838Q489 850 500 850Q508 850 515 844T522 827Q521 824 311 248T96 -337Q90 -349 77 -349Q68 -349 62 -343T55 -326Q56 -323 266 253T481 838',
@@ -56,3 +56,4 @@ exports.smallop = FontData_js_1.AddPaths(smallop_js_1.smallop, {
 }, {
     0x2A0C: "\u222C\u222C",
 });
+//# sourceMappingURL=smallop.js.map

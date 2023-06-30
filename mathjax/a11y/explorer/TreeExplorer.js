@@ -3,19 +3,24 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TreeColorer = exports.FlameColorer = exports.AbstractTreeExplorer = void 0;
 var Explorer_js_1 = require("./Explorer.js");
-require("../sre.js");
+var sre_js_1 = __importDefault(require("../sre.js"));
 var AbstractTreeExplorer = (function (_super) {
     __extends(AbstractTreeExplorer, _super);
     function AbstractTreeExplorer(document, region, node, mml) {
@@ -51,7 +56,7 @@ var FlameColorer = (function (_super) {
     };
     FlameColorer.prototype.Stop = function () {
         if (this.active) {
-            this.highlighter.unhighlightAll(this.node);
+            this.highlighter.unhighlightAll();
         }
         this.active = false;
     };
@@ -67,7 +72,7 @@ var TreeColorer = (function (_super) {
         if (this.active)
             return;
         this.active = true;
-        var generator = sre.SpeechGeneratorFactory.generator('Color');
+        var generator = sre_js_1.default.getSpeechGenerator('Color');
         if (!this.node.hasAttribute('hasforegroundcolor')) {
             generator.generateSpeech(this.node, this.mml);
             this.node.setAttribute('hasforegroundcolor', 'true');
@@ -83,3 +88,4 @@ var TreeColorer = (function (_super) {
     return TreeColorer;
 }(AbstractTreeExplorer));
 exports.TreeColorer = TreeColorer;
+//# sourceMappingURL=TreeExplorer.js.map

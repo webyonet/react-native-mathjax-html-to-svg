@@ -75,3 +75,4 @@ exports.sansSerif = {
     0x2044: [.75, .25, .5],
     0x2206: [.694, 0, .833],
 };
+//# sourceMappingURL=sans-serif.js.map

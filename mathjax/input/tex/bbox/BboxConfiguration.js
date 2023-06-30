@@ -1,9 +1,12 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BboxConfiguration = exports.BboxMethods = void 0;
 var Configuration_js_1 = require("../Configuration.js");
 var SymbolMap_js_1 = require("../SymbolMap.js");
-var TexError_js_1 = require("../TexError.js");
+var TexError_js_1 = __importDefault(require("../TexError.js"));
 exports.BboxMethods = {};
 exports.BboxMethods.BBox = function (parser, name) {
     var bbox = parser.GetBrackets(name, '');
@@ -66,3 +69,4 @@ var BBoxPadding = function (pad) {
 };
 new SymbolMap_js_1.CommandMap('bbox', { bbox: 'BBox' }, exports.BboxMethods);
 exports.BboxConfiguration = Configuration_js_1.Configuration.create('bbox', { handler: { macro: ['bbox'] } });
+//# sourceMappingURL=BboxConfiguration.js.map

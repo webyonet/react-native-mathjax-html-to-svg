@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -50,60 +52,62 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.liteAdaptor = exports.LiteAdaptor = void 0;
+exports.liteAdaptor = exports.LiteAdaptor = exports.LiteBase = void 0;
 var DOMAdaptor_js_1 = require("../core/DOMAdaptor.js");
+var NodeMixin_js_1 = require("./NodeMixin.js");
 var Document_js_1 = require("./lite/Document.js");
 var Element_js_1 = require("./lite/Element.js");
 var Text_js_1 = require("./lite/Text.js");
 var Window_js_1 = require("./lite/Window.js");
 var Parser_js_1 = require("./lite/Parser.js");
 var Styles_js_1 = require("../util/Styles.js");
-var Options_js_1 = require("../util/Options.js");
-var LiteAdaptor = (function (_super) {
-    __extends(LiteAdaptor, _super);
-    function LiteAdaptor(options) {
-        if (options === void 0) { options = null; }
+var LiteBase = (function (_super) {
+    __extends(LiteBase, _super);
+    function LiteBase() {
         var _this = _super.call(this) || this;
-        var CLASS = _this.constructor;
-        _this.options = Options_js_1.userOptions(Options_js_1.defaultOptions({}, CLASS.OPTIONS), options);
         _this.parser = new Parser_js_1.LiteParser();
         _this.window = new Window_js_1.LiteWindow();
         return _this;
     }
-    LiteAdaptor.prototype.parse = function (text, format) {
+    LiteBase.prototype.parse = function (text, format) {
         return this.parser.parseFromString(text, format, this);
     };
-    LiteAdaptor.prototype.create = function (kind, _ns) {
+    LiteBase.prototype.create = function (kind, _ns) {
         if (_ns === void 0) { _ns = null; }
         return new Element_js_1.LiteElement(kind);
     };
-    LiteAdaptor.prototype.text = function (text) {
+    LiteBase.prototype.text = function (text) {
         return new Text_js_1.LiteText(text);
     };
-    LiteAdaptor.prototype.comment = function (text) {
+    LiteBase.prototype.comment = function (text) {
         return new Text_js_1.LiteComment(text);
     };
-    LiteAdaptor.prototype.createDocument = function () {
+    LiteBase.prototype.createDocument = function () {
         return new Document_js_1.LiteDocument();
     };
-    LiteAdaptor.prototype.head = function (doc) {
+    LiteBase.prototype.head = function (doc) {
         return doc.head;
     };
-    LiteAdaptor.prototype.body = function (doc) {
+    LiteBase.prototype.body = function (doc) {
         return doc.body;
     };
-    LiteAdaptor.prototype.root = function (doc) {
+    LiteBase.prototype.root = function (doc) {
         return doc.root;
     };
-    LiteAdaptor.prototype.doctype = function (doc) {
+    LiteBase.prototype.doctype = function (doc) {
         return doc.type;
     };
-    LiteAdaptor.prototype.tags = function (node, name, ns) {
+    LiteBase.prototype.tags = function (node, name, ns) {
         if (ns === void 0) { ns = null; }
         var stack = [];
         var tags = [];
@@ -126,7 +130,7 @@ var LiteAdaptor = (function (_super) {
         }
         return tags;
     };
-    LiteAdaptor.prototype.elementById = function (node, id) {
+    LiteBase.prototype.elementById = function (node, id) {
         var stack = [];
         var n = node;
         while (n) {
@@ -143,7 +147,7 @@ var LiteAdaptor = (function (_super) {
         }
         return null;
     };
-    LiteAdaptor.prototype.elementsByClass = function (node, name) {
+    LiteBase.prototype.elementsByClass = function (node, name) {
         var stack = [];
         var tags = [];
         var n = node;
@@ -162,7 +166,7 @@ var LiteAdaptor = (function (_super) {
         }
         return tags;
     };
-    LiteAdaptor.prototype.getElements = function (nodes, document) {
+    LiteBase.prototype.getElements = function (nodes, document) {
         var e_1, _a;
         var containers = [];
         var body = this.body(document);
@@ -203,19 +207,19 @@ var LiteAdaptor = (function (_super) {
         }
         return containers;
     };
-    LiteAdaptor.prototype.contains = function (container, node) {
+    LiteBase.prototype.contains = function (container, node) {
         while (node && node !== container) {
             node = this.parent(node);
         }
         return !!node;
     };
-    LiteAdaptor.prototype.parent = function (node) {
+    LiteBase.prototype.parent = function (node) {
         return node.parent;
     };
-    LiteAdaptor.prototype.childIndex = function (node) {
+    LiteBase.prototype.childIndex = function (node) {
         return (node.parent ? node.parent.children.findIndex(function (n) { return n === node; }) : -1);
     };
-    LiteAdaptor.prototype.append = function (node, child) {
+    LiteBase.prototype.append = function (node, child) {
         if (child.parent) {
             this.remove(child);
         }
@@ -223,7 +227,7 @@ var LiteAdaptor = (function (_super) {
         child.parent = node;
         return child;
     };
-    LiteAdaptor.prototype.insert = function (nchild, ochild) {
+    LiteBase.prototype.insert = function (nchild, ochild) {
         if (nchild.parent) {
             this.remove(nchild);
         }
@@ -233,7 +237,7 @@ var LiteAdaptor = (function (_super) {
             nchild.parent = ochild.parent;
         }
     };
-    LiteAdaptor.prototype.remove = function (child) {
+    LiteBase.prototype.remove = function (child) {
         var i = this.childIndex(child);
         if (i >= 0) {
             child.parent.children.splice(i, 1);
@@ -241,7 +245,7 @@ var LiteAdaptor = (function (_super) {
         child.parent = null;
         return child;
     };
-    LiteAdaptor.prototype.replace = function (nnode, onode) {
+    LiteBase.prototype.replace = function (nnode, onode) {
         var i = this.childIndex(onode);
         if (i >= 0) {
             onode.parent.children[i] = nnode;
@@ -250,7 +254,7 @@ var LiteAdaptor = (function (_super) {
         }
         return onode;
     };
-    LiteAdaptor.prototype.clone = function (node) {
+    LiteBase.prototype.clone = function (node) {
         var _this = this;
         var nnode = new Element_js_1.LiteElement(node.kind);
         nnode.attributes = __assign({}, node.attributes);
@@ -269,60 +273,63 @@ var LiteAdaptor = (function (_super) {
         });
         return nnode;
     };
-    LiteAdaptor.prototype.split = function (node, n) {
+    LiteBase.prototype.split = function (node, n) {
         var text = new Text_js_1.LiteText(node.value.slice(n));
         node.value = node.value.slice(0, n);
         node.parent.children.splice(this.childIndex(node) + 1, 0, text);
         text.parent = node.parent;
         return text;
     };
-    LiteAdaptor.prototype.next = function (node) {
+    LiteBase.prototype.next = function (node) {
         var parent = node.parent;
         if (!parent)
             return null;
         var i = this.childIndex(node) + 1;
         return (i >= 0 && i < parent.children.length ? parent.children[i] : null);
     };
-    LiteAdaptor.prototype.previous = function (node) {
+    LiteBase.prototype.previous = function (node) {
         var parent = node.parent;
         if (!parent)
             return null;
         var i = this.childIndex(node) - 1;
         return (i >= 0 ? parent.children[i] : null);
     };
-    LiteAdaptor.prototype.firstChild = function (node) {
+    LiteBase.prototype.firstChild = function (node) {
         return node.children[0];
     };
-    LiteAdaptor.prototype.lastChild = function (node) {
+    LiteBase.prototype.lastChild = function (node) {
         return node.children[node.children.length - 1];
     };
-    LiteAdaptor.prototype.childNodes = function (node) {
-        return __spread(node.children);
+    LiteBase.prototype.childNodes = function (node) {
+        return __spreadArray([], __read(node.children), false);
     };
-    LiteAdaptor.prototype.childNode = function (node, i) {
+    LiteBase.prototype.childNode = function (node, i) {
         return node.children[i];
     };
-    LiteAdaptor.prototype.kind = function (node) {
+    LiteBase.prototype.kind = function (node) {
         return node.kind;
     };
-    LiteAdaptor.prototype.value = function (node) {
+    LiteBase.prototype.value = function (node) {
         return (node.kind === '#text' ? node.value :
             node.kind === '#comment' ? node.value.replace(/^<!(--)?((?:.|\n)*)\1>$/, '$2') : '');
     };
-    LiteAdaptor.prototype.textContent = function (node) {
+    LiteBase.prototype.textContent = function (node) {
         var _this = this;
         return node.children.reduce(function (s, n) {
             return s + (n.kind === '#text' ? n.value :
                 n.kind === '#comment' ? '' : _this.textContent(n));
         }, '');
     };
-    LiteAdaptor.prototype.innerHTML = function (node) {
+    LiteBase.prototype.innerHTML = function (node) {
         return this.parser.serializeInner(this, node);
     };
-    LiteAdaptor.prototype.outerHTML = function (node) {
+    LiteBase.prototype.outerHTML = function (node) {
         return this.parser.serialize(this, node);
     };
-    LiteAdaptor.prototype.setAttribute = function (node, name, value, ns) {
+    LiteBase.prototype.serializeXML = function (node) {
+        return this.parser.serialize(this, node, true);
+    };
+    LiteBase.prototype.setAttribute = function (node, name, value, ns) {
         if (ns === void 0) { ns = null; }
         if (typeof value !== 'string') {
             value = String(value);
@@ -335,16 +342,16 @@ var LiteAdaptor = (function (_super) {
             node.styles = null;
         }
     };
-    LiteAdaptor.prototype.getAttribute = function (node, name) {
+    LiteBase.prototype.getAttribute = function (node, name) {
         return node.attributes[name];
     };
-    LiteAdaptor.prototype.removeAttribute = function (node, name) {
+    LiteBase.prototype.removeAttribute = function (node, name) {
         delete node.attributes[name];
     };
-    LiteAdaptor.prototype.hasAttribute = function (node, name) {
+    LiteBase.prototype.hasAttribute = function (node, name) {
         return node.attributes.hasOwnProperty(name);
     };
-    LiteAdaptor.prototype.allAttributes = function (node) {
+    LiteBase.prototype.allAttributes = function (node) {
         var e_2, _a;
         var attributes = node.attributes;
         var list = [];
@@ -363,14 +370,14 @@ var LiteAdaptor = (function (_super) {
         }
         return list;
     };
-    LiteAdaptor.prototype.addClass = function (node, name) {
+    LiteBase.prototype.addClass = function (node, name) {
         var classes = (node.attributes['class'] || '').split(/ /);
         if (!classes.find(function (n) { return n === name; })) {
             classes.push(name);
             node.attributes['class'] = classes.join(' ');
         }
     };
-    LiteAdaptor.prototype.removeClass = function (node, name) {
+    LiteBase.prototype.removeClass = function (node, name) {
         var classes = (node.attributes['class'] || '').split(/ /);
         var i = classes.findIndex(function (n) { return n === name; });
         if (i >= 0) {
@@ -378,18 +385,18 @@ var LiteAdaptor = (function (_super) {
             node.attributes['class'] = classes.join(' ');
         }
     };
-    LiteAdaptor.prototype.hasClass = function (node, name) {
+    LiteBase.prototype.hasClass = function (node, name) {
         var classes = (node.attributes['class'] || '').split(/ /);
         return !!classes.find(function (n) { return n === name; });
     };
-    LiteAdaptor.prototype.setStyle = function (node, name, value) {
+    LiteBase.prototype.setStyle = function (node, name, value) {
         if (!node.styles) {
             node.styles = new Styles_js_1.Styles(this.getAttribute(node, 'style'));
         }
         node.styles.set(name, value);
         node.attributes['style'] = node.styles.cssText;
     };
-    LiteAdaptor.prototype.getStyle = function (node, name) {
+    LiteBase.prototype.getStyle = function (node, name) {
         if (!node.styles) {
             var style = this.getAttribute(node, 'style');
             if (!style) {
@@ -399,33 +406,40 @@ var LiteAdaptor = (function (_super) {
         }
         return node.styles.get(name);
     };
-    LiteAdaptor.prototype.allStyles = function (node) {
+    LiteBase.prototype.allStyles = function (node) {
         return this.getAttribute(node, 'style');
     };
-    LiteAdaptor.prototype.fontSize = function (_node) {
-        return this.options.fontSize;
+    LiteBase.prototype.insertRules = function (node, rules) {
+        node.children = [this.text(rules.join('\n\n') + '\n\n' + this.textContent(node))];
     };
-    LiteAdaptor.prototype.fontFamily = function (_node) {
-        return this.options.fontFamily;
+    LiteBase.prototype.fontSize = function (_node) {
+        return 0;
     };
-    LiteAdaptor.prototype.nodeSize = function (node, _em, _local) {
+    LiteBase.prototype.fontFamily = function (_node) {
+        return '';
+    };
+    LiteBase.prototype.nodeSize = function (_node, _em, _local) {
         if (_em === void 0) { _em = 1; }
         if (_local === void 0) { _local = null; }
-        var text = this.textContent(node);
-        return [.6 * text.length, 0];
+        return [0, 0];
     };
-    LiteAdaptor.prototype.nodeBBox = function (_node) {
+    LiteBase.prototype.nodeBBox = function (_node) {
         return { left: 0, right: 0, top: 0, bottom: 0 };
     };
-    LiteAdaptor.OPTIONS = {
-        fontSize: 16,
-        fontFamily: 'Times'
-    };
-    return LiteAdaptor;
+    return LiteBase;
 }(DOMAdaptor_js_1.AbstractDOMAdaptor));
+exports.LiteBase = LiteBase;
+var LiteAdaptor = (function (_super) {
+    __extends(LiteAdaptor, _super);
+    function LiteAdaptor() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    return LiteAdaptor;
+}((0, NodeMixin_js_1.NodeMixin)(LiteBase)));
 exports.LiteAdaptor = LiteAdaptor;
 function liteAdaptor(options) {
     if (options === void 0) { options = null; }
-    return new LiteAdaptor(options);
+    return new LiteAdaptor(null, options);
 }
 exports.liteAdaptor = liteAdaptor;
+//# sourceMappingURL=liteAdaptor.js.map

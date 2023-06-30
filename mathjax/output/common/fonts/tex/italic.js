@@ -63,3 +63,4 @@ exports.italic = {
     0x2206: [.716, 0, .833, { sk: .167 }],
     0x29F8: [.716, .215, .778],
 };
+//# sourceMappingURL=italic.js.map

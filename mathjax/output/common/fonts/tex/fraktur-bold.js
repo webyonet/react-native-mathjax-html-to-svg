@@ -42,3 +42,4 @@ exports.frakturBold = {
     0xE308: [.679, .22, .981],
     0xE309: [.717, .137, .727],
 };
+//# sourceMappingURL=fraktur-bold.js.map

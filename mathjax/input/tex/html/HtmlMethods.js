@@ -1,6 +1,9 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var NodeUtil_js_1 = require("../NodeUtil.js");
+var NodeUtil_js_1 = __importDefault(require("../NodeUtil.js"));
 var HtmlMethods = {};
 HtmlMethods.Href = function (parser, name) {
     var url = parser.GetArgument(name);
@@ -52,3 +55,4 @@ var GetArgumentMML = function (parser, name) {
     return mrow;
 };
 exports.default = HtmlMethods;
+//# sourceMappingURL=HtmlMethods.js.map

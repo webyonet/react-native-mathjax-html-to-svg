@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -84,7 +86,7 @@ var CHTMLmtable = (function (_super) {
         this.handleColumnWidths();
         this.handleRowSpacing();
         this.handleRowLines();
-        this.handleEqualRows();
+        this.handleRowHeights();
         this.handleFrame();
         this.handleWidth();
         this.handleLabels();
@@ -107,7 +109,7 @@ var CHTMLmtable = (function (_super) {
             for (var _b = __values(adaptor.childNodes(this.itable)), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var row = _c.value;
                 while (adaptor.childNodes(row).length < this.numCols) {
-                    adaptor.append(row, this.html('mjx-mtd'));
+                    adaptor.append(row, this.html('mjx-mtd', { 'extra': true }));
                 }
             }
         }
@@ -121,7 +123,8 @@ var CHTMLmtable = (function (_super) {
     };
     CHTMLmtable.prototype.handleColumnSpacing = function () {
         var e_3, _a, e_4, _b;
-        var spacing = this.getEmHalfSpacing(this.fSpace[0], this.cSpace);
+        var scale = (this.childNodes[0] ? 1 / this.childNodes[0].getBBox().rscale : 1);
+        var spacing = this.getEmHalfSpacing(this.fSpace[0], this.cSpace, scale);
         var frame = this.frame;
         try {
             for (var _c = __values(this.tableRows), _d = _c.next(); !_d.done; _d = _c.next()) {
@@ -230,7 +233,8 @@ var CHTMLmtable = (function (_super) {
     };
     CHTMLmtable.prototype.handleRowSpacing = function () {
         var e_9, _a, e_10, _b;
-        var spacing = this.getEmHalfSpacing(this.fSpace[1], this.rSpace);
+        var scale = (this.childNodes[0] ? 1 / this.childNodes[0].getBBox().rscale : 1);
+        var spacing = this.getEmHalfSpacing(this.fSpace[1], this.rSpace, scale);
         var frame = this.frame;
         var i = 0;
         try {
@@ -301,22 +305,28 @@ var CHTMLmtable = (function (_super) {
             finally { if (e_11) throw e_11.error; }
         }
     };
+    CHTMLmtable.prototype.handleRowHeights = function () {
+        if (this.node.attributes.get('equalrows')) {
+            this.handleEqualRows();
+        }
+    };
     CHTMLmtable.prototype.handleEqualRows = function () {
-        if (!this.node.attributes.get('equalrows'))
-            return;
         var space = this.getRowHalfSpacing();
         var _a = this.getTableData(), H = _a.H, D = _a.D, NH = _a.NH, ND = _a.ND;
         var HD = this.getEqualRowHeight();
         for (var i = 0; i < this.numRows; i++) {
             var row = this.childNodes[i];
+            this.setRowHeight(row, HD + space[i] + space[i + 1] + this.rLines[i]);
             if (HD !== NH[i] + ND[i]) {
-                this.setRowHeight(row, HD, (HD - H[i] + D[i]) / 2, space[i] + space[i + 1]);
+                this.setRowBaseline(row, HD, (HD - H[i] + D[i]) / 2);
             }
         }
     };
-    CHTMLmtable.prototype.setRowHeight = function (row, HD, D, space) {
+    CHTMLmtable.prototype.setRowHeight = function (row, HD) {
+        this.adaptor.setStyle(row.chtml, 'height', this.em(HD));
+    };
+    CHTMLmtable.prototype.setRowBaseline = function (row, HD, D) {
         var e_13, _a;
-        this.adaptor.setStyle(row.chtml, 'height', this.em(HD + space));
         var ralign = row.node.attributes.get('rowalign');
         try {
             for (var _b = __values(row.childNodes), _c = _b.next(); !_c.done; _c = _b.next()) {
@@ -349,7 +359,7 @@ var CHTMLmtable = (function (_super) {
         return false;
     };
     CHTMLmtable.prototype.handleFrame = function () {
-        if (this.frame) {
+        if (this.frame && this.fLine) {
             this.adaptor.setStyle(this.itable, 'border', '.07em ' + this.node.attributes.get('frame'));
         }
     };
@@ -358,7 +368,7 @@ var CHTMLmtable = (function (_super) {
         var _a = this.getBBox(), w = _a.w, L = _a.L, R = _a.R;
         adaptor.setStyle(this.chtml, 'minWidth', this.em(L + w + R));
         var W = this.node.attributes.get('width');
-        if (string_js_1.isPercent(W)) {
+        if ((0, string_js_1.isPercent)(W)) {
             adaptor.setStyle(this.chtml, 'width', '');
             adaptor.setAttribute(this.chtml, 'width', 'full');
         }
@@ -372,11 +382,12 @@ var CHTMLmtable = (function (_super) {
         adaptor.setStyle(table, 'minWidth', this.em(w));
         if (L || R) {
             adaptor.setStyle(this.chtml, 'margin', '');
+            var style = (this.node.attributes.get('data-width-includes-label') ? 'padding' : 'margin');
             if (L === R) {
-                adaptor.setStyle(table, 'margin', '0 ' + this.em(R));
+                adaptor.setStyle(table, style, '0 ' + this.em(R));
             }
             else {
-                adaptor.setStyle(table, 'margin', '0 ' + this.em(R) + ' 0 ' + this.em(L));
+                adaptor.setStyle(table, style, '0 ' + this.em(R) + ' 0 ' + this.em(L));
             }
         }
         adaptor.setAttribute(this.itable, 'width', 'full');
@@ -421,25 +432,24 @@ var CHTMLmtable = (function (_super) {
     CHTMLmtable.prototype.addLabelPadding = function (side) {
         var _a = __read(this.getPadAlignShift(side), 3), align = _a[1], shift = _a[2];
         var styles = {};
-        if (side === 'right') {
+        if (side === 'right' && !this.node.attributes.get('data-width-includes-label')) {
             var W = this.node.attributes.get('width');
             var _b = this.getBBox(), w = _b.w, L = _b.L, R = _b.R;
             styles.style = {
-                width: (string_js_1.isPercent(W) ? 'calc(' + W + ' + ' + this.em(L + R) + ')' : this.em(L + w + R))
+                width: ((0, string_js_1.isPercent)(W) ? 'calc(' + W + ' + ' + this.em(L + R) + ')' : this.em(L + w + R))
             };
         }
         this.adaptor.append(this.chtml, this.html('mjx-labels', styles, [this.labels]));
         return [align, shift];
     };
     CHTMLmtable.prototype.updateRowHeights = function () {
-        if (this.node.attributes.get('equalrows'))
-            return;
         var _a = this.getTableData(), H = _a.H, D = _a.D, NH = _a.NH, ND = _a.ND;
         var space = this.getRowHalfSpacing();
         for (var i = 0; i < this.numRows; i++) {
             var row = this.childNodes[i];
+            this.setRowHeight(row, H[i] + D[i] + space[i] + space[i + 1] + this.rLines[i]);
             if (H[i] !== NH[i] || D[i] !== ND[i]) {
-                this.setRowHeight(row, H[i] + D[i], D[i], space[i] + space[i + 1]);
+                this.setRowBaseline(row, H[i] + D[i], D[i]);
             }
             else if (row.node.isKind('mlabeledtr')) {
                 this.setCellBaseline(row.childNodes[0], '', H[i] + D[i], D[i]);
@@ -473,7 +483,12 @@ var CHTMLmtable = (function (_super) {
             'vertical-align': '.25em',
             'text-align': 'center',
             'position': 'relative',
-            'box-sizing': 'border-box'
+            'box-sizing': 'border-box',
+            'border-spacing': 0,
+            'border-collapse': 'collapse'
+        },
+        'mjx-mstyle[size="s"] mjx-mtable': {
+            'vertical-align': '.354em'
         },
         'mjx-labels': {
             position: 'absolute',
@@ -482,7 +497,8 @@ var CHTMLmtable = (function (_super) {
         },
         'mjx-table': {
             'display': 'inline-block',
-            'vertical-align': '-.5ex'
+            'vertical-align': '-.5ex',
+            'box-sizing': 'border-box'
         },
         'mjx-table > mjx-itable': {
             'vertical-align': 'middle',
@@ -525,5 +541,6 @@ var CHTMLmtable = (function (_super) {
         }
     };
     return CHTMLmtable;
-}(mtable_js_1.CommonMtableMixin(Wrapper_js_1.CHTMLWrapper)));
+}((0, mtable_js_1.CommonMtableMixin)(Wrapper_js_1.CHTMLWrapper)));
 exports.CHTMLmtable = CHTMLmtable;
+//# sourceMappingURL=mtable.js.map

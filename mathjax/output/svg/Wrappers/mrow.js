@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -29,7 +31,7 @@ var SVGmrow = (function (_super) {
     };
     SVGmrow.kind = mrow_js_3.MmlMrow.prototype.kind;
     return SVGmrow;
-}(mrow_js_1.CommonMrowMixin(Wrapper_js_1.SVGWrapper)));
+}((0, mrow_js_1.CommonMrowMixin)(Wrapper_js_1.SVGWrapper)));
 exports.SVGmrow = SVGmrow;
 var SVGinferredMrow = (function (_super) {
     __extends(SVGinferredMrow, _super);
@@ -38,5 +40,6 @@ var SVGinferredMrow = (function (_super) {
     }
     SVGinferredMrow.kind = mrow_js_3.MmlInferredMrow.prototype.kind;
     return SVGinferredMrow;
-}(mrow_js_2.CommonInferredMrowMixin(SVGmrow)));
+}((0, mrow_js_2.CommonInferredMrowMixin)(SVGmrow)));
 exports.SVGinferredMrow = SVGinferredMrow;
+//# sourceMappingURL=mrow.js.map

@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -39,9 +41,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FunctionList = void 0;
@@ -60,7 +67,7 @@ var FunctionList = (function (_super) {
         try {
             for (var _b = __values(this), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var item = _c.value;
-                var result = item.item.apply(item, __spread(data));
+                var result = item.item.apply(item, __spreadArray([], __read(data), false));
                 if (result === false) {
                     return false;
                 }
@@ -86,7 +93,7 @@ var FunctionList = (function (_super) {
             (function execute() {
                 var _a;
                 while (++i < items.length) {
-                    var result = (_a = items[i]).item.apply(_a, __spread(data));
+                    var result = (_a = items[i]).item.apply(_a, __spreadArray([], __read(data), false));
                     if (result instanceof Promise) {
                         result.then(execute).catch(function (err) { return fail(err); });
                         return;
@@ -103,3 +110,4 @@ var FunctionList = (function (_super) {
     return FunctionList;
 }(PrioritizedList_js_1.PrioritizedList));
 exports.FunctionList = FunctionList;
+//# sourceMappingURL=FunctionList.js.map

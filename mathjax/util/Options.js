@@ -26,19 +26,34 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.separateOptions = exports.selectOptionsFromKeys = exports.selectOptions = exports.userOptions = exports.defaultOptions = exports.insert = exports.copy = exports.keys = exports.makeArray = exports.expandable = exports.Expandable = exports.REMOVE = exports.APPEND = void 0;
+exports.lookup = exports.separateOptions = exports.selectOptionsFromKeys = exports.selectOptions = exports.userOptions = exports.defaultOptions = exports.insert = exports.copy = exports.keys = exports.makeArray = exports.expandable = exports.Expandable = exports.OPTIONS = exports.REMOVE = exports.APPEND = exports.isObject = void 0;
 var OBJECT = {}.constructor;
 function isObject(obj) {
     return typeof obj === 'object' && obj !== null &&
         (obj.constructor === OBJECT || obj.constructor === Expandable);
 }
+exports.isObject = isObject;
 exports.APPEND = '[+]';
 exports.REMOVE = '[-]';
+exports.OPTIONS = {
+    invalidOption: 'warn',
+    optionError: function (message, _key) {
+        if (exports.OPTIONS.invalidOption === 'fatal') {
+            throw new Error(message);
+        }
+        console.warn('MathJax: ' + message);
+    }
+};
 var Expandable = (function () {
     function Expandable() {
     }
@@ -97,7 +112,8 @@ function insert(dst, src, warn) {
             if (typeof key === 'symbol') {
                 key = key.toString();
             }
-            throw new Error('Invalid option "' + key + '" (no default value).');
+            exports.OPTIONS.optionError("Invalid option \"".concat(key, "\" (no default value)."), key);
+            return "continue";
         }
         var sval = src[key], dval = dst[key];
         if (isObject(sval) && dval !== null &&
@@ -111,7 +127,7 @@ function insert(dst, src, warn) {
                     dval = dst[key] = dval.filter(function (x) { return sval[exports.REMOVE].indexOf(x) < 0; });
                 }
                 if (sval[exports.APPEND]) {
-                    dst[key] = __spread(dval, sval[exports.APPEND]);
+                    dst[key] = __spreadArray(__spreadArray([], __read(dval), false), __read(sval[exports.APPEND]), false);
                 }
             }
             else {
@@ -189,7 +205,7 @@ function selectOptions(options) {
 }
 exports.selectOptions = selectOptions;
 function selectOptionsFromKeys(options, object) {
-    return selectOptions.apply(void 0, __spread([options], Object.keys(object)));
+    return selectOptions.apply(void 0, __spreadArray([options], __read(Object.keys(object)), false));
 }
 exports.selectOptionsFromKeys = selectOptionsFromKeys;
 function separateOptions(options) {
@@ -231,3 +247,9 @@ function separateOptions(options) {
     return results;
 }
 exports.separateOptions = separateOptions;
+function lookup(name, lookup, def) {
+    if (def === void 0) { def = null; }
+    return (lookup.hasOwnProperty(name) ? lookup[name] : def);
+}
+exports.lookup = lookup;
+//# sourceMappingURL=Options.js.map

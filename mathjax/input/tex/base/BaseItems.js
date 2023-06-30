@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -28,18 +30,26 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EquationItem = exports.EqnArrayItem = exports.ArrayItem = exports.DotsItem = exports.NotItem = exports.FnItem = exports.MmlItem = exports.CellItem = exports.PositionItem = exports.StyleItem = exports.EndItem = exports.BeginItem = exports.RightItem = exports.LeftItem = exports.OverItem = exports.SubsupItem = exports.PrimeItem = exports.CloseItem = exports.OpenItem = exports.StopItem = exports.StartItem = void 0;
+exports.EquationItem = exports.EqnArrayItem = exports.ArrayItem = exports.DotsItem = exports.NonscriptItem = exports.NotItem = exports.FnItem = exports.MmlItem = exports.CellItem = exports.PositionItem = exports.StyleItem = exports.EndItem = exports.BeginItem = exports.RightItem = exports.Middle = exports.LeftItem = exports.OverItem = exports.SubsupItem = exports.PrimeItem = exports.CloseItem = exports.OpenItem = exports.StopItem = exports.StartItem = void 0;
 var MapHandler_js_1 = require("../MapHandler.js");
 var Entities_js_1 = require("../../../util/Entities.js");
 var MmlNode_js_1 = require("../../../core/MmlTree/MmlNode.js");
-var TexError_js_1 = require("../TexError.js");
-var ParseUtil_js_1 = require("../ParseUtil.js");
-var NodeUtil_js_1 = require("../NodeUtil.js");
+var TexError_js_1 = __importDefault(require("../TexError.js"));
+var ParseUtil_js_1 = __importDefault(require("../ParseUtil.js"));
+var NodeUtil_js_1 = __importDefault(require("../NodeUtil.js"));
 var StackItem_js_1 = require("../StackItem.js");
 var StartItem = (function (_super) {
     __extends(StartItem, _super);
@@ -215,7 +225,7 @@ var SubsupItem = (function (_super) {
         }
         if (_super.prototype.checkItem.call(this, item)[1]) {
             var error = this.getErrors(['', 'sub', 'sup'][position]);
-            throw new (TexError_js_1.default.bind.apply(TexError_js_1.default, __spread([void 0, error[0], error[1]], error.splice(2))))();
+            throw new (TexError_js_1.default.bind.apply(TexError_js_1.default, __spreadArray([void 0, error[0], error[1]], __read(error.splice(2)), false)))();
         }
         return null;
     };
@@ -277,9 +287,9 @@ var OverItem = (function (_super) {
 exports.OverItem = OverItem;
 var LeftItem = (function (_super) {
     __extends(LeftItem, _super);
-    function LeftItem(factory) {
+    function LeftItem(factory, delim) {
         var _this = _super.call(this, factory) || this;
-        _this.setProperty('delim', '(');
+        _this.setProperty('delim', delim);
         return _this;
     }
     Object.defineProperty(LeftItem.prototype, "kind", {
@@ -298,7 +308,16 @@ var LeftItem = (function (_super) {
     });
     LeftItem.prototype.checkItem = function (item) {
         if (item.isKind('right')) {
-            return [[this.factory.create('mml', ParseUtil_js_1.default.fenced(this.factory.configuration, this.getProperty('delim'), this.toMml(), item.getProperty('delim')))], true];
+            return [[this.factory.create('mml', ParseUtil_js_1.default.fenced(this.factory.configuration, this.getProperty('delim'), this.toMml(), item.getProperty('delim'), '', item.getProperty('color')))], true];
+        }
+        if (item.isKind('middle')) {
+            var def = { stretchy: true };
+            if (item.getProperty('color')) {
+                def.mathcolor = item.getProperty('color');
+            }
+            this.Push(this.create('node', 'TeXAtom', [], { texClass: MmlNode_js_1.TEXCLASS.CLOSE }), this.create('token', 'mo', def, item.getProperty('delim')), this.create('node', 'TeXAtom', [], { texClass: MmlNode_js_1.TEXCLASS.OPEN }));
+            this.env = {};
+            return [[this], true];
         }
         return _super.prototype.checkItem.call(this, item);
     };
@@ -309,11 +328,37 @@ var LeftItem = (function (_super) {
     return LeftItem;
 }(StackItem_js_1.BaseItem));
 exports.LeftItem = LeftItem;
+var Middle = (function (_super) {
+    __extends(Middle, _super);
+    function Middle(factory, delim, color) {
+        var _this = _super.call(this, factory) || this;
+        _this.setProperty('delim', delim);
+        color && _this.setProperty('color', color);
+        return _this;
+    }
+    Object.defineProperty(Middle.prototype, "kind", {
+        get: function () {
+            return 'middle';
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Middle.prototype, "isClose", {
+        get: function () {
+            return true;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    return Middle;
+}(StackItem_js_1.BaseItem));
+exports.Middle = Middle;
 var RightItem = (function (_super) {
     __extends(RightItem, _super);
-    function RightItem(factory) {
+    function RightItem(factory, delim, color) {
         var _this = _super.call(this, factory) || this;
-        _this.setProperty('delim', ')');
+        _this.setProperty('delim', delim);
+        color && _this.setProperty('color', color);
         return _this;
     }
     Object.defineProperty(RightItem.prototype, "kind", {
@@ -439,7 +484,8 @@ var PositionItem = (function (_super) {
                         voffset: this.getProperty('dh') });
                     return [[this.factory.create('mml', mml)], true];
                 case 'horizontal':
-                    return [[this.factory.create('mml', this.getProperty('left')), item, this.factory.create('mml', this.getProperty('right'))], true];
+                    return [[this.factory.create('mml', this.getProperty('left')), item,
+                            this.factory.create('mml', this.getProperty('right'))], true];
             }
         }
         return _super.prototype.checkItem.call(this, item);
@@ -583,6 +629,37 @@ var NotItem = (function (_super) {
     return NotItem;
 }(StackItem_js_1.BaseItem));
 exports.NotItem = NotItem;
+var NonscriptItem = (function (_super) {
+    __extends(NonscriptItem, _super);
+    function NonscriptItem() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    Object.defineProperty(NonscriptItem.prototype, "kind", {
+        get: function () {
+            return 'nonscript';
+        },
+        enumerable: false,
+        configurable: true
+    });
+    NonscriptItem.prototype.checkItem = function (item) {
+        if (item.isKind('mml') && item.Size() === 1) {
+            var mml = item.First;
+            if (mml.isKind('mstyle') && mml.notParent) {
+                mml = NodeUtil_js_1.default.getChildren(NodeUtil_js_1.default.getChildren(mml)[0])[0];
+            }
+            if (mml.isKind('mspace')) {
+                if (mml !== item.First) {
+                    var mrow = this.create('node', 'mrow', [item.Pop()]);
+                    item.Push(mrow);
+                }
+                this.factory.configuration.addNode('nonscript', item.First);
+            }
+        }
+        return [[item], true];
+    };
+    return NonscriptItem;
+}(StackItem_js_1.BaseItem));
+exports.NonscriptItem = NonscriptItem;
 var DotsItem = (function (_super) {
     __extends(DotsItem, _super);
     function DotsItem() {
@@ -660,30 +737,7 @@ var ArrayItem = (function (_super) {
             }
             this.EndTable();
             this.clearEnv();
-            var scriptlevel = this.arraydef['scriptlevel'];
-            delete this.arraydef['scriptlevel'];
-            var mml = this.create('node', 'mtable', this.table, this.arraydef);
-            if (this.frame.length === 4) {
-                NodeUtil_js_1.default.setAttribute(mml, 'frame', this.dashed ? 'dashed' : 'solid');
-            }
-            else if (this.frame.length) {
-                if (this.arraydef['rowlines']) {
-                    this.arraydef['rowlines'] =
-                        this.arraydef['rowlines'].replace(/none( none)+$/, 'none');
-                }
-                mml = this.create('node', 'menclose', [mml], { notation: this.frame.join(' '), isFrame: true });
-                if ((this.arraydef['columnlines'] || 'none') !== 'none' ||
-                    (this.arraydef['rowlines'] || 'none') !== 'none') {
-                    NodeUtil_js_1.default.setAttribute(mml, 'padding', 0);
-                }
-            }
-            if (scriptlevel) {
-                mml = this.create('node', 'mstyle', [mml], { scriptlevel: scriptlevel });
-            }
-            if (this.getProperty('open') || this.getProperty('close')) {
-                mml = ParseUtil_js_1.default.fenced(this.factory.configuration, this.getProperty('open'), mml, this.getProperty('close'));
-            }
-            var newItem = this.factory.create('mml', mml);
+            var newItem = this.factory.create('mml', this.createMml());
             if (this.getProperty('requireClose')) {
                 if (item.isKind('close')) {
                     return [[newItem], true];
@@ -693,6 +747,33 @@ var ArrayItem = (function (_super) {
             return [[newItem, item], true];
         }
         return _super.prototype.checkItem.call(this, item);
+    };
+    ArrayItem.prototype.createMml = function () {
+        var scriptlevel = this.arraydef['scriptlevel'];
+        delete this.arraydef['scriptlevel'];
+        var mml = this.create('node', 'mtable', this.table, this.arraydef);
+        if (scriptlevel) {
+            mml.setProperty('scriptlevel', scriptlevel);
+        }
+        if (this.frame.length === 4) {
+            NodeUtil_js_1.default.setAttribute(mml, 'frame', this.dashed ? 'dashed' : 'solid');
+        }
+        else if (this.frame.length) {
+            if (this.arraydef['rowlines']) {
+                this.arraydef['rowlines'] =
+                    this.arraydef['rowlines'].replace(/none( none)+$/, 'none');
+            }
+            NodeUtil_js_1.default.setAttribute(mml, 'frame', '');
+            mml = this.create('node', 'menclose', [mml], { notation: this.frame.join(' ') });
+            if ((this.arraydef['columnlines'] || 'none') !== 'none' ||
+                (this.arraydef['rowlines'] || 'none') !== 'none') {
+                NodeUtil_js_1.default.setAttribute(mml, 'data-padding', 0);
+            }
+        }
+        if (this.getProperty('open') || this.getProperty('close')) {
+            mml = ParseUtil_js_1.default.fenced(this.factory.configuration, this.getProperty('open'), mml, this.getProperty('close'));
+        }
+        return mml;
     };
     ArrayItem.prototype.EndEntry = function () {
         var mtd = this.create('node', 'mtd', this.nodes);
@@ -747,6 +828,21 @@ var ArrayItem = (function (_super) {
             this.arraydef['rowspacing'] = rows.join(' ');
         }
     };
+    ArrayItem.prototype.addRowSpacing = function (spacing) {
+        if (this.arraydef['rowspacing']) {
+            var rows = this.arraydef['rowspacing'].split(/ /);
+            if (!this.getProperty('rowspacing')) {
+                var dimem = ParseUtil_js_1.default.dimen2em(rows[0]);
+                this.setProperty('rowspacing', dimem);
+            }
+            var rowspacing = this.getProperty('rowspacing');
+            while (rows.length < this.table.length) {
+                rows.push(ParseUtil_js_1.default.Em(rowspacing));
+            }
+            rows[this.table.length - 1] = ParseUtil_js_1.default.Em(Math.max(0, rowspacing + ParseUtil_js_1.default.dimen2em(spacing)));
+            this.arraydef['rowspacing'] = rows.join(' ');
+        }
+    };
     return ArrayItem;
 }(StackItem_js_1.BaseItem));
 exports.ArrayItem = ArrayItem;
@@ -758,6 +854,7 @@ var EqnArrayItem = (function (_super) {
             args[_i - 1] = arguments[_i];
         }
         var _this = _super.call(this, factory) || this;
+        _this.maxrow = 0;
         _this.factory.configuration.tags.start(args[0], args[2], args[1]);
         return _this;
     }
@@ -777,6 +874,9 @@ var EqnArrayItem = (function (_super) {
         this.Clear();
     };
     EqnArrayItem.prototype.EndRow = function () {
+        if (this.row.length > this.maxrow) {
+            this.maxrow = this.row.length;
+        }
         var mtr = 'mtr';
         var tag = this.factory.configuration.tags.getTag();
         if (tag) {
@@ -791,6 +891,21 @@ var EqnArrayItem = (function (_super) {
     EqnArrayItem.prototype.EndTable = function () {
         _super.prototype.EndTable.call(this);
         this.factory.configuration.tags.end();
+        this.extendArray('columnalign', this.maxrow);
+        this.extendArray('columnwidth', this.maxrow);
+        this.extendArray('columnspacing', this.maxrow - 1);
+    };
+    EqnArrayItem.prototype.extendArray = function (name, max) {
+        if (!this.arraydef[name])
+            return;
+        var repeat = this.arraydef[name].split(/ /);
+        var columns = __spreadArray([], __read(repeat), false);
+        if (columns.length > 1) {
+            while (columns.length < max) {
+                columns.push.apply(columns, __spreadArray([], __read(repeat), false));
+            }
+            this.arraydef[name] = columns.slice(0, max).join(' ');
+        }
     };
     return EqnArrayItem;
 }(ArrayItem));
@@ -835,3 +950,4 @@ var EquationItem = (function (_super) {
     return EquationItem;
 }(StackItem_js_1.BaseItem));
 exports.EquationItem = EquationItem;
+//# sourceMappingURL=BaseItems.js.map

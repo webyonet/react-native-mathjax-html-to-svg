@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -247,5 +249,6 @@ var TeXFont = (function (_super) {
             src: 'url("%%URL%%/MathJax_Vector-Bold.woff") format("woff")'
         } });
     return TeXFont;
-}(tex_js_1.CommonTeXFontMixin(FontData_js_1.CHTMLFontData)));
+}((0, tex_js_1.CommonTeXFontMixin)(FontData_js_1.CHTMLFontData)));
 exports.TeXFont = TeXFont;
+//# sourceMappingURL=tex.js.map

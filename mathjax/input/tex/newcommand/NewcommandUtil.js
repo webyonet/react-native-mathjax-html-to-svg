@@ -1,7 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var ParseUtil_js_1 = require("../ParseUtil.js");
-var TexError_js_1 = require("../TexError.js");
+var ParseUtil_js_1 = __importDefault(require("../ParseUtil.js"));
+var TexError_js_1 = __importDefault(require("../TexError.js"));
 var Symbol_js_1 = require("../Symbol.js");
 var NewcommandUtil;
 (function (NewcommandUtil) {
@@ -35,6 +38,28 @@ var NewcommandUtil;
         return cs.substr(1);
     }
     NewcommandUtil.GetCSname = GetCSname;
+    function GetCsNameArgument(parser, name) {
+        var cs = ParseUtil_js_1.default.trimSpaces(parser.GetArgument(name));
+        if (cs.charAt(0) === '\\') {
+            cs = cs.substr(1);
+        }
+        if (!cs.match(/^(.|[a-z]+)$/i)) {
+            throw new TexError_js_1.default('IllegalControlSequenceName', 'Illegal control sequence name for %1', name);
+        }
+        return cs;
+    }
+    NewcommandUtil.GetCsNameArgument = GetCsNameArgument;
+    function GetArgCount(parser, name) {
+        var n = parser.GetBrackets(name);
+        if (n) {
+            n = ParseUtil_js_1.default.trimSpaces(n);
+            if (!n.match(/^[0-9]+$/)) {
+                throw new TexError_js_1.default('IllegalParamNumber', 'Illegal number of parameters specified in %1', name);
+            }
+        }
+        return n;
+    }
+    NewcommandUtil.GetArgCount = GetArgCount;
     function GetTemplate(parser, cmd, cs) {
         var c = parser.GetNext();
         var params = [];
@@ -149,3 +174,4 @@ var NewcommandUtil;
     NewcommandUtil.NEW_ENVIRONMENT = 'new-Environment';
 })(NewcommandUtil || (NewcommandUtil = {}));
 exports.default = NewcommandUtil;
+//# sourceMappingURL=NewcommandUtil.js.map

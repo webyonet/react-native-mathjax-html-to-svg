@@ -409,7 +409,10 @@ exports.entities = {
     xi: '\u03BE',
     yen: '\u00A5',
     zeta: '\u03B6',
-    zigrarr: '\u21DD'
+    zigrarr: '\u21DD',
+    nbsp: '\u00A0',
+    rsquo: '\u2019',
+    lsquo: '\u2018'
 };
 var loaded = {};
 function add(additions, file) {
@@ -436,7 +439,7 @@ function replace(match, entity) {
         var file = (entity.match(/^[a-zA-Z](fr|scr|opf)$/) ? RegExp.$1 : entity.charAt(0).toLowerCase());
         if (!loaded[file]) {
             loaded[file] = true;
-            Retries_js_1.retryAfter(AsyncLoad_js_1.asyncLoad('./util/entities/' + file + '.js'));
+            (0, Retries_js_1.retryAfter)((0, AsyncLoad_js_1.asyncLoad)('./util/entities/' + file + '.js'));
         }
     }
     return match;
@@ -448,3 +451,4 @@ function numeric(entity) {
     return String.fromCodePoint(n);
 }
 exports.numeric = numeric;
+//# sourceMappingURL=Entities.js.map

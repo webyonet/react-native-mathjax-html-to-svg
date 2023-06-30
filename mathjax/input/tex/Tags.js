@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -23,9 +25,12 @@ var __values = (this && this.__values) || function(o) {
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TagsFactory = exports.AllTags = exports.NoTags = exports.AbstractTags = exports.TagInfo = exports.Label = void 0;
-var TexParser_js_1 = require("./TexParser.js");
+var TexParser_js_1 = __importDefault(require("./TexParser.js"));
 var Label = (function () {
     function Label(tag, id) {
         if (tag === void 0) { tag = '???'; }
@@ -134,7 +139,7 @@ var AbstractTags = (function () {
         return '(' + tag + ')';
     };
     AbstractTags.prototype.formatId = function (id) {
-        return 'mjx-eqn-' + id.replace(/\s/g, '_');
+        return 'mjx-eqn:' + id.replace(/\s/g, '_');
     };
     AbstractTags.prototype.formatNumber = function (n) {
         return n.toString();
@@ -181,6 +186,10 @@ var AbstractTags = (function () {
         this.allIds = {};
     };
     AbstractTags.prototype.startEquation = function (math) {
+        this.history = [];
+        this.stack = [];
+        this.clearTag();
+        this.currentTag = new TagInfo('', undefined, undefined);
         this.labels = {};
         this.ids = {};
         this.counter = this.allCounter;
@@ -266,7 +275,6 @@ var TagsFactory;
         tags: defaultTags,
         tagSide: 'right',
         tagIndent: '0.8em',
-        multlineWidth: '85%',
         useLabelIds: true,
         ignoreDuplicateLabels: false
     };
@@ -303,3 +311,4 @@ var TagsFactory;
         return TagsFactory.create(defaultTags);
     };
 })(TagsFactory = exports.TagsFactory || (exports.TagsFactory = {}));
+//# sourceMappingURL=Tags.js.map

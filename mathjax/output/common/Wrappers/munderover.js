@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -28,9 +30,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CommonMunderoverMixin = exports.CommonMoverMixin = exports.CommonMunderMixin = void 0;
@@ -42,11 +49,11 @@ function CommonMunderMixin(Base) {
             for (var _i = 0; _i < arguments.length; _i++) {
                 args[_i] = arguments[_i];
             }
-            var _this = _super.apply(this, __spread(args)) || this;
+            var _this = _super.apply(this, __spreadArray([], __read(args), false)) || this;
             _this.stretchChildren();
             return _this;
         }
-        Object.defineProperty(class_1.prototype, "script", {
+        Object.defineProperty(class_1.prototype, "scriptChild", {
             get: function () {
                 return this.childNodes[this.node.under];
             },
@@ -60,15 +67,14 @@ function CommonMunderMixin(Base) {
                 return;
             }
             bbox.empty();
-            var basebox = this.baseChild.getBBox();
-            var underbox = this.script.getBBox();
+            var basebox = this.baseChild.getOuterBBox();
+            var underbox = this.scriptChild.getOuterBBox();
             var v = this.getUnderKV(basebox, underbox)[1];
-            var delta = this.getDelta(true);
+            var delta = (this.isLineBelow ? 0 : this.getDelta(true));
             var _a = __read(this.getDeltaW([basebox, underbox], [0, -delta]), 2), bw = _a[0], uw = _a[1];
             bbox.combine(basebox, bw, 0);
             bbox.combine(underbox, uw, v);
             bbox.d += this.font.params.big_op_spacing5;
-            bbox.ic = -this.baseCore.bbox.ic;
             bbox.clean();
             this.setChildPWidths(recompute);
         };
@@ -84,11 +90,11 @@ function CommonMoverMixin(Base) {
             for (var _i = 0; _i < arguments.length; _i++) {
                 args[_i] = arguments[_i];
             }
-            var _this = _super.apply(this, __spread(args)) || this;
+            var _this = _super.apply(this, __spreadArray([], __read(args), false)) || this;
             _this.stretchChildren();
             return _this;
         }
-        Object.defineProperty(class_2.prototype, "script", {
+        Object.defineProperty(class_2.prototype, "scriptChild", {
             get: function () {
                 return this.childNodes[this.node.over];
             },
@@ -101,15 +107,17 @@ function CommonMoverMixin(Base) {
                 return;
             }
             bbox.empty();
-            var basebox = this.baseChild.getBBox();
-            var overbox = this.script.getBBox();
+            var basebox = this.baseChild.getOuterBBox();
+            var overbox = this.scriptChild.getOuterBBox();
+            if (this.node.attributes.get('accent')) {
+                basebox.h = Math.max(basebox.h, this.font.params.x_height * basebox.scale);
+            }
             var u = this.getOverKU(basebox, overbox)[1];
-            var delta = this.getDelta();
+            var delta = (this.isLineAbove ? 0 : this.getDelta());
             var _a = __read(this.getDeltaW([basebox, overbox], [0, delta]), 2), bw = _a[0], ow = _a[1];
             bbox.combine(basebox, bw, 0);
             bbox.combine(overbox, ow, u);
             bbox.h += this.font.params.big_op_spacing5;
-            bbox.ic = -this.baseCore.bbox.ic;
             bbox.clean();
         };
         return class_2;
@@ -124,7 +132,7 @@ function CommonMunderoverMixin(Base) {
             for (var _i = 0; _i < arguments.length; _i++) {
                 args[_i] = arguments[_i];
             }
-            var _this = _super.apply(this, __spread(args)) || this;
+            var _this = _super.apply(this, __spreadArray([], __read(args), false)) || this;
             _this.stretchChildren();
             return _this;
         }
@@ -162,23 +170,26 @@ function CommonMunderoverMixin(Base) {
                 return;
             }
             bbox.empty();
-            var overbox = this.overChild.getBBox();
-            var basebox = this.baseChild.getBBox();
-            var underbox = this.underChild.getBBox();
+            var overbox = this.overChild.getOuterBBox();
+            var basebox = this.baseChild.getOuterBBox();
+            var underbox = this.underChild.getOuterBBox();
+            if (this.node.attributes.get('accent')) {
+                basebox.h = Math.max(basebox.h, this.font.params.x_height * basebox.scale);
+            }
             var u = this.getOverKU(basebox, overbox)[1];
             var v = this.getUnderKV(basebox, underbox)[1];
             var delta = this.getDelta();
-            var _a = __read(this.getDeltaW([basebox, underbox, overbox], [0, -delta, delta]), 3), bw = _a[0], uw = _a[1], ow = _a[2];
+            var _a = __read(this.getDeltaW([basebox, underbox, overbox], [0, this.isLineBelow ? 0 : -delta, this.isLineAbove ? 0 : delta]), 3), bw = _a[0], uw = _a[1], ow = _a[2];
             bbox.combine(basebox, bw, 0);
             bbox.combine(overbox, ow, u);
             bbox.combine(underbox, uw, v);
             var z = this.font.params.big_op_spacing5;
             bbox.h += z;
             bbox.d += z;
-            bbox.ic = -this.baseCore.bbox.ic;
             bbox.clean();
         };
         return class_3;
     }(Base));
 }
 exports.CommonMunderoverMixin = CommonMunderoverMixin;
+//# sourceMappingURL=munderover.js.map

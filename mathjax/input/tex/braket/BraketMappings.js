@@ -1,7 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var SymbolMap_js_1 = require("../SymbolMap.js");
-var BraketMethods_js_1 = require("./BraketMethods.js");
+var BraketMethods_js_1 = __importDefault(require("./BraketMethods.js"));
 new SymbolMap_js_1.CommandMap('Braket-macros', {
     bra: ['Macro', '{\\langle {#1} \\vert}', 1],
     ket: ['Macro', '{\\vert {#1} \\rangle}', 1],
@@ -18,3 +21,4 @@ new SymbolMap_js_1.CommandMap('Braket-macros', {
 new SymbolMap_js_1.MacroMap('Braket-characters', {
     '|': 'Bar'
 }, BraketMethods_js_1.default);
+//# sourceMappingURL=BraketMappings.js.map

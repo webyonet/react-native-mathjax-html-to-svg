@@ -12,7 +12,7 @@ export declare class MathML<N, T, D> extends AbstractInputJax<N, T, D> {
     static OPTIONS: OptionList;
     protected findMathML: FindMathML<N, T, D>;
     protected mathml: MathMLCompile<N, T, D>;
-    protected mmlFilters: FunctionList;
+    mmlFilters: FunctionList;
     constructor(options?: OptionList);
     setAdaptor(adaptor: DOMAdaptor<N, T, D>): void;
     setMmlFactory(mmlFactory: MmlFactory): void;
@@ -20,5 +20,5 @@ export declare class MathML<N, T, D> extends AbstractInputJax<N, T, D> {
     compile(math: MathItem<N, T, D>, document: MathDocument<N, T, D>): any;
     protected checkForErrors(doc: D): D;
     protected error(message: string): void;
-    findMath(node: N): import("mathjax-full/ts/core/MathItem").ProtoItem<N, T>[];
+    findMath(node: N): import("../core/MathItem.js").ProtoItem<N, T>[];
 }

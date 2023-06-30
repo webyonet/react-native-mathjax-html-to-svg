@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -35,7 +37,9 @@ var CHTMLmtd = (function (_super) {
                 calign !== this.parent.parent.node.attributes.get('side'))) {
             this.adaptor.setStyle(this.chtml, 'textAlign', calign);
         }
-        this.adaptor.append(this.chtml, this.html('mjx-tstrut'));
+        if (this.parent.parent.node.getProperty('useHeight')) {
+            this.adaptor.append(this.chtml, this.html('mjx-tstrut'));
+        }
     };
     CHTMLmtd.kind = mtd_js_2.MmlMtd.prototype.kind;
     CHTMLmtd.styles = {
@@ -67,22 +71,26 @@ var CHTMLmtd = (function (_super) {
         'mjx-labels[align="right"] > mjx-mtr > mjx-mtd': {
             'text-align': 'right'
         },
-        'mjx-mtr mjx-mtd[rowalign="top"], mjx-mlabeledtr mjx-mtd[rowalign="top"]': {
+        'mjx-mtd[extra]': {
+            padding: 0
+        },
+        'mjx-mtd[rowalign="top"]': {
             'vertical-align': 'top'
         },
-        'mjx-mtr mjx-mtd[rowalign="center"], mjx-mlabeledtr mjx-mtd[rowalign="center"]': {
+        'mjx-mtd[rowalign="center"]': {
             'vertical-align': 'middle'
         },
-        'mjx-mtr mjx-mtd[rowalign="bottom"], mjx-mlabeledtr mjx-mtd[rowalign="bottom"]': {
+        'mjx-mtd[rowalign="bottom"]': {
             'vertical-align': 'bottom'
         },
-        'mjx-mtr mjx-mtd[rowalign="baseline"], mjx-mlabeledtr mjx-mtd[rowalign="baseline"]': {
+        'mjx-mtd[rowalign="baseline"]': {
             'vertical-align': 'baseline'
         },
-        'mjx-mtr mjx-mtd[rowalign="axis"], mjx-mlabeledtr mjx-mtd[rowalign="axis"]': {
+        'mjx-mtd[rowalign="axis"]': {
             'vertical-align': '.25em'
         }
     };
     return CHTMLmtd;
-}(mtd_js_1.CommonMtdMixin(Wrapper_js_1.CHTMLWrapper)));
+}((0, mtd_js_1.CommonMtdMixin)(Wrapper_js_1.CHTMLWrapper)));
 exports.CHTMLmtd = CHTMLmtd;
+//# sourceMappingURL=mtd.js.map

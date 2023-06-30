@@ -9,5 +9,4 @@ export declare class PrioritizedList<DataClass> {
     [Symbol.iterator](): Iterator<PrioritizedListItem<DataClass>>;
     add(item: DataClass, priority?: number): DataClass;
     remove(item: DataClass): void;
-    toArray(): PrioritizedListItem<DataClass>[];
 }

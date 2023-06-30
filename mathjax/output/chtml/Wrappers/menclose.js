@@ -3,15 +3,40 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
@@ -43,7 +68,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CHTMLmenclose = void 0;
 var Wrapper_js_1 = require("../Wrapper.js");
 var menclose_js_1 = require("../../common/Wrappers/menclose.js");
-var Notation = require("../Notation.js");
+var Notation = __importStar(require("../Notation.js"));
 var menclose_js_2 = require("../../../core/MmlTree/MmlNodes/menclose.js");
 var lengths_js_1 = require("../../../util/lengths.js");
 function Angle(x, y) {
@@ -96,8 +121,9 @@ var CHTMLmenclose = (function (_super) {
             finally { if (e_2) throw e_2.error; }
         }
     };
-    CHTMLmenclose.prototype.arrow = function (w, a, double) {
-        if (double === void 0) { double = false; }
+    CHTMLmenclose.prototype.arrow = function (w, a, double, offset, dist) {
+        if (offset === void 0) { offset = ''; }
+        if (dist === void 0) { dist = 0; }
         var W = this.getBBox().w;
         var style = { width: this.em(w) };
         if (W !== w) {
@@ -115,6 +141,7 @@ var CHTMLmenclose = (function (_super) {
             this.adaptor.setAttribute(arrow, 'double', 'true');
         }
         this.adjustArrow(arrow, double);
+        this.moveArrow(arrow, offset, dist);
         return arrow;
     };
     CHTMLmenclose.prototype.adjustArrow = function (arrow, double) {
@@ -146,6 +173,12 @@ var CHTMLmenclose = (function (_super) {
         if (double) {
             this.adaptor.setStyle(line, 'left', this.em(t * (x - 1)));
         }
+    };
+    CHTMLmenclose.prototype.moveArrow = function (arrow, offset, d) {
+        if (!d)
+            return;
+        var transform = this.adaptor.getStyle(arrow, 'transform');
+        this.adaptor.setStyle(arrow, 'transform', "translate".concat(offset, "(").concat(this.em(-d), ")").concat((transform ? ' ' + transform : '')));
     };
     CHTMLmenclose.prototype.adjustBorder = function (node) {
         if (this.thickness !== Notation.THICKNESS) {
@@ -192,19 +225,19 @@ var CHTMLmenclose = (function (_super) {
             'border-top': Notation.SOLID,
             position: 'absolute',
             left: 0, right: 0, bottom: '50%',
-            transform: 'translateY(' + lengths_js_1.em(Notation.THICKNESS / 2) + ')'
+            transform: 'translateY(' + (0, lengths_js_1.em)(Notation.THICKNESS / 2) + ')'
         },
         'mjx-menclose > mjx-vstrike': {
             'border-left': Notation.SOLID,
             position: 'absolute',
             top: 0, bottom: 0, right: '50%',
-            transform: 'translateX(' + lengths_js_1.em(Notation.THICKNESS / 2) + ')'
+            transform: 'translateX(' + (0, lengths_js_1.em)(Notation.THICKNESS / 2) + ')'
         },
         'mjx-menclose > mjx-rbox': {
             position: 'absolute',
             top: 0, bottom: 0, right: 0, left: 0,
             'border': Notation.SOLID,
-            'border-radius': lengths_js_1.em(Notation.THICKNESS + Notation.PADDING)
+            'border-radius': (0, lengths_js_1.em)(Notation.THICKNESS + Notation.PADDING)
         },
         'mjx-menclose > mjx-cbox': {
             position: 'absolute',
@@ -220,56 +253,56 @@ var CHTMLmenclose = (function (_super) {
             display: 'block',
             position: 'absolute',
             'transform-origin': 'bottom',
-            'border-left': lengths_js_1.em(Notation.THICKNESS * Notation.ARROWX) + ' solid',
+            'border-left': (0, lengths_js_1.em)(Notation.THICKNESS * Notation.ARROWX) + ' solid',
             'border-right': 0,
             'box-sizing': 'border-box'
         },
         'mjx-menclose > mjx-arrow > mjx-aline': {
-            left: 0, top: lengths_js_1.em(-Notation.THICKNESS / 2),
-            right: lengths_js_1.em(Notation.THICKNESS * (Notation.ARROWX - 1)), height: 0,
-            'border-top': lengths_js_1.em(Notation.THICKNESS) + ' solid',
+            left: 0, top: (0, lengths_js_1.em)(-Notation.THICKNESS / 2),
+            right: (0, lengths_js_1.em)(Notation.THICKNESS * (Notation.ARROWX - 1)), height: 0,
+            'border-top': (0, lengths_js_1.em)(Notation.THICKNESS) + ' solid',
             'border-left': 0
         },
         'mjx-menclose > mjx-arrow[double] > mjx-aline': {
-            left: lengths_js_1.em(Notation.THICKNESS * (Notation.ARROWX - 1)), height: 0,
+            left: (0, lengths_js_1.em)(Notation.THICKNESS * (Notation.ARROWX - 1)), height: 0,
         },
         'mjx-menclose > mjx-arrow > mjx-rthead': {
             transform: 'skewX(' + ANGLE + 'rad)',
             right: 0, bottom: '-1px',
             'border-bottom': '1px solid transparent',
-            'border-top': lengths_js_1.em(Notation.THICKNESS * Notation.ARROWY) + ' solid transparent'
+            'border-top': (0, lengths_js_1.em)(Notation.THICKNESS * Notation.ARROWY) + ' solid transparent'
         },
         'mjx-menclose > mjx-arrow > mjx-rbhead': {
             transform: 'skewX(-' + ANGLE + 'rad)',
             'transform-origin': 'top',
             right: 0, top: '-1px',
             'border-top': '1px solid transparent',
-            'border-bottom': lengths_js_1.em(Notation.THICKNESS * Notation.ARROWY) + ' solid transparent'
+            'border-bottom': (0, lengths_js_1.em)(Notation.THICKNESS * Notation.ARROWY) + ' solid transparent'
         },
         'mjx-menclose > mjx-arrow > mjx-lthead': {
             transform: 'skewX(-' + ANGLE + 'rad)',
             left: 0, bottom: '-1px',
             'border-left': 0,
-            'border-right': lengths_js_1.em(Notation.THICKNESS * Notation.ARROWX) + ' solid',
+            'border-right': (0, lengths_js_1.em)(Notation.THICKNESS * Notation.ARROWX) + ' solid',
             'border-bottom': '1px solid transparent',
-            'border-top': lengths_js_1.em(Notation.THICKNESS * Notation.ARROWY) + ' solid transparent'
+            'border-top': (0, lengths_js_1.em)(Notation.THICKNESS * Notation.ARROWY) + ' solid transparent'
         },
         'mjx-menclose > mjx-arrow > mjx-lbhead': {
             transform: 'skewX(' + ANGLE + 'rad)',
             'transform-origin': 'top',
             left: 0, top: '-1px',
             'border-left': 0,
-            'border-right': lengths_js_1.em(Notation.THICKNESS * Notation.ARROWX) + ' solid',
+            'border-right': (0, lengths_js_1.em)(Notation.THICKNESS * Notation.ARROWX) + ' solid',
             'border-top': '1px solid transparent',
-            'border-bottom': lengths_js_1.em(Notation.THICKNESS * Notation.ARROWY) + ' solid transparent'
+            'border-bottom': (0, lengths_js_1.em)(Notation.THICKNESS * Notation.ARROWY) + ' solid transparent'
         },
         'mjx-menclose > dbox': {
             position: 'absolute',
-            top: 0, bottom: 0, left: lengths_js_1.em(-1.5 * Notation.PADDING),
-            width: lengths_js_1.em(3 * Notation.PADDING),
-            border: lengths_js_1.em(Notation.THICKNESS) + ' solid',
+            top: 0, bottom: 0, left: (0, lengths_js_1.em)(-1.5 * Notation.PADDING),
+            width: (0, lengths_js_1.em)(3 * Notation.PADDING),
+            border: (0, lengths_js_1.em)(Notation.THICKNESS) + ' solid',
             'border-radius': '50%',
-            'clip-path': 'inset(0 0 0 ' + lengths_js_1.em(1.5 * Notation.PADDING) + ')',
+            'clip-path': 'inset(0 0 0 ' + (0, lengths_js_1.em)(1.5 * Notation.PADDING) + ')',
             'box-sizing': 'border-box'
         }
     };
@@ -375,5 +408,6 @@ var CHTMLmenclose = (function (_super) {
             }]
     ]);
     return CHTMLmenclose;
-}(menclose_js_1.CommonMencloseMixin(Wrapper_js_1.CHTMLWrapper)));
+}((0, menclose_js_1.CommonMencloseMixin)(Wrapper_js_1.CHTMLWrapper)));
 exports.CHTMLmenclose = CHTMLmenclose;
+//# sourceMappingURL=menclose.js.map

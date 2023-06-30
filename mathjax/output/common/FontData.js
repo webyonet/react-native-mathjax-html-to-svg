@@ -26,9 +26,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
@@ -43,35 +48,55 @@ var __values = (this && this.__values) || function(o) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FontData = exports.NOSTRETCH = exports.H = exports.V = void 0;
+var Options_js_1 = require("../../util/Options.js");
 exports.V = 1;
 exports.H = 2;
 exports.NOSTRETCH = { dir: 0 };
 var FontData = (function () {
-    function FontData() {
-        var e_1, _a;
+    function FontData(options) {
+        var e_1, _a, e_2, _b;
+        if (options === void 0) { options = null; }
         this.variant = {};
         this.delimiters = {};
         this.cssFontMap = {};
         this.remapChars = {};
+        this.skewIcFactor = .75;
         var CLASS = this.constructor;
+        this.options = (0, Options_js_1.userOptions)((0, Options_js_1.defaultOptions)({}, CLASS.OPTIONS), options);
         this.params = __assign({}, CLASS.defaultParams);
-        this.sizeVariants = __spread(CLASS.defaultSizeVariants);
+        this.sizeVariants = __spreadArray([], __read(CLASS.defaultSizeVariants), false);
+        this.stretchVariants = __spreadArray([], __read(CLASS.defaultStretchVariants), false);
         this.cssFontMap = __assign({}, CLASS.defaultCssFonts);
-        this.cssFamilyPrefix = CLASS.defaultCssFamilyPrefix;
-        this.createVariants(CLASS.defaultVariants);
-        this.defineDelimiters(CLASS.defaultDelimiters);
         try {
-            for (var _b = __values(Object.keys(CLASS.defaultChars)), _c = _b.next(); !_c.done; _c = _b.next()) {
-                var name_1 = _c.value;
-                this.defineChars(name_1, CLASS.defaultChars[name_1]);
+            for (var _c = __values(Object.keys(this.cssFontMap)), _d = _c.next(); !_d.done; _d = _c.next()) {
+                var name_1 = _d.value;
+                if (this.cssFontMap[name_1][0] === 'unknown') {
+                    this.cssFontMap[name_1][0] = this.options.unknownFamily;
+                }
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
         finally {
             try {
-                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+                if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
             }
             finally { if (e_1) throw e_1.error; }
+        }
+        this.cssFamilyPrefix = CLASS.defaultCssFamilyPrefix;
+        this.createVariants(CLASS.defaultVariants);
+        this.defineDelimiters(CLASS.defaultDelimiters);
+        try {
+            for (var _e = __values(Object.keys(CLASS.defaultChars)), _f = _e.next(); !_f.done; _f = _e.next()) {
+                var name_2 = _f.value;
+                this.defineChars(name_2, CLASS.defaultChars[name_2]);
+            }
+        }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        finally {
+            try {
+                if (_f && !_f.done && (_b = _e.return)) _b.call(_e);
+            }
+            finally { if (e_2) throw e_2.error; }
         }
         this.defineRemap('accent', CLASS.defaultAccentMap);
         this.defineRemap('mo', CLASS.defaultMoMap);
@@ -84,6 +109,16 @@ var FontData = (function () {
         }
         return char[3];
     };
+    Object.defineProperty(FontData.prototype, "styles", {
+        get: function () {
+            return this._styles;
+        },
+        set: function (style) {
+            this._styles = style;
+        },
+        enumerable: false,
+        configurable: true
+    });
     FontData.prototype.createVariant = function (name, inherit, link) {
         if (inherit === void 0) { inherit = null; }
         if (link === void 0) { link = null; }
@@ -100,7 +135,7 @@ var FontData = (function () {
         this.variant[name] = variant;
     };
     FontData.prototype.remapSmpChars = function (chars, name) {
-        var e_2, _a, e_3, _b;
+        var e_3, _a, e_4, _b;
         var CLASS = this.constructor;
         if (CLASS.VariantSmp[name]) {
             var SmpRemap = CLASS.SmpRemap;
@@ -119,27 +154,27 @@ var FontData = (function () {
                     }
                     if (SmpGreek[i]) {
                         try {
-                            for (var _f = (e_3 = void 0, __values(Object.keys(SmpGreek[i]).map(function (x) { return parseInt(x); }))), _g = _f.next(); !_g.done; _g = _f.next()) {
+                            for (var _f = (e_4 = void 0, __values(Object.keys(SmpGreek[i]).map(function (x) { return parseInt(x); }))), _g = _f.next(); !_g.done; _g = _f.next()) {
                                 var n = _g.value;
                                 chars[n] = this.smpChar(base + SmpGreek[i][n]);
                             }
                         }
-                        catch (e_3_1) { e_3 = { error: e_3_1 }; }
+                        catch (e_4_1) { e_4 = { error: e_4_1 }; }
                         finally {
                             try {
                                 if (_g && !_g.done && (_b = _f.return)) _b.call(_f);
                             }
-                            finally { if (e_3) throw e_3.error; }
+                            finally { if (e_4) throw e_4.error; }
                         }
                     }
                 }
             }
-            catch (e_2_1) { e_2 = { error: e_2_1 }; }
+            catch (e_3_1) { e_3 = { error: e_3_1 }; }
             finally {
                 try {
                     if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
                 }
-                finally { if (e_2) throw e_2.error; }
+                finally { if (e_3) throw e_3.error; }
             }
         }
         if (name === 'bold') {
@@ -151,23 +186,23 @@ var FontData = (function () {
         return [, , , { smp: n }];
     };
     FontData.prototype.createVariants = function (variants) {
-        var e_4, _a;
+        var e_5, _a;
         try {
             for (var variants_1 = __values(variants), variants_1_1 = variants_1.next(); !variants_1_1.done; variants_1_1 = variants_1.next()) {
                 var variant = variants_1_1.value;
                 this.createVariant(variant[0], variant[1], variant[2]);
             }
         }
-        catch (e_4_1) { e_4 = { error: e_4_1 }; }
+        catch (e_5_1) { e_5 = { error: e_5_1 }; }
         finally {
             try {
                 if (variants_1_1 && !variants_1_1.done && (_a = variants_1.return)) _a.call(variants_1);
             }
-            finally { if (e_4) throw e_4.error; }
+            finally { if (e_5) throw e_5.error; }
         }
     };
     FontData.prototype.defineChars = function (name, chars) {
-        var e_5, _a;
+        var e_6, _a;
         var variant = this.variant[name];
         Object.assign(variant.chars, chars);
         try {
@@ -176,12 +211,12 @@ var FontData = (function () {
                 Object.assign(link, chars);
             }
         }
-        catch (e_5_1) { e_5 = { error: e_5_1 }; }
+        catch (e_6_1) { e_6 = { error: e_6_1 }; }
         finally {
             try {
                 if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
             }
-            finally { if (e_5) throw e_5.error; }
+            finally { if (e_6) throw e_6.error; }
         }
     };
     FontData.prototype.defineDelimiters = function (delims) {
@@ -202,6 +237,9 @@ var FontData = (function () {
         }
         return this.sizeVariants[i];
     };
+    FontData.prototype.getStretchVariant = function (n, i) {
+        return this.stretchVariants[this.delimiters[n].stretchv ? this.delimiters[n].stretchv[i] : 0];
+    };
     FontData.prototype.getChar = function (name, n) {
         return this.variant[name].chars[n];
     };
@@ -218,7 +256,11 @@ var FontData = (function () {
         var map = this.remapChars[name] || {};
         return map[c];
     };
-    FontData.OPTIONS = {};
+    FontData.OPTIONS = {
+        unknownFamily: 'serif'
+    };
+    FontData.JAX = 'common';
+    FontData.NAME = '';
     FontData.defaultVariants = [
         ['normal'],
         ['bold', 'normal'],
@@ -236,13 +278,13 @@ var FontData = (function () {
         ['monospace', 'normal']
     ];
     FontData.defaultCssFonts = {
-        normal: ['serif', false, false],
-        bold: ['serif', false, true],
-        italic: ['serif', true, false],
-        'bold-italic': ['serif', true, true],
-        'double-struck': ['serif', false, true],
-        fraktur: ['serif', false, false],
-        'bold-fraktur': ['serif', false, true],
+        normal: ['unknown', false, false],
+        bold: ['unknown', false, true],
+        italic: ['unknown', true, false],
+        'bold-italic': ['unknown', true, true],
+        'double-struck': ['unknown', false, true],
+        fraktur: ['unknown', false, false],
+        'bold-fraktur': ['unknown', false, true],
         script: ['cursive', false, false],
         'bold-script': ['cursive', false, true],
         'sans-serif': ['sans-serif', false, false],
@@ -379,11 +421,15 @@ var FontData = (function () {
         nulldelimiterspace: .12,
         delimiterfactor: 901,
         delimitershortfall: .3,
-        min_rule_thickness: 1.25
+        min_rule_thickness: 1.25,
+        separation_factor: 1.75,
+        extra_ic: .033
     };
     FontData.defaultDelimiters = {};
     FontData.defaultChars = {};
     FontData.defaultSizeVariants = [];
+    FontData.defaultStretchVariants = [];
     return FontData;
 }());
 exports.FontData = FontData;
+//# sourceMappingURL=FontData.js.map

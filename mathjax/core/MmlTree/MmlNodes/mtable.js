@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -43,9 +45,9 @@ var MmlMtable = (function (_super) {
     function MmlMtable() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.properties = {
-            useHeight: 1
+            useHeight: true
         };
-        _this.texClass = MmlNode_js_1.TEXCLASS.ORD;
+        _this.texclass = MmlNode_js_1.TEXCLASS.ORD;
         return _this;
     }
     Object.defineProperty(MmlMtable.prototype, "kind", {
@@ -84,7 +86,7 @@ var MmlMtable = (function (_super) {
         }
         _super.prototype.setInheritedAttributes.call(this, attributes, display, level, prime);
     };
-    MmlMtable.prototype.setChildInheritedAttributes = function (attributes, display, level, prime) {
+    MmlMtable.prototype.setChildInheritedAttributes = function (attributes, display, level, _prime) {
         var e_2, _a, e_3, _b;
         try {
             for (var _c = __values(this.childNodes), _d = _c.next(); !_d.done; _d = _c.next()) {
@@ -102,17 +104,19 @@ var MmlMtable = (function (_super) {
             }
             finally { if (e_2) throw e_2.error; }
         }
+        level = this.getProperty('scriptlevel') || level;
         display = !!(this.attributes.getExplicit('displaystyle') || this.attributes.getDefault('displaystyle'));
         attributes = this.addInheritedAttributes(attributes, {
             columnalign: this.attributes.get('columnalign'),
             rowalign: 'center'
         });
-        var ralign = string_js_1.split(this.attributes.get('rowalign'));
+        var cramped = this.attributes.getExplicit('data-cramped');
+        var ralign = (0, string_js_1.split)(this.attributes.get('rowalign'));
         try {
             for (var _e = __values(this.childNodes), _f = _e.next(); !_f.done; _f = _e.next()) {
                 var child = _f.value;
                 attributes.rowalign[1] = ralign.shift() || attributes.rowalign[1];
-                child.setInheritedAttributes(attributes, display, level, prime);
+                child.setInheritedAttributes(attributes, display, level, !!cramped);
             }
         }
         catch (e_3_1) { e_3 = { error: e_3_1 }; }
@@ -124,28 +128,36 @@ var MmlMtable = (function (_super) {
         }
     };
     MmlMtable.prototype.verifyChildren = function (options) {
-        var e_4, _a;
-        if (!options['fixMtables']) {
-            try {
-                for (var _b = __values(this.childNodes), _c = _b.next(); !_c.done; _c = _b.next()) {
-                    var child = _c.value;
-                    if (!child.isKind('mtr')) {
-                        this.mError('Children of ' + this.kind + ' must be mtr or mlabeledtr', options);
-                    }
-                }
+        var mtr = null;
+        var factory = this.factory;
+        for (var i = 0; i < this.childNodes.length; i++) {
+            var child = this.childNodes[i];
+            if (child.isKind('mtr')) {
+                mtr = null;
             }
-            catch (e_4_1) { e_4 = { error: e_4_1 }; }
-            finally {
-                try {
-                    if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            else {
+                var isMtd = child.isKind('mtd');
+                if (mtr) {
+                    this.removeChild(child);
+                    i--;
                 }
-                finally { if (e_4) throw e_4.error; }
+                else {
+                    mtr = this.replaceChild(factory.create('mtr'), child);
+                }
+                mtr.appendChild(isMtd ? child : factory.create('mtd', {}, [child]));
+                if (!options['fixMtables']) {
+                    child.parent.removeChild(child);
+                    child.parent = this;
+                    isMtd && mtr.appendChild(factory.create('mtd'));
+                    var merror = child.mError('Children of ' + this.kind + ' must be mtr or mlabeledtr', options, isMtd);
+                    mtr.childNodes[mtr.childNodes.length - 1].appendChild(merror);
+                }
             }
         }
         _super.prototype.verifyChildren.call(this, options);
     };
     MmlMtable.prototype.setTeXclass = function (prev) {
-        var e_5, _a;
+        var e_4, _a;
         this.getPrevClass(prev);
         try {
             for (var _b = __values(this.childNodes), _c = _b.next(); !_c.done; _c = _b.next()) {
@@ -153,12 +165,12 @@ var MmlMtable = (function (_super) {
                 child.setTeXclass(null);
             }
         }
-        catch (e_5_1) { e_5 = { error: e_5_1 }; }
+        catch (e_4_1) { e_4 = { error: e_4_1 }; }
         finally {
             try {
                 if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
             }
-            finally { if (e_5) throw e_5.error; }
+            finally { if (e_4) throw e_4.error; }
         }
         return this;
     };
@@ -166,3 +178,4 @@ var MmlMtable = (function (_super) {
     return MmlMtable;
 }(MmlNode_js_1.AbstractMmlNode));
 exports.MmlMtable = MmlMtable;
+//# sourceMappingURL=mtable.js.map

@@ -1,6 +1,5 @@
 import { A11yDocument, Region } from './Region.js';
 import { Explorer, AbstractExplorer } from './Explorer.js';
-import '../sre.js';
 export interface TreeExplorer extends Explorer {
 }
 export declare class AbstractTreeExplorer extends AbstractExplorer<void> {

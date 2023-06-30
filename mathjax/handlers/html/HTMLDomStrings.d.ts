@@ -21,5 +21,6 @@ export declare class HTMLDomStrings<N, T, D> {
     protected handleText(node: T, ignore: boolean): N | T;
     protected handleTag(node: N, ignore: boolean): N | T;
     protected handleContainer(node: N, ignore: boolean): [N | T, boolean];
+    protected handleOther(node: N, _ignore: boolean): N | T;
     find(node: N | T): [string[], HTMLNodeList<N, T>[]];
 }

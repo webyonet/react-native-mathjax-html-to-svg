@@ -12,5 +12,6 @@ export declare class CssStyles {
     removeStyles(...selectors: string[]): void;
     clear(): void;
     getStyleString(): string;
+    getStyleRules(): string[];
     getStyleDefString(styles: StyleData): string;
 }

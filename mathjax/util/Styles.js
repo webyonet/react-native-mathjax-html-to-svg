@@ -26,9 +26,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Styles = void 0;
@@ -123,7 +128,7 @@ function splitSame(name) {
 }
 function combineSame(name) {
     var e_4, _a;
-    var children = __spread(Styles.connect[name].children);
+    var children = __spreadArray([], __read(Styles.connect[name].children), false);
     var value = this.styles[this.childName(name, children.shift())];
     try {
         for (var children_2 = __values(children), children_2_1 = children_2.next(); !children_2_1.done; children_2_1 = children_2.next()) {
@@ -332,7 +337,7 @@ var Styles = (function () {
                     var name_2 = _c.value;
                     var parent_1 = this.parentName(name_2);
                     if (!this.styles[parent_1]) {
-                        styles.push(name_2 + ': ' + this.styles[name_2]);
+                        styles.push(name_2 + ': ' + this.styles[name_2] + ';');
                     }
                 }
             }
@@ -343,7 +348,7 @@ var Styles = (function () {
                 }
                 finally { if (e_11) throw e_11.error; }
             }
-            return styles.join('; ');
+            return styles.join(' ');
         },
         enumerable: false,
         configurable: true
@@ -481,3 +486,4 @@ var Styles = (function () {
     return Styles;
 }());
 exports.Styles = Styles;
+//# sourceMappingURL=Styles.js.map

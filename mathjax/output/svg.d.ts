@@ -25,6 +25,7 @@ export declare class SVG<N, T, D> extends CommonOutputJax<N, T, D, SVGWrapper<N,
     constructor(options?: OptionList);
     initialize(): void;
     clearFontCache(): void;
+    reset(): void;
     protected setScale(node: N): void;
     escaped(math: MathItem<N, T, D>, html: MathDocument<N, T, D>): N;
     styleSheet(html: MathDocument<N, T, D>): N;

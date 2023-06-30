@@ -12,3 +12,4 @@ catch (e) {
     choose = liteAdaptor_js_1.liteAdaptor;
 }
 exports.chooseAdaptor = choose;
+//# sourceMappingURL=chooseAdaptor.js.map

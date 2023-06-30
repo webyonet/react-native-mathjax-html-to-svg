@@ -1,5 +1,4 @@
-import { SVGWrapper, Constructor } from '../Wrapper.js';
-import { SVGmtable } from './mtable.js';
+import { SVGConstructor, Constructor } from '../Wrapper.js';
 import { SVGmtd } from './mtd.js';
 export declare type SizeData = {
     x: number;
@@ -10,10 +9,9 @@ export declare type SizeData = {
     lLine: number;
     rLine: number;
 };
-declare const SVGmtr_base: Constructor<import("mathjax-full/ts/output/common/Wrappers/mtr").CommonMtr<SVGmtd<any, any, any>>> & Constructor<SVGWrapper<any, any, any>>;
+declare const SVGmtr_base: import("../../common/Wrappers/mtr.js").MtrConstructor<SVGmtd<any, any, any>> & SVGConstructor<any, any, any>;
 export declare class SVGmtr<N, T, D> extends SVGmtr_base {
     static kind: string;
-    parent: SVGmtable<N, T, D>;
     H: number;
     D: number;
     tSpace: number;
@@ -25,7 +23,7 @@ export declare class SVGmtr<N, T, D> extends SVGmtr_base {
     placeCell(cell: SVGmtd<N, T, D>, sizes: SizeData): number;
     protected placeColor(): void;
 }
-declare const SVGmlabeledtr_base: Constructor<import("mathjax-full/ts/output/common/Wrappers/mtr").CommonMlabeledtr<SVGmtd<any, any, any>>> & Constructor<SVGmtr<any, any, any>>;
+declare const SVGmlabeledtr_base: import("../../common/Wrappers/mtr.js").MlabeledtrConstructor<SVGmtd<any, any, any>> & Constructor<SVGmtr<any, any, any>>;
 export declare class SVGmlabeledtr<N, T, D> extends SVGmlabeledtr_base {
     static kind: string;
     toSVG(parent: N): void;

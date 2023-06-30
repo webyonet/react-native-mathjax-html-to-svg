@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -28,9 +30,8 @@ var SVGmsqrt = (function (_super) {
         var surd = this.childNodes[this.surd];
         var base = this.childNodes[this.base];
         var root = (this.root ? this.childNodes[this.root] : null);
-        var rbox = this.getBBox();
         var sbox = surd.getBBox();
-        var bbox = base.getBBox();
+        var bbox = base.getOuterBBox();
         var q = this.getPQ(sbox)[1];
         var t = this.font.params.rule_thickness * this.bbox.scale;
         var H = bbox.h + q + t;
@@ -38,17 +39,18 @@ var SVGmsqrt = (function (_super) {
         var BASE = this.adaptor.append(SVG, this.svg('g'));
         this.addRoot(SVG, root, sbox, H);
         surd.toSVG(SVG);
-        surd.place(this.dx, rbox.h - sbox.h - t);
+        surd.place(this.dx, H - sbox.h);
         base.toSVG(BASE);
         base.place(this.dx + sbox.w, 0);
         this.adaptor.append(SVG, this.svg('rect', {
             width: this.fixed(bbox.w), height: this.fixed(t),
-            x: this.fixed(this.dx + sbox.w), y: this.fixed(rbox.h - 2 * t)
+            x: this.fixed(this.dx + sbox.w), y: this.fixed(H - t)
         }));
     };
     SVGmsqrt.prototype.addRoot = function (_ROOT, _root, _sbox, _H) {
     };
     SVGmsqrt.kind = msqrt_js_2.MmlMsqrt.prototype.kind;
     return SVGmsqrt;
-}(msqrt_js_1.CommonMsqrtMixin(Wrapper_js_1.SVGWrapper)));
+}((0, msqrt_js_1.CommonMsqrtMixin)(Wrapper_js_1.SVGWrapper)));
 exports.SVGmsqrt = SVGmsqrt;
+//# sourceMappingURL=msqrt.js.map

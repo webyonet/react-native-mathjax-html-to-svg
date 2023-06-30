@@ -22,7 +22,7 @@ var HTMLDomStrings = (function () {
     function HTMLDomStrings(options) {
         if (options === void 0) { options = null; }
         var CLASS = this.constructor;
-        this.options = Options_js_1.userOptions(Options_js_1.defaultOptions({}, CLASS.OPTIONS), options);
+        this.options = (0, Options_js_1.userOptions)((0, Options_js_1.defaultOptions)({}, CLASS.OPTIONS), options);
         this.init();
         this.getPatterns();
     }
@@ -34,9 +34,9 @@ var HTMLDomStrings = (function () {
         this.stack = [];
     };
     HTMLDomStrings.prototype.getPatterns = function () {
-        var skip = Options_js_1.makeArray(this.options['skipHtmlTags']);
-        var ignore = Options_js_1.makeArray(this.options['ignoreHtmlClass']);
-        var process = Options_js_1.makeArray(this.options['processHtmlClass']);
+        var skip = (0, Options_js_1.makeArray)(this.options['skipHtmlTags']);
+        var ignore = (0, Options_js_1.makeArray)(this.options['ignoreHtmlClass']);
+        var process = (0, Options_js_1.makeArray)(this.options['processHtmlClass']);
         this.skipHtmlTags = new RegExp('^(?:' + skip.join('|') + ')$', 'i');
         this.ignoreHtmlClass = new RegExp('(?:^| )(?:' + ignore.join('|') + ')(?: |$)');
         this.processHtmlClass = new RegExp('(?:^| )(?:' + process + ')(?: |$)');
@@ -85,6 +85,10 @@ var HTMLDomStrings = (function () {
         }
         return [next, ignore];
     };
+    HTMLDomStrings.prototype.handleOther = function (node, _ignore) {
+        this.pushString();
+        return this.adaptor.next(node);
+    };
     HTMLDomStrings.prototype.find = function (node) {
         var _a, _b;
         this.init();
@@ -92,14 +96,18 @@ var HTMLDomStrings = (function () {
         var ignore = false;
         var include = this.options['includeHtmlTags'];
         while (node && node !== stop) {
-            if (this.adaptor.kind(node) === '#text') {
+            var kind = this.adaptor.kind(node);
+            if (kind === '#text') {
                 node = this.handleText(node, ignore);
             }
-            else if (include[this.adaptor.kind(node)] !== undefined) {
+            else if (include.hasOwnProperty(kind)) {
                 node = this.handleTag(node, ignore);
             }
-            else {
+            else if (kind) {
                 _a = __read(this.handleContainer(node, ignore), 2), node = _a[0], ignore = _a[1];
+            }
+            else {
+                node = this.handleOther(node, ignore);
             }
             if (!node && this.stack.length) {
                 this.pushString();
@@ -120,3 +128,4 @@ var HTMLDomStrings = (function () {
     return HTMLDomStrings;
 }());
 exports.HTMLDomStrings = HTMLDomStrings;
+//# sourceMappingURL=HTMLDomStrings.js.map

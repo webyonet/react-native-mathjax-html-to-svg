@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -40,7 +42,7 @@ var MathML = (function (_super) {
     function MathML(options) {
         if (options === void 0) { options = {}; }
         var _this = this;
-        var _a = __read(Options_js_1.separateOptions(options, FindMathML_js_1.FindMathML.OPTIONS, MathMLCompile_js_1.MathMLCompile.OPTIONS), 3), mml = _a[0], find = _a[1], compile = _a[2];
+        var _a = __read((0, Options_js_1.separateOptions)(options, FindMathML_js_1.FindMathML.OPTIONS, MathMLCompile_js_1.MathMLCompile.OPTIONS), 3), mml = _a[0], find = _a[1], compile = _a[2];
         _this = _super.call(this, mml) || this;
         _this.findMathML = _this.options['FindMathML'] || new FindMathML_js_1.FindMathML(find);
         _this.mathml = _this.options['MathMLCompile'] || new MathMLCompile_js_1.MathMLCompile(compile);
@@ -66,7 +68,7 @@ var MathML = (function (_super) {
     MathML.prototype.compile = function (math, document) {
         var mml = math.start.node;
         if (!mml || !math.end.node || this.options['forceReparse'] || this.adaptor.kind(mml) === '#text') {
-            var mathml = this.executeFilters(this.preFilters, math, document, math.math || '<math></math>');
+            var mathml = this.executeFilters(this.preFilters, math, document, (math.math || '<math></math>').trim());
             var doc = this.checkForErrors(this.adaptor.parse(mathml, 'text/' + this.options['parseAs']));
             var body = this.adaptor.body(doc);
             if (this.adaptor.childNodes(body).length !== 1) {
@@ -97,7 +99,7 @@ var MathML = (function (_super) {
         return this.findMathML.findMath(node);
     };
     MathML.NAME = 'MathML';
-    MathML.OPTIONS = Options_js_1.defaultOptions({
+    MathML.OPTIONS = (0, Options_js_1.defaultOptions)({
         parseAs: 'html',
         forceReparse: false,
         FindMathML: null,
@@ -109,3 +111,4 @@ var MathML = (function (_super) {
     return MathML;
 }(InputJax_js_1.AbstractInputJax));
 exports.MathML = MathML;
+//# sourceMappingURL=mathml.js.map

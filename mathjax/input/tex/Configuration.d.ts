@@ -32,6 +32,7 @@ export declare class Configuration {
     readonly initMethod: Processor<InitMethod>;
     readonly configMethod: Processor<ConfigMethod>;
     priority: number;
+    readonly parser: string;
     private static makeProcessor;
     private static _create;
     static create(name: string, config?: {
@@ -48,6 +49,7 @@ export declare class Configuration {
         init?: ProtoProcessor<InitMethod>;
         config?: ProtoProcessor<ConfigMethod>;
         priority?: number;
+        parser?: string;
     }): Configuration;
     static local(config?: {
         handler?: HandlerConfig;
@@ -63,6 +65,7 @@ export declare class Configuration {
         init?: ProtoProcessor<InitMethod>;
         config?: ProtoProcessor<ConfigMethod>;
         priority?: number;
+        parser?: string;
     }): Configuration;
     private constructor();
     get init(): InitMethod;
@@ -77,6 +80,7 @@ export declare class ParserConfiguration {
     protected initMethod: FunctionList;
     protected configMethod: FunctionList;
     protected configurations: PrioritizedList<Configuration>;
+    protected parsers: string[];
     handlers: SubHandlers;
     items: StackItemConfig;
     tags: TagsConfig;
@@ -84,11 +88,12 @@ export declare class ParserConfiguration {
     nodes: {
         [key: string]: any;
     };
-    constructor(packages: (string | [string, number])[]);
+    constructor(packages: (string | [string, number])[], parsers?: string[]);
     init(): void;
     config(jax: TeX<any, any, any>): void;
     addPackage(pkg: (string | [string, number])): void;
-    add(config: Configuration, jax: TeX<any, any, any>, options?: OptionList): void;
+    add(name: string, jax: TeX<any, any, any>, options?: OptionList): void;
+    protected getPackage(name: string): Configuration;
     append(config: Configuration, priority?: number): void;
     private addFilters;
 }

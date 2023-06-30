@@ -1,10 +1,10 @@
-import { CHTMLWrapper } from '../Wrapper.js';
+import { CHTMLWrapper, CHTMLConstructor } from '../Wrapper.js';
 import { CHTMLWrapperFactory } from '../WrapperFactory.js';
 import { CHTMLmtr } from './mtr.js';
 import { CHTMLmtd } from './mtd.js';
 import { MmlNode } from '../../../core/MmlTree/MmlNode.js';
 import { StyleList } from '../../../util/StyleList.js';
-declare const CHTMLmtable_base: import("mathjax-full/ts/output/common/Wrapper").Constructor<import("mathjax-full/ts/output/common/Wrappers/mtable").CommonMtable<CHTMLmtd<any, any, any>, CHTMLmtr<any, any, any>>> & import("mathjax-full/ts/output/common/Wrapper").Constructor<CHTMLWrapper<any, any, any>>;
+declare const CHTMLmtable_base: import("../../common/Wrappers/mtable.js").MtableConstructor<CHTMLmtd<any, any, any>, CHTMLmtr<any, any, any>> & CHTMLConstructor<any, any, any>;
 export declare class CHTMLmtable<N, T, D> extends CHTMLmtable_base {
     static kind: string;
     static styles: StyleList;
@@ -20,8 +20,10 @@ export declare class CHTMLmtable<N, T, D> extends CHTMLmtable_base {
     protected handleColumnWidths(): void;
     protected handleRowSpacing(): void;
     protected handleRowLines(): void;
+    protected handleRowHeights(): void;
     protected handleEqualRows(): void;
-    protected setRowHeight(row: CHTMLWrapper<N, T, D>, HD: number, D: number, space: number): void;
+    protected setRowHeight(row: CHTMLWrapper<N, T, D>, HD: number): void;
+    protected setRowBaseline(row: CHTMLWrapper<N, T, D>, HD: number, D: number): void;
     protected setCellBaseline(cell: CHTMLWrapper<N, T, D>, ralign: string, HD: number, D: number): boolean;
     protected handleFrame(): void;
     protected handleWidth(): void;

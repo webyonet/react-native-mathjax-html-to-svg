@@ -1,7 +1,7 @@
-import { SVGWrapper } from '../Wrapper.js';
+import { SVGWrapper, SVGConstructor } from '../Wrapper.js';
 import { BBox } from '../../../util/BBox.js';
 import { StyleList } from '../../../util/StyleList.js';
-declare const SVGsemantics_base: import("mathjax-full/ts/output/common/Wrapper").Constructor<import("mathjax-full/ts/output/common/Wrappers/semantics").CommonSemantics> & import("mathjax-full/ts/output/common/Wrapper").Constructor<SVGWrapper<any, any, any>>;
+declare const SVGsemantics_base: import("../../common/Wrappers/semantics.js").SemanticsConstructor & SVGConstructor<any, any, any>;
 export declare class SVGsemantics<N, T, D> extends SVGsemantics_base {
     static kind: string;
     toSVG(parent: N): void;

@@ -26,5 +26,6 @@ export default class ParseOptions {
     clear(): void;
     addNode(property: string, node: MmlNode): void;
     getList(property: string): MmlNode[];
+    removeFromList(property: string, nodes: MmlNode[]): void;
     private inTree;
 }

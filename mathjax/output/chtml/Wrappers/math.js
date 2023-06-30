@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -63,7 +65,7 @@ var CHTMLmath = (function (_super) {
         if (this.bbox.pwidth === BBox_js_1.BBox.fullWidth) {
             adaptor.setAttribute(parent, 'width', 'full');
             if (this.jax.table) {
-                var _b = this.jax.table.getBBox(), L = _b.L, w = _b.w, R = _b.R;
+                var _b = this.jax.table.getOuterBBox(), L = _b.L, w = _b.w, R = _b.R;
                 if (align === 'right') {
                     R = Math.max(R || -shift, -shift);
                 }
@@ -107,6 +109,7 @@ var CHTMLmath = (function (_super) {
             'font-size': '100%',
             'font-size-adjust': 'none',
             'letter-spacing': 'normal',
+            'border-collapse': 'collapse',
             'word-wrap': 'normal',
             'word-spacing': 'normal',
             'white-space': 'nowrap',
@@ -132,5 +135,6 @@ var CHTMLmath = (function (_super) {
         }
     };
     return CHTMLmath;
-}(math_js_1.CommonMathMixin(Wrapper_js_1.CHTMLWrapper)));
+}((0, math_js_1.CommonMathMixin)(Wrapper_js_1.CHTMLWrapper)));
 exports.CHTMLmath = CHTMLmath;
+//# sourceMappingURL=math.js.map

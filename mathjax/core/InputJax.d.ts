@@ -16,6 +16,7 @@ export interface InputJax<N, T, D> {
     setAdaptor(adaptor: DOMAdaptor<N, T, D>): void;
     setMmlFactory(mmlFactory: MmlFactory): void;
     initialize(): void;
+    reset(...args: any[]): void;
     findMath(which: N | string[], options?: OptionList): ProtoItem<N, T>[];
     compile(math: MathItem<N, T, D>, document: MathDocument<N, T, D>): MmlNode;
 }
@@ -32,6 +33,7 @@ export declare abstract class AbstractInputJax<N, T, D> implements InputJax<N, T
     setAdaptor(adaptor: DOMAdaptor<N, T, D>): void;
     setMmlFactory(mmlFactory: MmlFactory): void;
     initialize(): void;
+    reset(..._args: any[]): void;
     get processStrings(): boolean;
     findMath(_node: N | string[], _options?: OptionList): ProtoItem<N, T>[];
     abstract compile(math: MathItem<N, T, D>, document: MathDocument<N, T, D>): MmlNode;

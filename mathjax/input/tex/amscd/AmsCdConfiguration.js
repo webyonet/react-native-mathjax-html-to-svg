@@ -19,3 +19,4 @@ exports.AmsCdConfiguration = Configuration_js_1.Configuration.create('amscd', {
         }
     }
 });
+//# sourceMappingURL=AmsCdConfiguration.js.map

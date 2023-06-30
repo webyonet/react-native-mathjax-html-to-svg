@@ -7,6 +7,7 @@ export interface SymbolMap {
     parserFor(symbol: string): ParseMethod;
     parse([env, symbol]: ParseInput): ParseResult;
 }
+export declare function parseResult(result: ParseResult): ParseResult;
 export declare abstract class AbstractSymbolMap<T> implements SymbolMap {
     private _name;
     private _parser;
@@ -54,5 +55,5 @@ export declare class EnvironmentMap extends MacroMap {
     constructor(name: string, parser: ParseMethod, json: {
         [index: string]: string | Args[];
     }, functionMap: Record<string, ParseMethod>);
-    parse([env, symbol]: ParseInput): boolean;
+    parse([env, symbol]: ParseInput): ParseResult;
 }

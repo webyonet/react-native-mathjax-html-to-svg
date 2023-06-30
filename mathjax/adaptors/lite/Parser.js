@@ -1,4 +1,27 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __read = (this && this.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
@@ -28,7 +51,7 @@ var __values = (this && this.__values) || function(o) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LiteParser = exports.PATTERNS = void 0;
-var Entities = require("../../util/Entities.js");
+var Entities = __importStar(require("../../util/Entities.js"));
 var Element_js_1 = require("./Element.js");
 var Text_js_1 = require("./Text.js");
 var PATTERNS;
@@ -217,18 +240,21 @@ var LiteParser = (function () {
         }
         return node;
     };
-    LiteParser.prototype.serialize = function (adaptor, node) {
+    LiteParser.prototype.serialize = function (adaptor, node, xml) {
         var _this = this;
+        if (xml === void 0) { xml = false; }
         var SELF_CLOSING = this.constructor.SELF_CLOSING;
         var CDATA = this.constructor.CDATA_ATTR;
         var tag = adaptor.kind(node);
         var attributes = adaptor.allAttributes(node).map(function (x) { return x.name + '="' + (CDATA[x.name] ? x.value : _this.protectAttribute(x.value)) + '"'; }).join(' ');
-        var html = '<' + tag + (attributes ? ' ' + attributes : '') + '>'
-            + (SELF_CLOSING[tag] ? '' : adaptor.innerHTML(node) + '</' + tag + '>');
+        var content = this.serializeInner(adaptor, node, xml);
+        var html = '<' + tag + (attributes ? ' ' + attributes : '')
+            + ((!xml || content) && !SELF_CLOSING[tag] ? ">".concat(content, "</").concat(tag, ">") : xml ? '/>' : '>');
         return html;
     };
-    LiteParser.prototype.serializeInner = function (adaptor, node) {
+    LiteParser.prototype.serializeInner = function (adaptor, node, xml) {
         var _this = this;
+        if (xml === void 0) { xml = false; }
         var PCDATA = this.constructor.PCDATA;
         if (PCDATA.hasOwnProperty(node.kind)) {
             return adaptor.childNodes(node).map(function (x) { return adaptor.value(x); }).join('');
@@ -237,7 +263,7 @@ var LiteParser = (function () {
             var kind = adaptor.kind(x);
             return (kind === '#text' ? _this.protectHTML(adaptor.value(x)) :
                 kind === '#comment' ? x.value :
-                    _this.serialize(adaptor, x));
+                    _this.serialize(adaptor, x, xml));
         }).join('');
     };
     LiteParser.prototype.protectAttribute = function (text) {
@@ -297,3 +323,4 @@ var LiteParser = (function () {
     return LiteParser;
 }());
 exports.LiteParser = LiteParser;
+//# sourceMappingURL=Parser.js.map

@@ -10,9 +10,12 @@ var __values = (this && this.__values) || function(o) {
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ColorModel = void 0;
-var TexError_js_1 = require("../TexError.js");
+var TexError_js_1 = __importDefault(require("../TexError.js"));
 var ColorConstants_js_1 = require("./ColorConstants.js");
 var ColorModelProcessors = new Map();
 var ColorModel = (function () {
@@ -129,5 +132,6 @@ ColorModelProcessors.set('gray', function (gray) {
     if (pn.length < 2) {
         pn = '0' + pn;
     }
-    return "#" + pn + pn + pn;
+    return "#".concat(pn).concat(pn).concat(pn);
 });
+//# sourceMappingURL=ColorUtil.js.map

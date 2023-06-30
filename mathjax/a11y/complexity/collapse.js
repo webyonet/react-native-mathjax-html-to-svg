@@ -360,3 +360,4 @@ var Collapse = (function () {
     return Collapse;
 }());
 exports.Collapse = Collapse;
+//# sourceMappingURL=collapse.js.map

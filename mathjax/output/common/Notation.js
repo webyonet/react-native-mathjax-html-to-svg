@@ -26,23 +26,26 @@ exports.sideNames = Object.keys(exports.sideIndex);
 exports.fullBBox = (function (node) { return new Array(4).fill(node.thickness + node.padding); });
 exports.fullPadding = (function (node) { return new Array(4).fill(node.padding); });
 exports.fullBorder = (function (node) { return new Array(4).fill(node.thickness); });
-exports.arrowHead = function (node) {
+var arrowHead = function (node) {
     return Math.max(node.padding, node.thickness * (node.arrowhead.x + node.arrowhead.dx + 1));
 };
-exports.arrowBBoxHD = function (node, TRBL) {
+exports.arrowHead = arrowHead;
+var arrowBBoxHD = function (node, TRBL) {
     if (node.childNodes[0]) {
         var _a = node.childNodes[0].getBBox(), h = _a.h, d = _a.d;
         TRBL[0] = TRBL[2] = Math.max(0, node.thickness * node.arrowhead.y - (h + d) / 2);
     }
     return TRBL;
 };
-exports.arrowBBoxW = function (node, TRBL) {
+exports.arrowBBoxHD = arrowBBoxHD;
+var arrowBBoxW = function (node, TRBL) {
     if (node.childNodes[0]) {
         var w = node.childNodes[0].getBBox().w;
         TRBL[1] = TRBL[3] = Math.max(0, node.thickness * node.arrowhead.y - w / 2);
     }
     return TRBL;
 };
+exports.arrowBBoxW = arrowBBoxW;
 exports.arrowDef = {
     up: [-Math.PI / 2, false, true, 'verticalstrike'],
     down: [Math.PI / 2, false, true, 'verticakstrike'],
@@ -61,14 +64,14 @@ exports.diagonalArrowDef = {
     northwestsoutheast: [1, 0, true, 'downdiagonalstrike northwestarrow southeastarrow']
 };
 exports.arrowBBox = {
-    up: function (node) { return exports.arrowBBoxW(node, [exports.arrowHead(node), 0, node.padding, 0]); },
-    down: function (node) { return exports.arrowBBoxW(node, [node.padding, 0, exports.arrowHead(node), 0]); },
-    right: function (node) { return exports.arrowBBoxHD(node, [0, exports.arrowHead(node), 0, node.padding]); },
-    left: function (node) { return exports.arrowBBoxHD(node, [0, node.padding, 0, exports.arrowHead(node)]); },
-    updown: function (node) { return exports.arrowBBoxW(node, [exports.arrowHead(node), 0, exports.arrowHead(node), 0]); },
-    leftright: function (node) { return exports.arrowBBoxHD(node, [0, exports.arrowHead(node), 0, exports.arrowHead(node)]); }
+    up: function (node) { return (0, exports.arrowBBoxW)(node, [(0, exports.arrowHead)(node), 0, node.padding, 0]); },
+    down: function (node) { return (0, exports.arrowBBoxW)(node, [node.padding, 0, (0, exports.arrowHead)(node), 0]); },
+    right: function (node) { return (0, exports.arrowBBoxHD)(node, [0, (0, exports.arrowHead)(node), 0, node.padding]); },
+    left: function (node) { return (0, exports.arrowBBoxHD)(node, [0, node.padding, 0, (0, exports.arrowHead)(node)]); },
+    updown: function (node) { return (0, exports.arrowBBoxW)(node, [(0, exports.arrowHead)(node), 0, (0, exports.arrowHead)(node), 0]); },
+    leftright: function (node) { return (0, exports.arrowBBoxHD)(node, [0, (0, exports.arrowHead)(node), 0, (0, exports.arrowHead)(node)]); }
 };
-exports.CommonBorder = function (render) {
+var CommonBorder = function (render) {
     return function (side) {
         var i = exports.sideIndex[side];
         return [side, {
@@ -86,7 +89,8 @@ exports.CommonBorder = function (render) {
             }];
     };
 };
-exports.CommonBorder2 = function (render) {
+exports.CommonBorder = CommonBorder;
+var CommonBorder2 = function (render) {
     return function (name, side1, side2) {
         var i1 = exports.sideIndex[side1];
         var i2 = exports.sideIndex[side2];
@@ -107,7 +111,8 @@ exports.CommonBorder2 = function (render) {
             }];
     };
 };
-exports.CommonDiagonalStrike = function (render) {
+exports.CommonBorder2 = CommonBorder2;
+var CommonDiagonalStrike = function (render) {
     return function (name) {
         var cname = 'mjx-' + name.charAt(0) + 'strike';
         return [name + 'diagonalstrike', {
@@ -116,12 +121,13 @@ exports.CommonDiagonalStrike = function (render) {
             }];
     };
 };
-exports.CommonDiagonalArrow = function (render) {
+exports.CommonDiagonalStrike = CommonDiagonalStrike;
+var CommonDiagonalArrow = function (render) {
     return function (name) {
         var _a = __read(exports.diagonalArrowDef[name], 4), c = _a[0], pi = _a[1], double = _a[2], remove = _a[3];
         return [name + 'arrow', {
                 renderer: function (node, _child) {
-                    var _a = node.arrowData(), a = _a.a, W = _a.W;
+                    var _a = __read(node.arrowAW(), 2), a = _a[0], W = _a[1];
                     var arrow = node.arrow(W, c * (a - pi), double);
                     render(node, arrow);
                 },
@@ -137,14 +143,16 @@ exports.CommonDiagonalArrow = function (render) {
             }];
     };
 };
-exports.CommonArrow = function (render) {
+exports.CommonDiagonalArrow = CommonDiagonalArrow;
+var CommonArrow = function (render) {
     return function (name) {
         var _a = __read(exports.arrowDef[name], 4), angle = _a[0], double = _a[1], isVertical = _a[2], remove = _a[3];
         return [name + 'arrow', {
                 renderer: function (node, _child) {
                     var _a = node.getBBox(), w = _a.w, h = _a.h, d = _a.d;
-                    var W = (isVertical ? h + d : w);
-                    var arrow = node.arrow(W, angle, double);
+                    var _b = __read((isVertical ? [h + d, 'X'] : [w, 'Y']), 2), W = _b[0], offset = _b[1];
+                    var dd = node.getOffset(offset);
+                    var arrow = node.arrow(W, angle, double, offset, dd);
                     render(node, arrow);
                 },
                 bbox: exports.arrowBBox[name],
@@ -152,3 +160,5 @@ exports.CommonArrow = function (render) {
             }];
     };
 };
+exports.CommonArrow = CommonArrow;
+//# sourceMappingURL=Notation.js.map

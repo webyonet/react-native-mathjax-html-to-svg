@@ -1,11 +1,11 @@
 import { MathDocument } from '../../core/MathDocument.js';
 import { CssStyles } from '../../util/StyleList.js';
-import '../sre.js';
+import Sre from '../sre.js';
 export declare type A11yDocument = MathDocument<HTMLElement, Text, Document>;
 export interface Region<T> {
     AddStyles(): void;
     AddElement(): void;
-    Show(node: HTMLElement, highlighter: sre.Highlighter): void;
+    Show(node: HTMLElement, highlighter: Sre.highlighter): void;
     Hide(): void;
     Clear(): void;
     Update(content: T): void;
@@ -21,9 +21,9 @@ export declare abstract class AbstractRegion<T> implements Region<T> {
     constructor(document: A11yDocument);
     AddStyles(): void;
     AddElement(): void;
-    Show(node: HTMLElement, highlighter: sre.Highlighter): void;
+    Show(node: HTMLElement, highlighter: Sre.highlighter): void;
     protected abstract position(node: HTMLElement): void;
-    protected abstract highlight(highlighter: sre.Highlighter): void;
+    protected abstract highlight(highlighter: Sre.highlighter): void;
     Hide(): void;
     abstract Clear(): void;
     abstract Update(content: T): void;
@@ -37,13 +37,13 @@ export declare class DummyRegion extends AbstractRegion<void> {
     AddElement(): void;
     AddStyles(): void;
     position(): void;
-    highlight(_highlighter: sre.Highlighter): void;
+    highlight(_highlighter: Sre.highlighter): void;
 }
 export declare class StringRegion extends AbstractRegion<string> {
     Clear(): void;
     Update(speech: string): void;
     protected position(node: HTMLElement): void;
-    protected highlight(highlighter: sre.Highlighter): void;
+    protected highlight(highlighter: Sre.highlighter): void;
 }
 export declare class ToolTip extends StringRegion {
     protected static className: string;
@@ -61,8 +61,8 @@ export declare class HoverRegion extends AbstractRegion<HTMLElement> {
     protected static style: CssStyles;
     constructor(document: A11yDocument);
     protected position(node: HTMLElement): void;
-    protected highlight(highlighter: sre.Highlighter): void;
-    Show(node: HTMLElement, highlighter: sre.Highlighter): void;
+    protected highlight(highlighter: Sre.highlighter): void;
+    Show(node: HTMLElement, highlighter: Sre.highlighter): void;
     Clear(): void;
     Update(node: HTMLElement): void;
     private cloneNode;

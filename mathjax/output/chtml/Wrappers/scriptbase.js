@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -50,13 +52,14 @@ var CHTMLscriptbase = (function (_super) {
     }
     CHTMLscriptbase.prototype.toCHTML = function (parent) {
         this.chtml = this.standardCHTMLnode(parent);
-        var _a = __read(this.getOffset(this.baseChild.getBBox(), this.script.getBBox()), 2), x = _a[0], v = _a[1];
+        var _a = __read(this.getOffset(), 2), x = _a[0], v = _a[1];
+        var dx = x - (this.baseRemoveIc ? this.baseIc : 0);
         var style = { 'vertical-align': this.em(v) };
-        if (x) {
-            style['margin-left'] = this.em(x);
+        if (dx) {
+            style['margin-left'] = this.em(dx);
         }
         this.baseChild.toCHTML(this.chtml);
-        this.script.toCHTML(this.adaptor.append(this.chtml, this.html('mjx-script', { style: style })));
+        this.scriptChild.toCHTML(this.adaptor.append(this.chtml, this.html('mjx-script', { style: style })));
     };
     CHTMLscriptbase.prototype.setDeltaW = function (nodes, dx) {
         for (var i = 0; i < dx.length; i++) {
@@ -92,8 +95,17 @@ var CHTMLscriptbase = (function (_super) {
         }
         adaptor.append(adaptor.firstChild(under), box);
     };
+    CHTMLscriptbase.prototype.adjustBaseHeight = function (base, basebox) {
+        if (this.node.attributes.get('accent')) {
+            var minH = this.font.params.x_height * basebox.scale;
+            if (basebox.h < minH) {
+                this.adaptor.setStyle(base, 'paddingTop', this.em(minH - basebox.h));
+                basebox.h = minH;
+            }
+        }
+    };
     CHTMLscriptbase.kind = 'scriptbase';
-    CHTMLscriptbase.useIC = false;
     return CHTMLscriptbase;
-}(scriptbase_js_1.CommonScriptbaseMixin(Wrapper_js_1.CHTMLWrapper)));
+}((0, scriptbase_js_1.CommonScriptbaseMixin)(Wrapper_js_1.CHTMLWrapper)));
 exports.CHTMLscriptbase = CHTMLscriptbase;
+//# sourceMappingURL=scriptbase.js.map

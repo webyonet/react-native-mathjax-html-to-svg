@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.normal = void 0;
 var FontData_js_1 = require("../../FontData.js");
 var normal_js_1 = require("../../../common/fonts/tex/normal.js");
-exports.normal = FontData_js_1.AddCSS(normal_js_1.normal, {
+exports.normal = (0, FontData_js_1.AddCSS)(normal_js_1.normal, {
     0xA3: { f: 'MI' },
     0xA5: { f: 'A' },
     0xAE: { f: 'A' },
@@ -58,7 +58,7 @@ exports.normal = FontData_js_1.AddCSS(normal_js_1.normal, {
     0x210D: { c: 'H', f: 'A' },
     0x210E: { c: 'h', f: 'I' },
     0x210F: { f: 'A' },
-    0x2110: { c: 'J', f: 'SC' },
+    0x2110: { c: 'I', f: 'SC' },
     0x2111: { c: 'I', f: 'FR' },
     0x2112: { c: 'L', f: 'SC' },
     0x2115: { c: 'N', f: 'A' },
@@ -1027,3 +1027,4 @@ exports.normal = FontData_js_1.AddCSS(normal_js_1.normal, {
     0x1D7FE: { c: '8', f: 'T' },
     0x1D7FF: { c: '9', f: 'T' },
 });
+//# sourceMappingURL=normal.js.map

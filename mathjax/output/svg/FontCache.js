@@ -34,3 +34,4 @@ var FontCache = (function () {
     return FontCache;
 }());
 exports.FontCache = FontCache;
+//# sourceMappingURL=FontCache.js.map

@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -34,17 +36,16 @@ var CHTMLmunder = (function (_super) {
         var base = this.adaptor.append(this.adaptor.append(this.chtml, this.html('mjx-row')), this.html('mjx-base'));
         var under = this.adaptor.append(this.adaptor.append(this.chtml, this.html('mjx-row')), this.html('mjx-under'));
         this.baseChild.toCHTML(base);
-        this.script.toCHTML(under);
-        var basebox = this.baseChild.getBBox();
-        var underbox = this.script.getBBox();
+        this.scriptChild.toCHTML(under);
+        var basebox = this.baseChild.getOuterBBox();
+        var underbox = this.scriptChild.getOuterBBox();
         var k = this.getUnderKV(basebox, underbox)[0];
-        var delta = this.getDelta(true);
+        var delta = (this.isLineBelow ? 0 : this.getDelta(true));
         this.adaptor.setStyle(under, 'paddingTop', this.em(k));
         this.setDeltaW([base, under], this.getDeltaW([basebox, underbox], [0, -delta]));
         this.adjustUnderDepth(under, underbox);
     };
     CHTMLmunder.kind = munderover_js_4.MmlMunder.prototype.kind;
-    CHTMLmunder.useIC = true;
     CHTMLmunder.styles = {
         'mjx-over': {
             'text-align': 'left'
@@ -60,7 +61,7 @@ var CHTMLmunder = (function (_super) {
         }
     };
     return CHTMLmunder;
-}(munderover_js_1.CommonMunderMixin(msubsup_js_1.CHTMLmsub)));
+}((0, munderover_js_1.CommonMunderMixin)(msubsup_js_1.CHTMLmsub)));
 exports.CHTMLmunder = CHTMLmunder;
 var CHTMLmover = (function (_super) {
     __extends(CHTMLmover, _super);
@@ -76,18 +77,18 @@ var CHTMLmover = (function (_super) {
         this.chtml = this.standardCHTMLnode(parent);
         var over = this.adaptor.append(this.chtml, this.html('mjx-over'));
         var base = this.adaptor.append(this.chtml, this.html('mjx-base'));
-        this.script.toCHTML(over);
+        this.scriptChild.toCHTML(over);
         this.baseChild.toCHTML(base);
-        var overbox = this.script.getBBox();
-        var basebox = this.baseChild.getBBox();
+        var overbox = this.scriptChild.getOuterBBox();
+        var basebox = this.baseChild.getOuterBBox();
+        this.adjustBaseHeight(base, basebox);
         var k = this.getOverKU(basebox, overbox)[0];
-        var delta = this.getDelta();
+        var delta = (this.isLineAbove ? 0 : this.getDelta());
         this.adaptor.setStyle(over, 'paddingBottom', this.em(k));
         this.setDeltaW([base, over], this.getDeltaW([basebox, overbox], [0, delta]));
         this.adjustOverDepth(over, overbox);
     };
     CHTMLmover.kind = munderover_js_4.MmlMover.prototype.kind;
-    CHTMLmover.useIC = true;
     CHTMLmover.styles = {
         'mjx-mover:not([limits="false"])': {
             'padding-top': '.1em'
@@ -98,7 +99,7 @@ var CHTMLmover = (function (_super) {
         }
     };
     return CHTMLmover;
-}(munderover_js_2.CommonMoverMixin(msubsup_js_1.CHTMLmsup)));
+}((0, munderover_js_2.CommonMoverMixin)(msubsup_js_1.CHTMLmsup)));
 exports.CHTMLmover = CHTMLmover;
 var CHTMLmunderover = (function (_super) {
     __extends(CHTMLmunderover, _super);
@@ -119,20 +120,24 @@ var CHTMLmunderover = (function (_super) {
         this.overChild.toCHTML(over);
         this.baseChild.toCHTML(base);
         this.underChild.toCHTML(under);
-        var overbox = this.overChild.getBBox();
-        var basebox = this.baseChild.getBBox();
-        var underbox = this.underChild.getBBox();
+        var overbox = this.overChild.getOuterBBox();
+        var basebox = this.baseChild.getOuterBBox();
+        var underbox = this.underChild.getOuterBBox();
+        this.adjustBaseHeight(base, basebox);
         var ok = this.getOverKU(basebox, overbox)[0];
         var uk = this.getUnderKV(basebox, underbox)[0];
         var delta = this.getDelta();
         this.adaptor.setStyle(over, 'paddingBottom', this.em(ok));
         this.adaptor.setStyle(under, 'paddingTop', this.em(uk));
-        this.setDeltaW([base, under, over], this.getDeltaW([basebox, underbox, overbox], [0, -delta, delta]));
+        this.setDeltaW([base, under, over], this.getDeltaW([basebox, underbox, overbox], [0, this.isLineBelow ? 0 : -delta, this.isLineAbove ? 0 : delta]));
         this.adjustOverDepth(over, overbox);
         this.adjustUnderDepth(under, underbox);
     };
+    CHTMLmunderover.prototype.markUsed = function () {
+        _super.prototype.markUsed.call(this);
+        this.jax.wrapperUsage.add(msubsup_js_1.CHTMLmsubsup.kind);
+    };
     CHTMLmunderover.kind = munderover_js_4.MmlMunderover.prototype.kind;
-    CHTMLmunderover.useIC = true;
     CHTMLmunderover.styles = {
         'mjx-munderover:not([limits="false"])': {
             'padding-top': '.1em'
@@ -142,5 +147,6 @@ var CHTMLmunderover = (function (_super) {
         },
     };
     return CHTMLmunderover;
-}(munderover_js_3.CommonMunderoverMixin(msubsup_js_1.CHTMLmsubsup)));
+}((0, munderover_js_3.CommonMunderoverMixin)(msubsup_js_1.CHTMLmsubsup)));
 exports.CHTMLmunderover = CHTMLmunderover;
+//# sourceMappingURL=munderover.js.map

@@ -7,9 +7,9 @@ exports.HDW2 = [.85, .349, .667];
 exports.HDW3 = [.583, .082, .5];
 exports.VSIZES = [1, 1.2, 1.8, 2.4, 3];
 var DELIM2F = { c: 0x2F, dir: FontData_js_1.V, sizes: exports.VSIZES };
-var DELIMAF = { c: 0xAF, dir: FontData_js_1.H, sizes: [.59], stretch: [0, 0xAF], HDW: [.59, -0.544, .5] };
-var DELIM2C6 = { c: 0x2C6, dir: FontData_js_1.H, sizes: [.517, .817, 1.335, 1.777, 1.909] };
-var DELIM2DC = { c: 0x2DC, dir: FontData_js_1.H, sizes: [.583, .805, 1.33, 1.773, 1.887] };
+var DELIMAF = { c: 0xAF, dir: FontData_js_1.H, sizes: [.5], stretch: [0, 0xAF], HDW: [.59, -0.544, .5] };
+var DELIM2C6 = { c: 0x2C6, dir: FontData_js_1.H, sizes: [.5, .556, 1, 1.444, 1.889] };
+var DELIM2DC = { c: 0x2DC, dir: FontData_js_1.H, sizes: [.5, .556, 1, 1.444, 1.889] };
 var DELIM2013 = { c: 0x2013, dir: FontData_js_1.H, sizes: [.5], stretch: [0, 0x2013], HDW: [.285, -0.248, .5] };
 var DELIM2190 = { c: 0x2190, dir: FontData_js_1.H, sizes: [1], stretch: [0x2190, 0x2212], HDW: exports.HDW3 };
 var DELIM2192 = { c: 0x2192, dir: FontData_js_1.H, sizes: [1], stretch: [0, 0x2212, 0x2192], HDW: exports.HDW3 };
@@ -21,10 +21,10 @@ var DELIM21D2 = { c: 0x21D2, dir: FontData_js_1.H, sizes: [1], stretch: [0, 0x3D
 var DELIM21D4 = { c: 0x21D4, dir: FontData_js_1.H, sizes: [1], stretch: [0x21D0, 0x3D, 0x21D2], HDW: exports.HDW3 };
 var DELIM2212 = { c: 0x2212, dir: FontData_js_1.H, sizes: [.778], stretch: [0, 0x2212], HDW: exports.HDW3 };
 var DELIM2223 = { c: 0x2223, dir: FontData_js_1.V, sizes: [1], stretch: [0, 0x2223], HDW: [.627, .015, .333] };
-var DELIM23DC = { c: 0x23DC, dir: FontData_js_1.H, sizes: [.778, 1], schar: [0x2322, 0x2322], stretch: [0xE150, 0xE154, 0xE151],
-    HDW: [.32, .2, .5] };
-var DELIM23DD = { c: 0x23DD, dir: FontData_js_1.H, sizes: [.778, 1], schar: [0x2323, 0x2323], stretch: [0xE152, 0xE154, 0xE153],
-    HDW: [.32, .2, .5] };
+var DELIM23DC = { c: 0x23DC, dir: FontData_js_1.H, sizes: [.778, 1], schar: [0x2322, 0x2322], variants: [5, 0],
+    stretch: [0xE150, 0xE154, 0xE151], HDW: [.32, .2, .5] };
+var DELIM23DD = { c: 0x23DD, dir: FontData_js_1.H, sizes: [.778, 1], schar: [0x2323, 0x2323], variants: [5, 0],
+    stretch: [0xE152, 0xE154, 0xE153], HDW: [.32, .2, .5] };
 var DELIM23DE = { c: 0x23DE, dir: FontData_js_1.H, stretch: [0xE150, 0xE154, 0xE151, 0xE155], HDW: [.32, .2, .5], min: 1.8 };
 var DELIM23DF = { c: 0x23DF, dir: FontData_js_1.H, stretch: [0xE152, 0xE154, 0xE153, 0xE156], HDW: [.32, .2, .5], min: 1.8 };
 var DELIM27E8 = { c: 0x27E8, dir: FontData_js_1.V, sizes: exports.VSIZES };
@@ -36,7 +36,7 @@ exports.delimiters = {
     0x29: { dir: FontData_js_1.V, sizes: exports.VSIZES, stretch: [0x239E, 0x239F, 0x23A0], HDW: [.85, .349, .875] },
     0x2D: DELIM2212,
     0x2F: DELIM2F,
-    0x3D: { dir: FontData_js_1.H, sizes: [.767], stretch: [0, 0x3D], HDW: exports.HDW3 },
+    0x3D: { dir: FontData_js_1.H, sizes: [.778], stretch: [0, 0x3D], HDW: exports.HDW3 },
     0x5B: { dir: FontData_js_1.V, sizes: exports.VSIZES, stretch: [0x23A1, 0x23A2, 0x23A3], HDW: exports.HDW2 },
     0x5C: { dir: FontData_js_1.V, sizes: exports.VSIZES },
     0x5D: { dir: FontData_js_1.V, sizes: exports.VSIZES, stretch: [0x23A4, 0x23A5, 0x23A6], HDW: exports.HDW2 },
@@ -56,7 +56,7 @@ exports.delimiters = {
     0x2013: DELIM2013,
     0x2014: DELIM2013,
     0x2015: DELIM2013,
-    0x2016: { dir: FontData_js_1.V, sizes: [.602, 1], schar: [0, 0x2225], stretch: [0, 0x2225], HDW: [.602, 0, .556] },
+    0x2016: { dir: FontData_js_1.V, sizes: [.602, 1], schar: [0, 0x2225], variants: [1, 0], stretch: [0, 0x2225], HDW: [.602, 0, .556] },
     0x2017: DELIM2013,
     0x203E: DELIMAF,
     0x20D7: DELIM2192,
@@ -92,7 +92,7 @@ exports.delimiters = {
     0x21DB: { dir: FontData_js_1.H, sizes: [1], stretch: [0, 0x2261, 0x21DB], HDW: [.464, -0.036, .5] },
     0x2212: DELIM2212,
     0x2215: DELIM2F,
-    0x221A: { dir: FontData_js_1.V, sizes: exports.VSIZES, stretch: [0xE001, 0xE000, 0x23B7], HDW: [.85, .35, 1.056] },
+    0x221A: { dir: FontData_js_1.V, sizes: exports.VSIZES, stretch: [0xE001, 0xE000, 0x23B7], fullExt: [.65, 2.3], HDW: [.85, .35, 1.056] },
     0x2223: DELIM2223,
     0x2225: { dir: FontData_js_1.V, sizes: [1], stretch: [0, 0x2225], HDW: [.627, .015, .556] },
     0x2308: { dir: FontData_js_1.V, sizes: exports.VSIZES, stretch: [0x23A1, 0x23A2], HDW: exports.HDW2 },
@@ -110,7 +110,7 @@ exports.delimiters = {
     0x23B1: { dir: FontData_js_1.V, sizes: [.989], stretch: [0x23AB, 0x23AA, 0x23A9], HDW: [.75, .25, .889] },
     0x23B4: { dir: FontData_js_1.H, stretch: [0x250C, 0x2212, 0x2510], HDW: exports.HDW3, min: 1 },
     0x23B5: { dir: FontData_js_1.H, stretch: [0x2514, 0x2212, 0x2518], HDW: exports.HDW3, min: 1 },
-    0x23D0: { dir: FontData_js_1.V, sizes: [.602, 1], schar: [0, 0x2223], stretch: [0, 0x2223], HDW: [.602, 0, .333] },
+    0x23D0: { dir: FontData_js_1.V, sizes: [.602, 1], schar: [0, 0x2223], variants: [1, 0], stretch: [0, 0x2223], HDW: [.602, 0, .333] },
     0x23DC: DELIM23DC,
     0x23DD: DELIM23DD,
     0x23DE: DELIM23DE,
@@ -152,3 +152,4 @@ exports.delimiters = {
     0xFE37: DELIM23DE,
     0xFE38: DELIM23DF,
 };
+//# sourceMappingURL=delimiters.js.map

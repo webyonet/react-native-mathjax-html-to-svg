@@ -44,3 +44,4 @@ var TexError = (function () {
     return TexError;
 }());
 exports.default = TexError;
+//# sourceMappingURL=TexError.js.map

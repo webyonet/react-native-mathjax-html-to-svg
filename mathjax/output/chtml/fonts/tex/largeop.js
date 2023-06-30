@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.largeop = void 0;
 var FontData_js_1 = require("../../FontData.js");
 var largeop_js_1 = require("../../../common/fonts/tex/largeop.js");
-exports.largeop = FontData_js_1.AddCSS(largeop_js_1.largeop, {
+exports.largeop = (0, FontData_js_1.AddCSS)(largeop_js_1.largeop, {
     0x2016: { f: 'S1' },
     0x2044: { c: '/' },
     0x2191: { f: 'S1' },
@@ -20,3 +20,4 @@ exports.largeop = FontData_js_1.AddCSS(largeop_js_1.largeop, {
     0x3008: { c: '\\27E8' },
     0x3009: { c: '\\27E9' },
 });
+//# sourceMappingURL=largeop.js.map

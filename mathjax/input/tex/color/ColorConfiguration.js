@@ -27,3 +27,4 @@ exports.ColorConfiguration = Configuration_js_1.Configuration.create('color', {
     },
     config: config
 });
+//# sourceMappingURL=ColorConfiguration.js.map

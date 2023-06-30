@@ -5,6 +5,8 @@ declare namespace NewcommandUtil {
     function disassembleSymbol(name: string, symbol: Symbol): Args[];
     function assembleSymbol(args: Args[]): Symbol;
     function GetCSname(parser: TexParser, cmd: string): string;
+    function GetCsNameArgument(parser: TexParser, name: string): string;
+    function GetArgCount(parser: TexParser, name: string): string;
     function GetTemplate(parser: TexParser, cmd: string, cs: string): number | string[];
     function GetParameter(parser: TexParser, name: string, param: string): string;
     function MatchParam(parser: TexParser, param: string): number;

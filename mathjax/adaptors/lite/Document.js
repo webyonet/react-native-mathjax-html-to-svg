@@ -8,7 +8,7 @@ var LiteDocument = (function () {
             this.head = new Element_js_1.LiteElement('head'),
             this.body = new Element_js_1.LiteElement('body')
         ]);
-        this.type = '<!DOCTYPE html>';
+        this.type = '';
     }
     Object.defineProperty(LiteDocument.prototype, "kind", {
         get: function () {
@@ -20,3 +20,4 @@ var LiteDocument = (function () {
     return LiteDocument;
 }());
 exports.LiteDocument = LiteDocument;
+//# sourceMappingURL=Document.js.map

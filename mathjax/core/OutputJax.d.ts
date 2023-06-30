@@ -10,6 +10,7 @@ export interface OutputJax<N, T, D> {
     adaptor: DOMAdaptor<N, T, D>;
     setAdaptor(adaptor: DOMAdaptor<N, T, D>): void;
     initialize(): void;
+    reset(...args: any[]): void;
     typeset(math: MathItem<N, T, D>, document?: MathDocument<N, T, D>): N;
     escaped(math: MathItem<N, T, D>, document?: MathDocument<N, T, D>): N;
     getMetrics(document: MathDocument<N, T, D>): void;
@@ -26,6 +27,7 @@ export declare abstract class AbstractOutputJax<N, T, D> implements OutputJax<N,
     get name(): string;
     setAdaptor(adaptor: DOMAdaptor<N, T, D>): void;
     initialize(): void;
+    reset(..._args: any[]): void;
     abstract typeset(math: MathItem<N, T, D>, document?: MathDocument<N, T, D>): N;
     abstract escaped(math: MathItem<N, T, D>, document?: MathDocument<N, T, D>): N;
     getMetrics(_document: MathDocument<N, T, D>): void;

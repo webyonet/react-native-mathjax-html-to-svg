@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -47,16 +49,16 @@ var HTMLAdaptor = (function (_super) {
         return this.document.createTextNode(text);
     };
     HTMLAdaptor.prototype.head = function (doc) {
-        return doc.head;
+        return doc.head || doc;
     };
     HTMLAdaptor.prototype.body = function (doc) {
-        return doc.body;
+        return doc.body || doc;
     };
     HTMLAdaptor.prototype.root = function (doc) {
-        return doc.documentElement;
+        return doc.documentElement || doc;
     };
     HTMLAdaptor.prototype.doctype = function (doc) {
-        return "<!DOCTYPE " + doc.doctype.name + ">";
+        return (doc.doctype ? "<!DOCTYPE ".concat(doc.doctype.name, ">") : '');
     };
     HTMLAdaptor.prototype.tags = function (node, name, ns) {
         if (ns === void 0) { ns = null; }
@@ -135,7 +137,8 @@ var HTMLAdaptor = (function (_super) {
         return node.childNodes[i];
     };
     HTMLAdaptor.prototype.kind = function (node) {
-        return node.nodeName.toLowerCase();
+        var n = node.nodeType;
+        return (n === 1 || n === 3 || n === 8 ? node.nodeName.toLowerCase() : '');
     };
     HTMLAdaptor.prototype.value = function (node) {
         return node.nodeValue || '';
@@ -148,6 +151,10 @@ var HTMLAdaptor = (function (_super) {
     };
     HTMLAdaptor.prototype.outerHTML = function (node) {
         return node.outerHTML;
+    };
+    HTMLAdaptor.prototype.serializeXML = function (node) {
+        var serializer = new this.window.XMLSerializer();
+        return serializer.serializeToString(node);
     };
     HTMLAdaptor.prototype.setAttribute = function (node, name, value, ns) {
         if (ns === void 0) { ns = null; }
@@ -202,6 +209,27 @@ var HTMLAdaptor = (function (_super) {
     HTMLAdaptor.prototype.allStyles = function (node) {
         return node.style.cssText;
     };
+    HTMLAdaptor.prototype.insertRules = function (node, rules) {
+        var e_2, _a;
+        try {
+            for (var _b = __values(rules.reverse()), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var rule = _c.value;
+                try {
+                    node.sheet.insertRule(rule, 0);
+                }
+                catch (e) {
+                    console.warn("MathJax: can't insert css rule '".concat(rule, "': ").concat(e.message));
+                }
+            }
+        }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_2) throw e_2.error; }
+        }
+    };
     HTMLAdaptor.prototype.fontSize = function (node) {
         var style = this.window.getComputedStyle(node);
         return parseFloat(style.fontSize);
@@ -226,3 +254,4 @@ var HTMLAdaptor = (function (_super) {
     return HTMLAdaptor;
 }(DOMAdaptor_js_1.AbstractDOMAdaptor));
 exports.HTMLAdaptor = HTMLAdaptor;
+//# sourceMappingURL=HTMLAdaptor.js.map

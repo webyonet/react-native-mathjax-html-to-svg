@@ -2,7 +2,7 @@ import { PropertyList } from '../../Tree/Node.js';
 import { MmlNode, AbstractMmlNode, AttributeList } from '../MmlNode.js';
 export declare class MmlMsqrt extends AbstractMmlNode {
     static defaults: PropertyList;
-    texClass: number;
+    protected texclass: number;
     get kind(): string;
     get arity(): number;
     get linebreakContainer(): boolean;

@@ -48,7 +48,9 @@ export declare abstract class CommonOutputJax<N, T, D, W extends AnyWrapper, F e
     protected getTestElement(node: N, display: boolean): N;
     protected measureMetrics(node: N, getFamily: boolean): ExtendedMetrics;
     styleSheet(html: MathDocument<N, T, D>): N;
-    protected addClassStyles(CLASS: typeof CommonWrapper): void;
+    protected addFontStyles(styles: CssStyles): void;
+    protected addWrapperStyles(styles: CssStyles): void;
+    protected addClassStyles(CLASS: typeof CommonWrapper, styles: CssStyles): void;
     protected setDocument(html: MathDocument<N, T, D>): void;
     html(type: string, def?: OptionList, content?: (N | T)[], ns?: string): N;
     text(text: string): T;
